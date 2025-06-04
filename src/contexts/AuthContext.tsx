@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           method: 'GET',
           headers: {
-            'Authorization': 'Bearer ' + (accessToken || ''),
+             'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE5MDY3MTczNTN9.XvoAeeXYWfbbjWxCrOkpAfaBtvM2dfXD5q5tw2WCFDs',
             'Accept': 'application/json',
           },
         }
