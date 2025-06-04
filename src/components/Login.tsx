@@ -140,10 +140,6 @@ const Login = () => {
                   </Button>
                 </>
               )}
-
-              <div className="text-center text-sm text-gray-500 pt-4">
-                Demo credentials: 6381647507 / 7507
-              </div>
             </CardContent>
           </Card>
         </div>
