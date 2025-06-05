@@ -166,7 +166,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
       <CardHeader className="pb-6 pt-6 rounded-t-xl bg-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-[#FDDC4E]" />
+            <MapPin className="w-5 h-5 mr-2 text-[#1f2937]" />
             Locations
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
