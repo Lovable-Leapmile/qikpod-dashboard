@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridReadyEvent, GridApi, ModuleRegistry, PaginationChangedEvent } from 'ag-grid-community';
@@ -238,7 +237,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               loading={loading}
               onGridReady={onGridReady}
               animateRows={true}
-              rowSelection="none"
               suppressCellFocus={true}
               suppressRowClickSelection={true}
               rowHeight={60}

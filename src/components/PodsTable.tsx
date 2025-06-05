@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridReadyEvent, GridApi, ModuleRegistry } from 'ag-grid-community';
@@ -297,7 +296,6 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
               loading={loading}
               onGridReady={onGridReady}
               animateRows={true}
-              rowSelection="none"
               suppressCellFocus={true}
               suppressRowClickSelection={true}
               rowHeight={60}
