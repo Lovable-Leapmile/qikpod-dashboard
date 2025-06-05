@@ -1,11 +1,13 @@
+"use client"; // Ensure this is at the top of the file
+
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  MapPin, 
-  Package, 
-  Users, 
+import {
+  MapPin,
+  Package,
+  Users,
   Calendar,
   Settings,
   HelpCircle,
@@ -21,22 +23,50 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
+// AG Grid imports
 import { AgGridReact } from 'ag-grid-react';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import type { ColDef } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+// Use AllCommunityModules (plural) which is typically the correct export for all modules
+import { ModuleRegistry, AllCommunityModules } from 'ag-grid-community';
+import type { ColDef, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
+
+// AG Grid CSS
+import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS
+import 'ag-grid-community/styles/ag-theme-alpine.css'; // Alpine theme CSS (as per your import)
 
 // Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule]);
+// AllCommunityModules is an array of all community modules.
+ModuleRegistry.registerModules(AllCommunityModules);
 
 // Define the data type for locations
 type LocationData = {
   id: number;
   name: string;
   address: string;
-  pincode: string;
+  pincode: string; // Kept as string
 };
+
+// Custom Cell Renderer for the Action Button
+// It's good practice to type params with ICellRendererParams
+const ActionButtonRenderer = (params: ICellRendererParams<LocationData>) => {
+  const handleActionClick = () => {
+    console.log("Settings clicked for location ID:", params.data?.id);
+    // Implement action logic here, e.g., open a modal, navigate, etc.
+    // You have access to the full row data via params.data
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="text-gray-400 hover:text-gray-600"
+      onClick={handleActionClick}
+    >
+      <Settings className="w-4 h-4" />
+    </Button>
+  );
+};
+
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -48,6 +78,7 @@ const Dashboard = () => {
     setShowLogoutDialog(false);
   };
 
+  // Assuming these are defined elsewhere or you'll add them
   const navigationItems = [
     { name: 'Dashboard', icon: Calendar, active: true },
     { name: 'Operations', icon: Settings },
@@ -63,64 +94,59 @@ const Dashboard = () => {
     { title: 'RESERVATIONS', value: '40195', icon: Calendar },
   ];
 
-  const locationsData: LocationData[] = [
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
-  ];
+  // Sample locationsData, memoized for performance
+  const locationsData = useMemo<LocationData[]>(() => [
+    { id: 491, name: 'SV Paradies Koramangala', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road, Koramangala 1st block near wipro park', pincode: '560095' },
+    { id: 492, name: 'Greenwood Regency HSR', address: 'Plot 15, 27th Main Rd, Sector 2, HSR Layout, Bengaluru', pincode: '560102' },
+    { id: 493, name: 'Lakeview Apartments Bellandur', address: '45 Lake Rd, Bellandur, Bengaluru, Near Central Mall', pincode: '560103' },
+    { id: 494, name: 'Mountain Vista Whitefield', address: '789 Hilltop Dr, Whitefield, Hope Farm Junction, Bengaluru', pincode: '560066' },
+    { id: 495, name: 'Ocean Breeze Indiranagar', address: '10 Beach Ave, 100 Feet Rd, Indiranagar, Bengaluru', pincode: '560038' },
+  ], []);
 
   // AG Grid column definitions with proper typing
   const columnDefs = useMemo<ColDef<LocationData>[]>(() => [
-    { 
-      field: 'id' as keyof LocationData, 
+    {
       headerName: 'ID',
+      field: 'id', // Direct key of LocationData
       width: 100,
-      sortable: true,
-      filter: true
     },
-    { 
-      field: 'name' as keyof LocationData, 
+    {
       headerName: 'NAME',
-      width: 150,
-      sortable: true,
-      filter: true
+      field: 'name',
+      width: 250, // Increased width
+      filter: 'agTextColumnFilter', // Example of specific filter
     },
-    { 
-      field: 'address' as keyof LocationData, 
+    {
       headerName: 'ADDRESS',
-      flex: 1,
-      sortable: true,
-      filter: true,
-      tooltipField: 'address' as keyof LocationData
+      field: 'address',
+      flex: 1, // Takes remaining width
+      minWidth: 300, // Minimum width for address
+      wrapText: true, // Enable text wrapping for long addresses
+      autoHeight: true, // Adjust row height to fit wrapped text
+      tooltipField: 'address', // Shows full address on hover
     },
-    { 
-      field: 'pincode' as keyof LocationData, 
+    {
       headerName: 'PINCODE',
+      field: 'pincode',
       width: 120,
-      sortable: true,
-      filter: true
     },
     {
       headerName: 'ACTION',
       width: 100,
-      cellRenderer: () => (
-        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-          <Settings className="w-4 h-4" />
-        </Button>
-      ),
-      sortable: false,
-      filter: false,
-      pinned: 'right'
+      cellRenderer: ActionButtonRenderer, // Use the custom React component
+      sortable: false, // Actions are typically not sortable
+      filter: false,   // Or filterable
+      pinned: 'right', // Pin column to the right
+      cellClass: 'flex items-center justify-center', // Tailwind for centering
     }
   ], []);
 
   // AG Grid default column properties
-  const defaultColDef = useMemo(() => ({
+  const defaultColDef = useMemo<ColDef<LocationData>>(() => ({
     resizable: true,
     sortable: true,
-    filter: true,
+    filter: true, // Enable basic filtering on all columns by default
+    // floatingFilter: true, // Optionally enable floating filters
   }), []);
 
   return (
@@ -129,14 +155,11 @@ const Dashboard = () => {
       <nav className="bg-yellow-500 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <span className="text-xl font-bold">QikPod</span>
               </div>
             </div>
-
-            {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {navigationItems.map((item) => (
@@ -162,8 +185,6 @@ const Dashboard = () => {
                 </Button>
               </div>
             </div>
-
-            {/* Mobile menu button */}
             <div className="md:hidden">
               <Button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -176,8 +197,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-yellow-600">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -244,17 +263,20 @@ const Dashboard = () => {
             <CardTitle className="text-xl font-semibold text-gray-900">Locations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
-              <AgGridReact<LocationData>
+            <div
+              className="ag-theme-alpine" // Using Alpine theme
+              style={{ height: 500, width: '100%' }} // Ensure grid has dimensions
+            >
+              <AgGridReact<LocationData> // Specify the row data type
                 rowData={locationsData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
                 paginationPageSize={10}
-                domLayout="normal"
-                suppressHorizontalScroll={false}
-                enableCellTextSelection={true}
-                ensureDomOrder={true}
+                paginationPageSizeSelector={[10, 20, 50, 100]} // Options for page size
+                // domLayout='autoHeight' // Consider this if you want grid height to fit content. Can impact performance.
+                enableCellTextSelection={true} // Allows text selection in cells
+                // ensureDomOrder={true} // Retained from your code, useful for some testing/accessibility
               />
             </div>
           </CardContent>
