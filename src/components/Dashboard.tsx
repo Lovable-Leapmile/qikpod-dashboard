@@ -131,7 +131,7 @@ const Dashboard = () => {
       case 'podDetail':
         return selectedPodId ? <PodDetail podId={selectedPodId} onBack={handleBackToPods} /> : null;
       default:
-        return <div className="space-y-8">
+        return <div className="space-y-4">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {statsData.map((stat, index) => <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
@@ -142,7 +142,7 @@ const Dashboard = () => {
                     <stat.icon className="h-4 w-4 text-[#FDDC4E]" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-700">
+                    <div className="text-2xl font-bold text-gray-900">
                       {statsLoading ? '...' : stat.value}
                     </div>
                   </CardContent>
