@@ -116,7 +116,9 @@ const Dashboard = () => {
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
-    { name: 'Logout', icon: LogOut, onClick: () => {} },
+    { name: 'Logout', icon: LogOut,onClick: ()=>{ 
+      setShowLogoutDialog(true);
+      setIsMobileMenuOpen(false);}},
   ];
 
   const statsData = [
