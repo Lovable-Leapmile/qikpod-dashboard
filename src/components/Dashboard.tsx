@@ -13,7 +13,8 @@ import {
   LogOut,
   Menu,
   X,
-  Activity
+  Activity,
+  ChevronDown
 } from 'lucide-react';
 import {
   Dialog,
@@ -23,6 +24,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { dashboardApi } from '@/services/dashboardApi';
 import LocationsTable from './LocationsTable';
 import PodsTable from './PodsTable';
@@ -56,7 +63,6 @@ const Dashboard = () => {
     
     setStatsLoading(true);
     try {
-      // Use the count APIs directly to get proper counts from response body
       const [locations, pods, users, reservations] = await Promise.all([
         dashboardApi.getLocationsCount(accessToken),
         dashboardApi.getPodsCount(accessToken),
@@ -79,7 +85,6 @@ const Dashboard = () => {
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
     setCurrentView(view);
-    // Close mobile menu after navigation
     setIsMobileMenuOpen(false);
   };
 
@@ -91,18 +96,23 @@ const Dashboard = () => {
       onClick: () => handleNavigationClick('dashboard')
     },
     { 
-      name: 'Locations', 
-      icon: MapPin, 
-      active: currentView === 'locations',
-      onClick: () => handleNavigationClick('locations')
+      name: 'Operations', 
+      icon: Settings, 
+      active: currentView === 'locations' || currentView === 'pods',
+      isDropdown: true,
+      items: [
+        {
+          name: 'Locations',
+          icon: MapPin,
+          onClick: () => handleNavigationClick('locations')
+        },
+        {
+          name: 'Pods',
+          icon: Package,
+          onClick: () => handleNavigationClick('pods')
+        }
+      ]
     },
-    { 
-      name: 'Pods', 
-      icon: Package, 
-      active: currentView === 'pods',
-      onClick: () => handleNavigationClick('pods')
-    },
-    { name: 'Operations', icon: Settings },
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
@@ -155,12 +165,12 @@ const Dashboard = () => {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {statsData.map((stat, index) => (
-                <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow">
+                <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600">
                       {stat.title}
                     </CardTitle>
-                    <stat.icon className="h-4 w-4 text-yellow-500" />
+                    <stat.icon className="h-4 w-4 text-[#FDDC4E]" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
@@ -182,15 +192,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 w-full">
       {/* Fixed Top Navigation */}
-      <nav className="bg-blue-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="bg-[#FDDC4E] text-black shadow-lg fixed top-0 left-0 right-0 z-50">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-xl font-bold text-white">QikPod</span>
+                <span className="text-xl font-bold text-black">QikPod</span>
               </div>
             </div>
 
@@ -198,23 +208,53 @@ const Dashboard = () => {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {navigationItems.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={item.onClick}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      item.active
-                        ? 'bg-blue-700 text-white'
-                        : 'text-blue-100 hover:bg-blue-700 hover:text-white'
-                    }`}
-                  >
-                    <item.icon className="inline-block w-4 h-4 mr-2" />
-                    {item.name}
-                  </button>
+                  item.isDropdown ? (
+                    <DropdownMenu key={item.name}>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
+                            item.active
+                              ? 'bg-yellow-400 text-black'
+                              : 'text-black hover:bg-yellow-400 hover:text-black'
+                          }`}
+                        >
+                          <item.icon className="inline-block w-4 h-4 mr-2" />
+                          {item.name}
+                          <ChevronDown className="w-4 h-4 ml-1" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
+                        {item.items?.map((subItem) => (
+                          <DropdownMenuItem
+                            key={subItem.name}
+                            onClick={subItem.onClick}
+                            className="flex items-center px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            <subItem.icon className="w-4 h-4 mr-2" />
+                            {subItem.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <button
+                      key={item.name}
+                      onClick={item.onClick}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        item.active
+                          ? 'bg-yellow-400 text-black'
+                          : 'text-black hover:bg-yellow-400 hover:text-black'
+                      }`}
+                    >
+                      <item.icon className="inline-block w-4 h-4 mr-2" />
+                      {item.name}
+                    </button>
+                  )
                 ))}
                 <Button
                   onClick={() => setShowLogoutDialog(true)}
                   variant="ghost"
-                  className="text-blue-100 hover:bg-blue-700 hover:text-white"
+                  className="text-black hover:bg-yellow-400 hover:text-black"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -228,7 +268,7 @@ const Dashboard = () => {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-blue-700"
+                className="text-black hover:bg-yellow-400"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>
@@ -238,21 +278,40 @@ const Dashboard = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-blue-700">
+          <div className="md:hidden bg-yellow-400">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navigationItems.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={item.onClick}
-                  className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    item.active
-                      ? 'bg-blue-800 text-white'
-                      : 'text-blue-100 hover:bg-blue-800 hover:text-white'
-                  }`}
-                >
-                  <item.icon className="inline-block w-4 h-4 mr-2" />
-                  {item.name}
-                </button>
+                item.isDropdown ? (
+                  <div key={item.name} className="space-y-1">
+                    <div className="px-3 py-2 text-base font-medium text-black">
+                      <item.icon className="inline-block w-4 h-4 mr-2" />
+                      {item.name}
+                    </div>
+                    {item.items?.map((subItem) => (
+                      <button
+                        key={subItem.name}
+                        onClick={subItem.onClick}
+                        className="w-full text-left px-6 py-2 text-sm text-black hover:bg-yellow-500"
+                      >
+                        <subItem.icon className="inline-block w-4 h-4 mr-2" />
+                        {subItem.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <button
+                    key={item.name}
+                    onClick={item.onClick}
+                    className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      item.active
+                        ? 'bg-yellow-500 text-black'
+                        : 'text-black hover:bg-yellow-500 hover:text-black'
+                    }`}
+                  >
+                    <item.icon className="inline-block w-4 h-4 mr-2" />
+                    {item.name}
+                  </button>
+                )
               ))}
               <Button
                 onClick={() => {
@@ -260,7 +319,7 @@ const Dashboard = () => {
                   setIsMobileMenuOpen(false);
                 }}
                 variant="ghost"
-                className="w-full text-left text-blue-100 hover:bg-blue-800 hover:text-white justify-start"
+                className="w-full text-left text-black hover:bg-yellow-500 hover:text-black justify-start"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -271,16 +330,16 @@ const Dashboard = () => {
       </nav>
 
       {/* Main Content with top padding for fixed header */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pt-24">
+      <main className="w-full py-6 px-4 sm:px-6 lg:px-8 pt-24">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center text-sm text-gray-500 mb-2">
             <Activity className="w-4 h-4 mr-2" />
             {currentView === 'dashboard' && 'Dashboard'}
-            {currentView === 'locations' && 'Locations Management'}
-            {currentView === 'pods' && 'Pods Management'}
-            {currentView === 'locationDetail' && 'Location Details'}
-            {currentView === 'podDetail' && 'Pod Details'}
+            {currentView === 'locations' && 'Operations / Locations Management'}
+            {currentView === 'pods' && 'Operations / Pods Management'}
+            {currentView === 'locationDetail' && 'Operations / Location Details'}
+            {currentView === 'podDetail' && 'Operations / Pod Details'}
           </div>
           <h1 className="text-3xl font-bold text-gray-900">
             {currentView === 'dashboard' && 'Dashboard'}
@@ -316,7 +375,7 @@ const Dashboard = () => {
             </Button>
             <Button
               onClick={handleLogout}
-              className="bg-yellow-500 hover:bg-yellow-600"
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black"
             >
               Logout
             </Button>

@@ -24,8 +24,8 @@ const PodCard: React.FC<{ pod: Pod; onPodClick: (id: number) => void }> = ({
   pod, 
   onPodClick 
 }) => (
-  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow">
-    <CardContent className="p-4">
+  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
+    <CardContent className="p-6">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 pr-3">
           <h3 className="font-semibold text-lg text-gray-900 mb-1">{pod.pod_name}</h3>
@@ -35,7 +35,7 @@ const PodCard: React.FC<{ pod: Pod; onPodClick: (id: number) => void }> = ({
           variant="ghost"
           size="sm"
           onClick={() => onPodClick(pod.id)}
-          className="text-blue-600 hover:text-blue-800 shrink-0"
+          className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50 shrink-0"
         >
           <Eye className="w-4 h-4" />
         </Button>
@@ -101,61 +101,70 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
   }, []);
 
   const ActionCellRenderer = ({ data }: { data: Pod }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => onPodClick(data.id)}
-      className="text-blue-600 hover:text-blue-800"
-    >
-      <Eye className="w-4 h-4" />
-    </Button>
+    <div className="flex justify-center items-center h-full">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onPodClick(data.id)}
+        className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50"
+      >
+        <Eye className="w-4 h-4" />
+      </Button>
+    </div>
   );
 
   const StatusCellRenderer = ({ value }: { value: string }) => (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-      value === 'active' ? 'bg-green-100 text-green-800' : 
-      value === 'inactive' ? 'bg-red-100 text-red-800' : 
-      'bg-gray-100 text-gray-800'
-    }`}>
-      {value}
-    </span>
+    <div className="flex justify-center items-center h-full">
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        value === 'active' ? 'bg-green-100 text-green-800' : 
+        value === 'inactive' ? 'bg-red-100 text-red-800' : 
+        'bg-gray-100 text-gray-800'
+      }`}>
+        {value}
+      </span>
+    </div>
   );
 
   const PowerStatusCellRenderer = ({ value }: { value: string }) => (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-      value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-    }`}>
-      {value}
-    </span>
+    <div className="flex justify-center items-center h-full">
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      }`}>
+        {value}
+      </span>
+    </div>
   );
 
   const columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'POD ID', width: 100, sortable: true },
-    { field: 'pod_name', headerName: 'POD NAME', width: 150, sortable: true },
+    { field: 'id', headerName: 'POD ID', width: 120, sortable: true, cellClass: 'vertical-center' },
+    { field: 'pod_name', headerName: 'POD NAME', width: 200, sortable: true, cellClass: 'vertical-center' },
     { 
       field: 'pod_power_status', 
       headerName: 'POWER STATUS', 
-      width: 130, 
+      width: 150, 
       sortable: true,
-      cellRenderer: PowerStatusCellRenderer
+      cellRenderer: PowerStatusCellRenderer,
+      cellClass: 'vertical-center'
     },
     { 
       field: 'status', 
       headerName: 'STATUS', 
-      width: 120, 
+      width: 130, 
       sortable: true,
-      cellRenderer: StatusCellRenderer
+      cellRenderer: StatusCellRenderer,
+      cellClass: 'vertical-center'
     },
-    { field: 'pod_health', headerName: 'HEALTH', width: 120, sortable: true },
-    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', width: 130, sortable: true },
-    { field: 'location_name', headerName: 'LOCATION NAME', width: 200, sortable: true },
+    { field: 'pod_health', headerName: 'HEALTH', width: 150, sortable: true, cellClass: 'vertical-center' },
+    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', width: 140, sortable: true, cellClass: 'vertical-center' },
+    { field: 'location_name', headerName: 'LOCATION NAME', flex: 1, minWidth: 200, sortable: true, cellClass: 'vertical-center' },
     {
       field: 'action',
       headerName: 'ACTION',
-      width: 100,
+      width: 120,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
+      cellClass: 'vertical-center',
     },
   ];
 
@@ -212,11 +221,11 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
   });
 
   return (
-    <Card className="bg-white shadow-sm">
-      <CardHeader className="pb-4 bg-blue-50">
+    <Card className="bg-white shadow-sm rounded-xl">
+      <CardHeader className="pb-6 pt-6 bg-yellow-50 rounded-t-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <Package className="w-5 h-5 mr-2 text-blue-500" />
+            <Package className="w-5 h-5 mr-2 text-[#FDDC4E]" />
             Pods
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -225,11 +234,11 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
                 placeholder="Search pods..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="w-full md:w-64"
+                className="w-full md:w-64 rounded-lg"
               />
             </div>
             <Select value={recordCount.toString()} onValueChange={(value) => setRecordCount(Number(value))}>
-              <SelectTrigger className="w-full md:w-32">
+              <SelectTrigger className="w-full md:w-32 rounded-lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -247,7 +256,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
           <div className="space-y-3">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FDDC4E] mx-auto"></div>
                 <p className="text-gray-500 mt-2">Loading pods...</p>
               </div>
             ) : filteredPods.length > 0 ? (
@@ -268,11 +277,17 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
           </div>
         ) : (
           <div 
-            className="ag-theme-alpine w-full" 
+            className="ag-theme-alpine w-full rounded-lg overflow-hidden" 
             style={{ 
-              height: 400,
-              '--ag-header-background-color': '#f8fafc',
-              '--ag-row-hover-color': '#f1f5f9'
+              height: 500,
+              '--ag-header-background-color': '#FFFBEB',
+              '--ag-row-hover-color': '#FEF3C7',
+              '--ag-odd-row-background-color': '#FEFEFE',
+              '--ag-even-row-background-color': '#F9F9F9',
+              '--ag-header-cell-border': '1px solid #E5E7EB',
+              '--ag-row-border-color': '#E5E7EB',
+              '--ag-border-radius': '0.5rem',
+              '--ag-selected-row-background-color': 'transparent'
             } as React.CSSProperties}
           >
             <AgGridReact
@@ -282,14 +297,17 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
               loading={loading}
               onGridReady={onGridReady}
               animateRows={true}
-              rowSelection="single"
+              rowSelection="none"
               suppressCellFocus={true}
-              rowHeight={50}
+              suppressRowClickSelection={true}
+              rowHeight={60}
+              headerHeight={50}
               pagination={true}
               paginationPageSize={10}
               paginationPageSizeSelector={[10, 25, 50]}
               suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
+              rowClass="cursor-default"
             />
           </div>
         )}

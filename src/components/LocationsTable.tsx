@@ -24,8 +24,8 @@ const LocationCard: React.FC<{ location: Location; onLocationClick: (id: number)
   location, 
   onLocationClick 
 }) => (
-  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow">
-    <CardContent className="p-4">
+  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
+    <CardContent className="p-6">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 pr-3">
           <h3 className="font-semibold text-lg text-gray-900 mb-1">{location.primary_name}</h3>
@@ -35,7 +35,7 @@ const LocationCard: React.FC<{ location: Location; onLocationClick: (id: number)
           variant="ghost"
           size="sm"
           onClick={() => onLocationClick(location.id)}
-          className="text-blue-600 hover:text-blue-800 shrink-0"
+          className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50 shrink-0"
         >
           <Eye className="w-4 h-4" />
         </Button>
@@ -81,29 +81,32 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   }, []);
 
   const ActionCellRenderer = ({ data }: { data: Location }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => onLocationClick(data.id)}
-      className="text-blue-600 hover:text-blue-800"
-    >
-      <Eye className="w-4 h-4" />
-    </Button>
+    <div className="flex justify-center items-center h-full">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onLocationClick(data.id)}
+        className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50"
+      >
+        <Eye className="w-4 h-4" />
+      </Button>
+    </div>
   );
 
   const columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 80, sortable: true },
-    { field: 'primary_name', headerName: 'NAME', width: 150, sortable: true },
-    { field: 'location_name', headerName: 'LOCATION NAME', width: 200, sortable: true },
-    { field: 'location_address', headerName: 'ADDRESS', width: 300, sortable: true },
-    { field: 'location_pincode', headerName: 'PINCODE', width: 120, sortable: true },
+    { field: 'id', headerName: 'ID', width: 100, sortable: true, cellClass: 'vertical-center' },
+    { field: 'primary_name', headerName: 'NAME', width: 200, sortable: true, cellClass: 'vertical-center' },
+    { field: 'location_name', headerName: 'LOCATION NAME', width: 250, sortable: true, cellClass: 'vertical-center' },
+    { field: 'location_address', headerName: 'ADDRESS', flex: 1, minWidth: 300, sortable: true, cellClass: 'vertical-center' },
+    { field: 'location_pincode', headerName: 'PINCODE', width: 150, sortable: true, cellClass: 'vertical-center' },
     {
       field: 'action',
       headerName: 'ACTION',
-      width: 100,
+      width: 120,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
+      cellClass: 'vertical-center',
     },
   ];
 
@@ -159,11 +162,11 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   });
 
   return (
-    <Card className="bg-white shadow-sm">
-      <CardHeader className="pb-4 bg-blue-50">
+    <Card className="bg-white shadow-sm rounded-xl">
+      <CardHeader className="pb-6 pt-6 bg-yellow-50 rounded-t-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-blue-500" />
+            <MapPin className="w-5 h-5 mr-2 text-[#FDDC4E]" />
             Locations
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -172,11 +175,11 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                 placeholder="Search locations..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="w-full md:w-64"
+                className="w-full md:w-64 rounded-lg"
               />
             </div>
             <Select value={recordCount.toString()} onValueChange={(value) => setRecordCount(Number(value))}>
-              <SelectTrigger className="w-full md:w-32">
+              <SelectTrigger className="w-full md:w-32 rounded-lg">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -194,7 +197,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           <div className="space-y-3">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FDDC4E] mx-auto"></div>
                 <p className="text-gray-500 mt-2">Loading locations...</p>
               </div>
             ) : filteredLocations.length > 0 ? (
@@ -215,11 +218,17 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </div>
         ) : (
           <div 
-            className="ag-theme-alpine w-full" 
+            className="ag-theme-alpine w-full rounded-lg overflow-hidden" 
             style={{ 
-              height: 400,
-              '--ag-header-background-color': '#f8fafc',
-              '--ag-row-hover-color': '#f1f5f9'
+              height: 500,
+              '--ag-header-background-color': '#FFFBEB',
+              '--ag-row-hover-color': '#FEF3C7',
+              '--ag-odd-row-background-color': '#FEFEFE',
+              '--ag-even-row-background-color': '#F9F9F9',
+              '--ag-header-cell-border': '1px solid #E5E7EB',
+              '--ag-row-border-color': '#E5E7EB',
+              '--ag-border-radius': '0.5rem',
+              '--ag-selected-row-background-color': 'transparent'
             } as React.CSSProperties}
           >
             <AgGridReact
@@ -229,14 +238,17 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               loading={loading}
               onGridReady={onGridReady}
               animateRows={true}
-              rowSelection="single"
+              rowSelection="none"
               suppressCellFocus={true}
-              rowHeight={50}
+              suppressRowClickSelection={true}
+              rowHeight={60}
+              headerHeight={50}
               pagination={true}
               paginationPageSize={10}
               paginationPageSizeSelector={[10, 25, 50]}
               suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
+              rowClass="cursor-default"
             />
           </div>
         )}
