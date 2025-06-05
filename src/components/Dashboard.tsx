@@ -139,10 +139,10 @@ const Dashboard = () => {
                     <CardTitle className="text-sm font-medium text-gray-600">
                       {stat.title}
                     </CardTitle>
-                    <stat.icon className="h-4 w-4 text-[#1f2937]" />
+                    <stat.icon className="h-4 w-4 text-[#FDDC4E]" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-2xl font-bold text-gray-700">
                       {statsLoading ? '...' : stat.value}
                     </div>
                   </CardContent>
