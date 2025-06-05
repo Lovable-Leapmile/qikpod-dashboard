@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridReadyEvent, GridApi, ModuleRegistry } from 'ag-grid-community';
@@ -7,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Package, Search, Eye } from 'lucide-react';
+import { Package, Eye } from 'lucide-react';
 import { dashboardApi, Pod } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -128,29 +127,32 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
   );
 
   const columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'POD ID', width: 100, sortable: true },
-    { field: 'pod_name', headerName: 'POD NAME', width: 150, sortable: true },
+    { field: 'id', headerName: 'POD ID', minWidth: 100, flex: 1, sortable: true },
+    { field: 'pod_name', headerName: 'POD NAME', minWidth: 150, flex: 2, sortable: true },
     { 
       field: 'pod_power_status', 
       headerName: 'POWER STATUS', 
-      width: 130, 
+      minWidth: 130, 
+      flex: 1, 
       sortable: true,
       cellRenderer: PowerStatusCellRenderer
     },
     { 
       field: 'status', 
       headerName: 'STATUS', 
-      width: 120, 
+      minWidth: 120, 
+      flex: 1, 
       sortable: true,
       cellRenderer: StatusCellRenderer
     },
-    { field: 'pod_health', headerName: 'HEALTH', width: 120, sortable: true },
-    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', width: 130, sortable: true },
-    { field: 'location_name', headerName: 'LOCATION NAME', width: 200, sortable: true },
+    { field: 'pod_health', headerName: 'HEALTH', minWidth: 120, flex: 1, sortable: true },
+    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', minWidth: 130, flex: 1, sortable: true },
+    { field: 'location_name', headerName: 'LOCATION NAME', minWidth: 200, flex: 2, sortable: true },
     {
       field: 'action',
       headerName: 'ACTION',
-      width: 100,
+      minWidth: 100,
+      flex: 1,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
@@ -180,7 +182,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
 
   const onGridReady = (params: GridReadyEvent) => {
     setGridApi(params.api);
-    params.api.sizeColumnsToFit();
+    // Remove sizeColumnsToFit to allow flex columns to work properly
   };
 
   useEffect(() => {
@@ -193,6 +195,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
     resizable: true,
     sortable: true,
     filter: true,
+    floatingFilter: false, // Remove the search icon from column filters
   };
 
   // Filter pods for mobile cards
@@ -211,24 +214,23 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
 
   return (
     <Card className="bg-white shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
+      <CardHeader className="pb-4" style={{ backgroundColor: '#FFF19E' }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
             <Package className="w-5 h-5 mr-2 text-yellow-500" />
             Pods
           </CardTitle>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center space-x-2">
-              <Search className="w-4 h-4 text-gray-400" />
               <Input
                 placeholder="Search pods..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="w-64"
+                className="w-full md:w-64"
               />
             </div>
             <Select value={recordCount.toString()} onValueChange={(value) => setRecordCount(Number(value))}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full md:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -266,7 +268,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
             )}
           </div>
         ) : (
-          <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
+          <div className="ag-theme-alpine w-full" style={{ height: 500 }}>
             <AgGridReact
               rowData={pods}
               columnDefs={columnDefs}
@@ -277,6 +279,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
               rowSelection="single"
               suppressCellFocus={true}
               rowHeight={50}
+              suppressColumnVirtualisation={true}
             />
           </div>
         )}

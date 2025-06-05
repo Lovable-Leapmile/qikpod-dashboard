@@ -56,16 +56,35 @@ const Dashboard = () => {
     
     setStatsLoading(true);
     try {
-      const [locations, pods, users, reservations] = await Promise.all([
-        dashboardApi.getLocationsCount(accessToken),
-        dashboardApi.getPodsCount(accessToken),
-        dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken),
+      // Fetch actual data and get counts from response body
+      const [locationsData, podsData, usersData, reservationsData] = await Promise.all([
+        dashboardApi.getLocations(accessToken, 1000), // Get larger number to get accurate count
+        dashboardApi.getPods(accessToken, 1000),
+        dashboardApi.getUsers ? dashboardApi.getUsers(accessToken, 1000) : [],
+        dashboardApi.getReservations ? dashboardApi.getReservations(accessToken, 1000) : [],
       ]);
       
-      setDashboardStats({ locations, pods, users, reservations });
+      setDashboardStats({ 
+        locations: locationsData.length, 
+        pods: podsData.length, 
+        users: Array.isArray(usersData) ? usersData.length : 0, 
+        reservations: Array.isArray(reservationsData) ? reservationsData.length : 0 
+      });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
+      // Fallback to API count methods if they exist
+      try {
+        const [locations, pods, users, reservations] = await Promise.all([
+          dashboardApi.getLocationsCount ? dashboardApi.getLocationsCount(accessToken) : 0,
+          dashboardApi.getPodsCount ? dashboardApi.getPodsCount(accessToken) : 0,
+          dashboardApi.getUsersCount ? dashboardApi.getUsersCount(accessToken) : 0,
+          dashboardApi.getReservationsCount ? dashboardApi.getReservationsCount(accessToken) : 0,
+        ]);
+        
+        setDashboardStats({ locations, pods, users, reservations });
+      } catch (fallbackError) {
+        console.error('Error fetching fallback dashboard stats:', fallbackError);
+      }
     } finally {
       setStatsLoading(false);
     }
@@ -75,24 +94,31 @@ const Dashboard = () => {
     fetchDashboardStats();
   }, [accessToken]);
 
+  const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
+    if (onClick) onClick();
+    setCurrentView(view);
+    // Close mobile menu after navigation
+    setIsMobileMenuOpen(false);
+  };
+
   const navigationItems = [
     { 
       name: 'Dashboard', 
       icon: Activity, 
       active: currentView === 'dashboard',
-      onClick: () => setCurrentView('dashboard')
+      onClick: () => handleNavigationClick('dashboard')
     },
     { 
       name: 'Locations', 
       icon: MapPin, 
       active: currentView === 'locations',
-      onClick: () => setCurrentView('locations')
+      onClick: () => handleNavigationClick('locations')
     },
     { 
       name: 'Pods', 
       icon: Package, 
       active: currentView === 'pods',
-      onClick: () => setCurrentView('pods')
+      onClick: () => handleNavigationClick('pods')
     },
     { name: 'Operations', icon: Settings },
     { name: 'Users & Network', icon: Users },
@@ -199,13 +225,13 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Fixed Top Navigation */}
-      <nav className="bg-yellow-500 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
+      <nav className="text-white shadow-lg fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: '#FFF19E' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-xl font-bold">QikPod</span>
+                <span className="text-xl font-bold text-gray-900">QikPod</span>
               </div>
             </div>
 
@@ -219,7 +245,7 @@ const Dashboard = () => {
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       item.active
                         ? 'bg-yellow-600 text-white'
-                        : 'text-yellow-100 hover:bg-yellow-600 hover:text-white'
+                        : 'text-gray-700 hover:bg-yellow-600 hover:text-white'
                     }`}
                   >
                     <item.icon className="inline-block w-4 h-4 mr-2" />
@@ -229,7 +255,7 @@ const Dashboard = () => {
                 <Button
                   onClick={() => setShowLogoutDialog(true)}
                   variant="ghost"
-                  className="text-yellow-100 hover:bg-yellow-600 hover:text-white"
+                  className="text-gray-700 hover:bg-yellow-600 hover:text-white"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -243,7 +269,7 @@ const Dashboard = () => {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-yellow-600"
+                className="text-gray-900 hover:bg-yellow-600"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>
@@ -270,7 +296,10 @@ const Dashboard = () => {
                 </button>
               ))}
               <Button
-                onClick={() => setShowLogoutDialog(true)}
+                onClick={() => {
+                  setShowLogoutDialog(true);
+                  setIsMobileMenuOpen(false);
+                }}
                 variant="ghost"
                 className="w-full text-left text-yellow-100 hover:bg-yellow-700 hover:text-white justify-start"
               >
