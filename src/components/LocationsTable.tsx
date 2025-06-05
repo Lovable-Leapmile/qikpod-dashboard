@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridReadyEvent, GridApi, ModuleRegistry } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, GridApi, ModuleRegistry, PaginationChangedEvent } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,34 +24,36 @@ const LocationCard: React.FC<{ location: Location; onLocationClick: (id: number)
   location, 
   onLocationClick 
 }) => (
-  <Card className="mb-4 bg-white shadow-sm">
+  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow">
     <CardContent className="p-4">
       <div className="flex justify-between items-start mb-3">
-        <div>
-          <h3 className="font-semibold text-lg text-gray-900">{location.primary_name}</h3>
-          <p className="text-sm text-gray-600">{location.location_name}</p>
+        <div className="flex-1 pr-3">
+          <h3 className="font-semibold text-lg text-gray-900 mb-1">{location.primary_name}</h3>
+          <p className="text-sm text-gray-600 mb-2">{location.location_name}</p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onLocationClick(location.id)}
-          className="text-blue-600 hover:text-blue-800"
+          className="text-blue-600 hover:text-blue-800 shrink-0"
         >
           <Eye className="w-4 h-4" />
         </Button>
       </div>
       <div className="space-y-2 text-sm">
-        <div>
-          <span className="font-medium text-gray-700">ID: </span>
-          <span className="text-gray-600">{location.id}</span>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <div>
+            <span className="font-medium text-gray-700">ID: </span>
+            <span className="text-gray-600">{location.id}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Pincode: </span>
+            <span className="text-gray-600">{location.location_pincode}</span>
+          </div>
         </div>
         <div>
           <span className="font-medium text-gray-700">Address: </span>
           <span className="text-gray-600">{location.location_address}</span>
-        </div>
-        <div>
-          <span className="font-medium text-gray-700">Pincode: </span>
-          <span className="text-gray-600">{location.location_pincode}</span>
         </div>
       </div>
     </CardContent>
@@ -89,16 +92,15 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   );
 
   const columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', minWidth: 80, flex: 1, sortable: true },
-    { field: 'primary_name', headerName: 'NAME', minWidth: 150, flex: 2, sortable: true },
-    { field: 'location_name', headerName: 'LOCATION NAME', minWidth: 200, flex: 2, sortable: true },
-    { field: 'location_address', headerName: 'ADDRESS', minWidth: 300, flex: 3, sortable: true },
-    { field: 'location_pincode', headerName: 'PINCODE', minWidth: 120, flex: 1, sortable: true },
+    { field: 'id', headerName: 'ID', width: 80, sortable: true },
+    { field: 'primary_name', headerName: 'NAME', width: 150, sortable: true },
+    { field: 'location_name', headerName: 'LOCATION NAME', width: 200, sortable: true },
+    { field: 'location_address', headerName: 'ADDRESS', width: 300, sortable: true },
+    { field: 'location_pincode', headerName: 'PINCODE', width: 120, sortable: true },
     {
       field: 'action',
       headerName: 'ACTION',
-      minWidth: 100,
-      flex: 1,
+      width: 100,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
@@ -128,7 +130,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
 
   const onGridReady = (params: GridReadyEvent) => {
     setGridApi(params.api);
-    // Remove sizeColumnsToFit to allow flex columns to work properly
   };
 
   useEffect(() => {
@@ -141,7 +142,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     resizable: true,
     sortable: true,
     filter: true,
-    floatingFilter: false, // Remove the search icon from column filters
+    floatingFilter: false,
   };
 
   // Filter locations for mobile cards
@@ -159,10 +160,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
 
   return (
     <Card className="bg-white shadow-sm">
-      <CardHeader className="pb-4" style={{ backgroundColor: '#FFF19E' }}>
+      <CardHeader className="pb-4 bg-blue-50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-yellow-500" />
+            <MapPin className="w-5 h-5 mr-2 text-blue-500" />
             Locations
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -188,16 +189,16 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {isMobile ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
                 <p className="text-gray-500 mt-2">Loading locations...</p>
               </div>
             ) : filteredLocations.length > 0 ? (
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-[70vh] overflow-y-auto px-1">
                 {filteredLocations.map((location) => (
                   <LocationCard
                     key={location.id}
@@ -213,7 +214,14 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
             )}
           </div>
         ) : (
-          <div className="ag-theme-alpine w-full" style={{ height: 500 }}>
+          <div 
+            className="ag-theme-alpine w-full" 
+            style={{ 
+              height: 400,
+              '--ag-header-background-color': '#f8fafc',
+              '--ag-row-hover-color': '#f1f5f9'
+            } as React.CSSProperties}
+          >
             <AgGridReact
               rowData={locations}
               columnDefs={columnDefs}
@@ -224,6 +232,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               rowSelection="single"
               suppressCellFocus={true}
               rowHeight={50}
+              pagination={true}
+              paginationPageSize={10}
+              paginationPageSizeSelector={[10, 25, 50]}
+              suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
             />
           </div>

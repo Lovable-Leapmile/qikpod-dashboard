@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridReadyEvent, GridApi, ModuleRegistry } from 'ag-grid-community';
@@ -23,38 +24,44 @@ const PodCard: React.FC<{ pod: Pod; onPodClick: (id: number) => void }> = ({
   pod, 
   onPodClick 
 }) => (
-  <Card className="mb-4 bg-white shadow-sm">
+  <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow">
     <CardContent className="p-4">
       <div className="flex justify-between items-start mb-3">
-        <div>
-          <h3 className="font-semibold text-lg text-gray-900">{pod.pod_name}</h3>
-          <p className="text-sm text-gray-600">{pod.location_name}</p>
+        <div className="flex-1 pr-3">
+          <h3 className="font-semibold text-lg text-gray-900 mb-1">{pod.pod_name}</h3>
+          <p className="text-sm text-gray-600 mb-2">{pod.location_name}</p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onPodClick(pod.id)}
-          className="text-blue-600 hover:text-blue-800"
+          className="text-blue-600 hover:text-blue-800 shrink-0"
         >
           <Eye className="w-4 h-4" />
         </Button>
       </div>
       <div className="space-y-2 text-sm">
-        <div>
-          <span className="font-medium text-gray-700">Pod ID: </span>
-          <span className="text-gray-600">{pod.id}</span>
-        </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
           <div>
-            <span className="font-medium text-gray-700">Power: </span>
+            <span className="font-medium text-gray-700">Pod ID: </span>
+            <span className="text-gray-600">{pod.id}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Total Doors: </span>
+            <span className="text-gray-600">{pod.pod_numtotaldoors}</span>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <div className="flex items-center">
+            <span className="font-medium text-gray-700 mr-2">Power: </span>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
               pod.pod_power_status === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
             }`}>
               {pod.pod_power_status}
             </span>
           </div>
-          <div>
-            <span className="font-medium text-gray-700">Status: </span>
+          <div className="flex items-center">
+            <span className="font-medium text-gray-700 mr-2">Status: </span>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
               pod.status === 'active' ? 'bg-green-100 text-green-800' : 
               pod.status === 'inactive' ? 'bg-red-100 text-red-800' : 
@@ -67,10 +74,6 @@ const PodCard: React.FC<{ pod: Pod; onPodClick: (id: number) => void }> = ({
         <div>
           <span className="font-medium text-gray-700">Health: </span>
           <span className="text-gray-600">{pod.pod_health}</span>
-        </div>
-        <div>
-          <span className="font-medium text-gray-700">Total Doors: </span>
-          <span className="text-gray-600">{pod.pod_numtotaldoors}</span>
         </div>
       </div>
     </CardContent>
@@ -127,32 +130,29 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
   );
 
   const columnDefs: ColDef[] = [
-    { field: 'id', headerName: 'POD ID', minWidth: 100, flex: 1, sortable: true },
-    { field: 'pod_name', headerName: 'POD NAME', minWidth: 150, flex: 2, sortable: true },
+    { field: 'id', headerName: 'POD ID', width: 100, sortable: true },
+    { field: 'pod_name', headerName: 'POD NAME', width: 150, sortable: true },
     { 
       field: 'pod_power_status', 
       headerName: 'POWER STATUS', 
-      minWidth: 130, 
-      flex: 1, 
+      width: 130, 
       sortable: true,
       cellRenderer: PowerStatusCellRenderer
     },
     { 
       field: 'status', 
       headerName: 'STATUS', 
-      minWidth: 120, 
-      flex: 1, 
+      width: 120, 
       sortable: true,
       cellRenderer: StatusCellRenderer
     },
-    { field: 'pod_health', headerName: 'HEALTH', minWidth: 120, flex: 1, sortable: true },
-    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', minWidth: 130, flex: 1, sortable: true },
-    { field: 'location_name', headerName: 'LOCATION NAME', minWidth: 200, flex: 2, sortable: true },
+    { field: 'pod_health', headerName: 'HEALTH', width: 120, sortable: true },
+    { field: 'pod_numtotaldoors', headerName: 'TOTAL DOORS', width: 130, sortable: true },
+    { field: 'location_name', headerName: 'LOCATION NAME', width: 200, sortable: true },
     {
       field: 'action',
       headerName: 'ACTION',
-      minWidth: 100,
-      flex: 1,
+      width: 100,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
@@ -182,7 +182,6 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
 
   const onGridReady = (params: GridReadyEvent) => {
     setGridApi(params.api);
-    // Remove sizeColumnsToFit to allow flex columns to work properly
   };
 
   useEffect(() => {
@@ -195,7 +194,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
     resizable: true,
     sortable: true,
     filter: true,
-    floatingFilter: false, // Remove the search icon from column filters
+    floatingFilter: false,
   };
 
   // Filter pods for mobile cards
@@ -214,10 +213,10 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
 
   return (
     <Card className="bg-white shadow-sm">
-      <CardHeader className="pb-4" style={{ backgroundColor: '#FFF19E' }}>
+      <CardHeader className="pb-4 bg-blue-50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <Package className="w-5 h-5 mr-2 text-yellow-500" />
+            <Package className="w-5 h-5 mr-2 text-blue-500" />
             Pods
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -243,16 +242,16 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {isMobile ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
                 <p className="text-gray-500 mt-2">Loading pods...</p>
               </div>
             ) : filteredPods.length > 0 ? (
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-[70vh] overflow-y-auto px-1">
                 {filteredPods.map((pod) => (
                   <PodCard
                     key={pod.id}
@@ -268,7 +267,14 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
             )}
           </div>
         ) : (
-          <div className="ag-theme-alpine w-full" style={{ height: 500 }}>
+          <div 
+            className="ag-theme-alpine w-full" 
+            style={{ 
+              height: 400,
+              '--ag-header-background-color': '#f8fafc',
+              '--ag-row-hover-color': '#f1f5f9'
+            } as React.CSSProperties}
+          >
             <AgGridReact
               rowData={pods}
               columnDefs={columnDefs}
@@ -279,6 +285,10 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick }) => {
               rowSelection="single"
               suppressCellFocus={true}
               rowHeight={50}
+              pagination={true}
+              paginationPageSize={10}
+              paginationPageSizeSelector={[10, 25, 50]}
+              suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
             />
           </div>

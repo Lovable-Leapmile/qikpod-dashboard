@@ -56,35 +56,17 @@ const Dashboard = () => {
     
     setStatsLoading(true);
     try {
-      // Fetch actual data and get counts from response body
-      const [locationsData, podsData, usersData, reservationsData] = await Promise.all([
-        dashboardApi.getLocations(accessToken, 1000), // Get larger number to get accurate count
-        dashboardApi.getPods(accessToken, 1000),
-        dashboardApi.getUsers ? dashboardApi.getUsers(accessToken, 1000) : [],
-        dashboardApi.getReservations ? dashboardApi.getReservations(accessToken, 1000) : [],
+      // Use the count APIs directly to get proper counts from response body
+      const [locations, pods, users, reservations] = await Promise.all([
+        dashboardApi.getLocationsCount(accessToken),
+        dashboardApi.getPodsCount(accessToken),
+        dashboardApi.getUsersCount(accessToken),
+        dashboardApi.getReservationsCount(accessToken),
       ]);
       
-      setDashboardStats({ 
-        locations: locationsData.length, 
-        pods: podsData.length, 
-        users: Array.isArray(usersData) ? usersData.length : 0, 
-        reservations: Array.isArray(reservationsData) ? reservationsData.length : 0 
-      });
+      setDashboardStats({ locations, pods, users, reservations });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-      // Fallback to API count methods if they exist
-      try {
-        const [locations, pods, users, reservations] = await Promise.all([
-          dashboardApi.getLocationsCount ? dashboardApi.getLocationsCount(accessToken) : 0,
-          dashboardApi.getPodsCount ? dashboardApi.getPodsCount(accessToken) : 0,
-          dashboardApi.getUsersCount ? dashboardApi.getUsersCount(accessToken) : 0,
-          dashboardApi.getReservationsCount ? dashboardApi.getReservationsCount(accessToken) : 0,
-        ]);
-        
-        setDashboardStats({ locations, pods, users, reservations });
-      } catch (fallbackError) {
-        console.error('Error fetching fallback dashboard stats:', fallbackError);
-      }
     } finally {
       setStatsLoading(false);
     }
@@ -189,33 +171,10 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
-                    onClick={() => setCurrentView('locations')}>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-lg">
-                    <MapPin className="w-5 h-5 mr-2 text-yellow-500" />
-                    Manage Locations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">View and manage all location data with advanced filtering and search capabilities.</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => setCurrentView('pods')}>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-lg">
-                    <Package className="w-5 h-5 mr-2 text-yellow-500" />
-                    Manage Pods
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">Monitor pod status, health, and performance across all locations.</p>
-                </CardContent>
-              </Card>
+            {/* Tables on Dashboard */}
+            <div className="space-y-6">
+              <LocationsTable onLocationClick={handleLocationClick} />
+              <PodsTable onPodClick={handlePodClick} />
             </div>
           </div>
         );
@@ -225,13 +184,13 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Fixed Top Navigation */}
-      <nav className="text-white shadow-lg fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: '#FFF19E' }}>
+      <nav className="bg-blue-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-xl font-bold text-gray-900">QikPod</span>
+                <span className="text-xl font-bold text-white">QikPod</span>
               </div>
             </div>
 
@@ -244,8 +203,8 @@ const Dashboard = () => {
                     onClick={item.onClick}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       item.active
-                        ? 'bg-yellow-600 text-white'
-                        : 'text-gray-700 hover:bg-yellow-600 hover:text-white'
+                        ? 'bg-blue-700 text-white'
+                        : 'text-blue-100 hover:bg-blue-700 hover:text-white'
                     }`}
                   >
                     <item.icon className="inline-block w-4 h-4 mr-2" />
@@ -255,7 +214,7 @@ const Dashboard = () => {
                 <Button
                   onClick={() => setShowLogoutDialog(true)}
                   variant="ghost"
-                  className="text-gray-700 hover:bg-yellow-600 hover:text-white"
+                  className="text-blue-100 hover:bg-blue-700 hover:text-white"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -269,7 +228,7 @@ const Dashboard = () => {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="sm"
-                className="text-gray-900 hover:bg-yellow-600"
+                className="text-white hover:bg-blue-700"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </Button>
@@ -279,7 +238,7 @@ const Dashboard = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-yellow-600">
+          <div className="md:hidden bg-blue-700">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navigationItems.map((item) => (
                 <button
@@ -287,8 +246,8 @@ const Dashboard = () => {
                   onClick={item.onClick}
                   className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     item.active
-                      ? 'bg-yellow-700 text-white'
-                      : 'text-yellow-100 hover:bg-yellow-700 hover:text-white'
+                      ? 'bg-blue-800 text-white'
+                      : 'text-blue-100 hover:bg-blue-800 hover:text-white'
                   }`}
                 >
                   <item.icon className="inline-block w-4 h-4 mr-2" />
@@ -301,7 +260,7 @@ const Dashboard = () => {
                   setIsMobileMenuOpen(false);
                 }}
                 variant="ghost"
-                className="w-full text-left text-yellow-100 hover:bg-yellow-700 hover:text-white justify-start"
+                className="w-full text-left text-blue-100 hover:bg-blue-800 hover:text-white justify-start"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
