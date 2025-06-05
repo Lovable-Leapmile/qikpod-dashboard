@@ -116,10 +116,6 @@ const Dashboard = () => {
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
-    { name: 'Logout', icon: LogOut,onClick:() => {
-       setShowLogoutDialog(true);
-      setIsMobileMenuOpen(false);
-    } },
   ];
 
   const statsData = [
@@ -317,6 +313,17 @@ const Dashboard = () => {
                   </button>
                 )
               ))}
+              <Button
+                onClick={() => {
+                  setShowLogoutDialog(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left text-black hover:bg-yellow-500 hover:text-black justify-start"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         )}
