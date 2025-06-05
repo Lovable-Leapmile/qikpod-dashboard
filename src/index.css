@@ -118,7 +118,7 @@
 }
 
 .ag-theme-alpine .ag-row {
-  border-bottom: 1px solid #E5E7EB !important;
+  border-bottom: 1px solid #D1D5DB !important;
 }
 
 .ag-theme-alpine .ag-row:hover {
@@ -126,7 +126,7 @@
 }
 
 .ag-theme-alpine .ag-row-odd {
-  background-color: var(--ag-odd-row-background-color) !important;
+  background-color: var(--ag-even-row-background-color) !important;
 }
 
 .ag-theme-alpine .ag-row-even {
@@ -143,10 +143,10 @@
 
 .ag-theme-alpine .ag-header {
   background-color: var(--ag-header-background-color) !important;
-  border-bottom: 2px solid #E5E7EB !important;
+  border-bottom: 2px solid #D1D5DB !important;
 }
 
 .ag-theme-alpine .ag-paging-panel {
-  border-top: 1px solid #E5E7EB !important;
+  border-top: 1px solid #D1D5DB !important;
   padding: 12px !important;
 }

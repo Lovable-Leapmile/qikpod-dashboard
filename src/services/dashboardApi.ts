@@ -37,6 +37,25 @@ interface Reservation {
   reservation_status: string;
 }
 
+interface StandardReservation {
+  id: number;
+  drop_by_name: string;
+  location_name: string;
+  created_by_name: string;
+  status: string;
+  created_at: string;
+}
+
+interface AdhocReservation {
+  id: number;
+  pod_name: string;
+  user_phone: string;
+  drop_time: string;
+  pickup_time: string;
+  rto_picktime: string;
+  reservation_status: string;
+}
+
 const BASE_URL = 'https://robotmanagerv1test.qikpod.com:8989';
 
 const getAuthHeaders = (token: string) => ({
@@ -110,6 +129,23 @@ export const dashboardApi = {
     const data: ApiResponse<Reservation> = await response.json();
     return data.records || [];
   },
+
+  // New Reservation APIs
+  getStandardReservations: async (token: string, numRecords: number = 100): Promise<StandardReservation[]> => {
+    const response = await fetch(`${BASE_URL}/reservations/?num_records=${numRecords}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<StandardReservation> = await response.json();
+    return data.records || [];
+  },
+
+  getAdhocReservations: async (token: string, numRecords: number = 100): Promise<AdhocReservation[]> => {
+    const response = await fetch(`${BASE_URL}/adhoc/reservations/?num_records=${numRecords}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<AdhocReservation> = await response.json();
+    return data.records || [];
+  },
 };
 
-export type { Location, Pod, User, Reservation };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation };

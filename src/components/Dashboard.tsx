@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,12 @@ import LocationsTable from './LocationsTable';
 import PodsTable from './PodsTable';
 import LocationDetail from './LocationDetail';
 import PodDetail from './PodDetail';
-type ViewType = 'dashboard' | 'locations' | 'pods' | 'locationDetail' | 'podDetail';
+import Reservations from './Reservations';
+import ReservationDetail from './ReservationDetail';
+import AdhocReservationDetail from './AdhocReservationDetail';
+
+type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail';
+
 const Dashboard = () => {
   const {
     user,
@@ -22,6 +28,7 @@ const Dashboard = () => {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
   const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
+  const [selectedReservationId, setSelectedReservationId] = useState<number | null>(null);
   const [dashboardStats, setDashboardStats] = useState({
     locations: 0,
     pods: 0,
@@ -29,15 +36,22 @@ const Dashboard = () => {
     reservations: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
+
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
   };
+
   const fetchDashboardStats = async () => {
     if (!accessToken) return;
     setStatsLoading(true);
     try {
-      const [locations, pods, users, reservations] = await Promise.all([dashboardApi.getLocationsCount(accessToken), dashboardApi.getPodsCount(accessToken), dashboardApi.getUsersCount(accessToken), dashboardApi.getReservationsCount(accessToken)]);
+      const [locations, pods, users, reservations] = await Promise.all([
+        dashboardApi.getLocationsCount(accessToken),
+        dashboardApi.getPodsCount(accessToken),
+        dashboardApi.getUsersCount(accessToken),
+        dashboardApi.getReservationsCount(accessToken)
+      ]);
       setDashboardStats({
         locations,
         pods,
@@ -50,14 +64,17 @@ const Dashboard = () => {
       setStatsLoading(false);
     }
   };
+
   useEffect(() => {
     fetchDashboardStats();
   }, [accessToken]);
+
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
     setCurrentView(view);
     setIsMobileMenuOpen(false);
   };
+
   const navigationItems = [{
     name: 'Dashboard',
     icon: Activity,
@@ -66,7 +83,7 @@ const Dashboard = () => {
   }, {
     name: 'Operations',
     icon: Settings,
-    active: currentView === 'locations' || currentView === 'pods',
+    active: currentView === 'locations' || currentView === 'pods' || currentView === 'reservations',
     isDropdown: true,
     items: [{
       name: 'Locations',
@@ -76,6 +93,10 @@ const Dashboard = () => {
       name: 'Pods',
       icon: Package,
       onClick: () => handleNavigationClick('pods')
+    }, {
+      name: 'Reservations',
+      icon: Calendar,
+      onClick: () => handleNavigationClick('reservations')
     }]
   }, {
     name: 'Users & Network',
@@ -87,6 +108,7 @@ const Dashboard = () => {
     name: 'Support',
     icon: HelpCircle
   }];
+
   const statsData = [{
     title: 'LOCATIONS',
     value: dashboardStats.locations.toString(),
@@ -104,42 +126,76 @@ const Dashboard = () => {
     value: dashboardStats.reservations.toString(),
     icon: Calendar
   }];
+
   const handleLocationClick = (locationId: number) => {
     setSelectedLocationId(locationId);
     setCurrentView('locationDetail');
   };
+
   const handlePodClick = (podId: number) => {
     setSelectedPodId(podId);
     setCurrentView('podDetail');
   };
+
+  const handleStandardReservationClick = (reservationId: number) => {
+    setSelectedReservationId(reservationId);
+    setCurrentView('reservationDetail');
+  };
+
+  const handleAdhocReservationClick = (reservationId: number) => {
+    setSelectedReservationId(reservationId);
+    setCurrentView('adhocReservationDetail');
+  };
+
   const handleBackToLocations = () => {
     setCurrentView('locations');
     setSelectedLocationId(null);
   };
+
   const handleBackToPods = () => {
     setCurrentView('pods');
     setSelectedPodId(null);
   };
+
+  const handleBackToReservations = () => {
+    setCurrentView('reservations');
+    setSelectedReservationId(null);
+  };
+
+  const handleBackToOperations = () => {
+    setCurrentView('dashboard');
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'locations':
         return <LocationsTable onLocationClick={handleLocationClick} />;
       case 'pods':
         return <PodsTable onPodClick={handlePodClick} />;
+      case 'reservations':
+        return <Reservations 
+          onBack={handleBackToOperations}
+          onStandardReservationClick={handleStandardReservationClick}
+          onAdhocReservationClick={handleAdhocReservationClick}
+        />;
       case 'locationDetail':
         return selectedLocationId ? <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} /> : null;
       case 'podDetail':
         return selectedPodId ? <PodDetail podId={selectedPodId} onBack={handleBackToPods} /> : null;
+      case 'reservationDetail':
+        return selectedReservationId ? <ReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} /> : null;
+      case 'adhocReservationDetail':
+        return selectedReservationId ? <AdhocReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} /> : null;
       default:
         return <div className="space-y-4">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {statsData.map((stat, index) => <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
+              {statsData.map((stat, index) => <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl border-gray-200">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600">
                       {stat.title}
                     </CardTitle>
-                    <stat.icon className="h-4 w-4 text-[#FDDC4E]" />
+                    <stat.icon className="h-4 w-4 text-gray-800" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-gray-900">
@@ -157,6 +213,7 @@ const Dashboard = () => {
           </div>;
     }
   };
+
   return <div className="min-h-screen bg-gray-50 w-full">
       {/* Fixed Top Navigation */}
       <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
@@ -174,7 +231,7 @@ const Dashboard = () => {
               <div className="ml-10 flex items-baseline space-x-4">
                 {navigationItems.map(item => item.isDropdown ? <DropdownMenu key={item.name}>
                       <DropdownMenuTrigger asChild>
-                        <button className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                        <button className={`h-10 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
                           <item.icon className="inline-block w-4 h-4 mr-2" />
                           {item.name}
                           <ChevronDown className="w-4 h-4 ml-1" />
@@ -186,11 +243,11 @@ const Dashboard = () => {
                             {subItem.name}
                           </DropdownMenuItem>)}
                       </DropdownMenuContent>
-                    </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                    </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`h-10 px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
                       <item.icon className="inline-block w-4 h-4 mr-2" />
                       {item.name}
                     </button>)}
-                <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="text-black hover:bg-yellow-400 hover:text-black">
+                <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-10 text-black hover:bg-yellow-400 hover:text-black">
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </Button>
@@ -242,15 +299,21 @@ const Dashboard = () => {
             {currentView === 'dashboard' && 'Dashboard'}
             {currentView === 'locations' && 'Operations / Locations Management'}
             {currentView === 'pods' && 'Operations / Pods Management'}
+            {currentView === 'reservations' && 'Operations / Reservations Management'}
             {currentView === 'locationDetail' && 'Operations / Location Details'}
             {currentView === 'podDetail' && 'Operations / Pod Details'}
+            {currentView === 'reservationDetail' && 'Operations / Reservation Details'}
+            {currentView === 'adhocReservationDetail' && 'Operations / Adhoc Reservation Details'}
           </div>
           <h1 className="text-3xl font-bold text-gray-900">
             {currentView === 'dashboard' && 'Dashboard'}
             {currentView === 'locations' && 'Locations'}
             {currentView === 'pods' && 'Pods'}
+            {currentView === 'reservations' && 'Reservations'}
             {currentView === 'locationDetail' && 'Location Details'}
             {currentView === 'podDetail' && 'Pod Details'}
+            {currentView === 'reservationDetail' && 'Reservation Details'}
+            {currentView === 'adhocReservationDetail' && 'Adhoc Reservation Details'}
           </h1>
           {user && currentView === 'dashboard' && <p className="text-gray-600 mt-1">Welcome back, {user.user_name}!</p>}
         </div>
@@ -280,4 +343,5 @@ const Dashboard = () => {
       </Dialog>
     </div>;
 };
+
 export default Dashboard;
