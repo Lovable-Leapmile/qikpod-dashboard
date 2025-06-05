@@ -10,12 +10,14 @@ import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/
 import { ExternalLink } from 'lucide-react';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 
-interface ReservationsTableProps {
+interface LocationReservationsTableProps {
+  locationId: number;
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
 
-const ReservationsTable: React.FC<ReservationsTableProps> = ({ 
+const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({ 
+  locationId,
   onStandardReservationClick,
   onAdhocReservationClick 
 }) => {
@@ -29,10 +31,10 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     if (!accessToken) return;
     setLoading(true);
     try {
-      const data = await dashboardApi.getStandardReservations(accessToken);
+      const data = await dashboardApi.getLocationStandardReservations(accessToken, locationId);
       setStandardReservations(data);
     } catch (error) {
-      console.error('Error fetching standard reservations:', error);
+      console.error('Error fetching location standard reservations:', error);
     } finally {
       setLoading(false);
     }
@@ -42,10 +44,10 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     if (!accessToken) return;
     setLoading(true);
     try {
-      const data = await dashboardApi.getAdhocReservations(accessToken);
+      const data = await dashboardApi.getLocationAdhocReservations(accessToken, locationId);
       setAdhocReservations(data);
     } catch (error) {
-      console.error('Error fetching adhoc reservations:', error);
+      console.error('Error fetching location adhoc reservations:', error);
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     } else {
       fetchAdhocReservations();
     }
-  }, [isStandardMode, accessToken]);
+  }, [isStandardMode, accessToken, locationId]);
 
   const ActionCellRenderer = ({ data, isStandard }: { data: any; isStandard: boolean }) => (
     <Button
@@ -190,7 +192,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <span className={`text-sm font-medium ${isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
-              Standard Mode
+              Standard
             </span>
             <Switch
               checked={!isStandardMode}
@@ -198,20 +200,20 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
               className="data-[state=checked]:bg-accent"
             />
             <span className={`text-sm font-medium ${!isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
-              Adhoc Mode
+              Adhoc
             </span>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pb-8">
         {hasData ? (
-          <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+          <div className="ag-theme-alpine" style={{ height: '400px', width: '100%' }}>
             <AgGridReact
               rowData={currentData}
               columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
               defaultColDef={defaultColDef}
               pagination={true}
-              paginationPageSize={25}
+              paginationPageSize={20}
               domLayout="normal"
               loading={loading}
               suppressRowClickSelection={true}
@@ -221,7 +223,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         ) : (
           <NoDataIllustration
             title="No reservations found"
-            description={`No ${isStandardMode ? 'standard' : 'adhoc'} reservations found.`}
+            description={`No ${isStandardMode ? 'standard' : 'adhoc'} reservations found for this location.`}
             icon="inbox"
           />
         )}
@@ -230,4 +232,4 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   );
 };
 
-export default ReservationsTable;
+export default LocationReservationsTable;

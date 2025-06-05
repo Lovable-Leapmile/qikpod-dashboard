@@ -16,6 +16,33 @@ interface Location {
   location_pincode: string;
 }
 
+interface LocationDetail {
+  id: number;
+  status: string | null;
+  created_at: string;
+  updated_at: string;
+  location_name: string;
+  primary_name: string;
+  primary_fe: string | null;
+  primary_contact: string;
+  primary_bd: string | null;
+  secondary_name: string | null;
+  secondary_fe: string | null;
+  secondary_contact: string;
+  map_latitude: string;
+  map_longitude: string;
+  location_address: string;
+  location_pincode: string;
+  location_state: string | null;
+  map_text: string;
+  map_color: string | null;
+  docs_status: string | null;
+  primary_fe_contact: string | null;
+  bd_tag: string | null;
+  bd_details: string | null;
+  payment_mode: string;
+}
+
 interface Pod {
   id: number;
   pod_name: string;
@@ -146,6 +173,31 @@ export const dashboardApi = {
     const data: ApiResponse<AdhocReservation> = await response.json();
     return data.records || [];
   },
+
+  // Location Detail APIs
+  getLocationDetail: async (token: string, locationId: number): Promise<LocationDetail | null> => {
+    const response = await fetch(`${BASE_URL}/locations/?record_id=${locationId}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<LocationDetail> = await response.json();
+    return data.records?.[0] || null;
+  },
+
+  getLocationStandardReservations: async (token: string, locationId: number, numRecords: number = 100): Promise<StandardReservation[]> => {
+    const response = await fetch(`${BASE_URL}/reservations/?location_id=${locationId}&num_records=${numRecords}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<StandardReservation> = await response.json();
+    return data.records || [];
+  },
+
+  getLocationAdhocReservations: async (token: string, locationId: number, numRecords: number = 100): Promise<AdhocReservation[]> => {
+    const response = await fetch(`${BASE_URL}/adhoc/reservations/?location_id=${locationId}&num_records=${numRecords}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<AdhocReservation> = await response.json();
+    return data.records || [];
+  },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail };
