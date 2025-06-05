@@ -79,7 +79,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
   }: {
     data: Location;
   }) => <div className="flex justify-center items-center h-full">
-      <Button variant="ghost" size="sm" onClick={() => onLocationClick(data.id)} className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50">
+      <Button variant="ghost" size="sm" onClick={() => onLocationClick(data.id)} className="text-gray-800 bg-gray-100">
         <Eye className="w-4 h-4" />
       </Button>
     </div>;
