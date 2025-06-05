@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -115,10 +116,7 @@ const Dashboard = () => {
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
-    { name: 'Logout', icon: LogOut, onClick: () => { 
-      setShowLogoutDialog(true);
-      setIsMobileMenuOpen(false);
-    }},
+    { name: 'Support', icon: HelpCircle },
   ];
 
   const statsData = [
@@ -254,14 +252,14 @@ const Dashboard = () => {
                     </button>
                   )
                 ))}
-                <Button
+                {/* <Button
                   onClick={() => setShowLogoutDialog(true)}
                   variant="ghost"
                   className="text-black hover:bg-yellow-400 hover:text-black"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
-                </Button>
+                </Button> */}
               </div>
             </div>
 
