@@ -65,11 +65,11 @@ const Dashboard = () => {
 
   // Data for AG Grid
   const locationsData = useMemo(() => [
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road, Koramangala 1st block near wipro park', pincode: 560095 },
-    { id: 492, name: 'Greenwood Regency', address: '123 Main St, Anytown, CA, USA', pincode: 90210 },
-    { id: 493, name: 'Lakeview Apartments', address: '45 Lake Rd, Lakeside, FL, USA', pincode: 33301 },
-    { id: 494, name: 'Mountain Vista', address: '789 Hilltop Dr, Mountainview, CO, USA', pincode: 80401 },
-    { id: 495, name: 'Ocean Breeze Condos', address: '10 Beach Ave, Seaside, NJ, USA', pincode: 08751 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road, Koramangala 1st block near wipro park', pincode: '560095' },
+    { id: 492, name: 'Greenwood Regency', address: '123 Main St, Anytown, CA, USA', pincode: '90210' },
+    { id: 493, name: 'Lakeview Apartments', address: '45 Lake Rd, Lakeside, FL, USA', pincode: '33301' },
+    { id: 494, name: 'Mountain Vista', address: '789 Hilltop Dr, Mountainview, CO, USA', pincode: '80401' },
+    { id: 495, name: 'Ocean Breeze Condos', address: '10 Beach Ave, Seaside, NJ, USA', pincode: '08751' },
   ], []);
 
   // Custom Cell Renderer for the Action Button
@@ -122,7 +122,6 @@ const Dashboard = () => {
     resizable: true,
     // Add other default properties here if needed
   }), []);
-
 
   return (
     <div className="min-h-screen bg-gray-50">
