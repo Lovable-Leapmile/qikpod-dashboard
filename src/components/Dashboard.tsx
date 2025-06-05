@@ -1,14 +1,12 @@
 
-"use client"; // Ensure this is at the top of the file
-
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  MapPin,
-  Package,
-  Users,
+import { 
+  MapPin, 
+  Package, 
+  Users, 
   Calendar,
   Settings,
   HelpCircle,
@@ -25,47 +23,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-// AG Grid imports
-import { AgGridReact } from 'ag-grid-react';
-// Use AllCommunityModule (singular) which is the correct export
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-import type { ColDef, ICellRendererParams } from 'ag-grid-community';
-
-// AG Grid CSS
-import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS
-import 'ag-grid-community/styles/ag-theme-alpine.css'; // Alpine theme CSS
-
-// Register AG Grid modules
-// AllCommunityModule is the correct export for all community modules
-ModuleRegistry.registerModules([AllCommunityModule]);
-
-// Define the data type for locations
-type LocationData = {
-  id: number;
-  name: string;
-  address: string;
-  pincode: string;
-};
-
-// Custom Cell Renderer for the Action Button
-const ActionButtonRenderer = (params: ICellRendererParams<LocationData>) => {
-  const handleActionClick = () => {
-    console.log("Settings clicked for location ID:", params.data?.id);
-    // Implement action logic here, e.g., open a modal, navigate, etc.
-  };
-
-  return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="text-gray-400 hover:text-gray-600"
-      onClick={handleActionClick}
-    >
-      <Settings className="w-4 h-4" />
-    </Button>
-  );
-};
-
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -76,7 +33,6 @@ const Dashboard = () => {
     setShowLogoutDialog(false);
   };
 
-  // Navigation items
   const navigationItems = [
     { name: 'Dashboard', icon: Calendar, active: true },
     { name: 'Operations', icon: Settings },
@@ -92,59 +48,13 @@ const Dashboard = () => {
     { title: 'RESERVATIONS', value: '40195', icon: Calendar },
   ];
 
-  // Sample locationsData, memoized for performance
-  const locationsData = useMemo<LocationData[]>(() => [
-    { id: 491, name: 'SV Paradies Koramangala', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road, Koramangala 1st block near wipro park', pincode: '560095' },
-    { id: 492, name: 'Greenwood Regency HSR', address: 'Plot 15, 27th Main Rd, Sector 2, HSR Layout, Bengaluru', pincode: '560102' },
-    { id: 493, name: 'Lakeview Apartments Bellandur', address: '45 Lake Rd, Bellandur, Bengaluru, Near Central Mall', pincode: '560103' },
-    { id: 494, name: 'Mountain Vista Whitefield', address: '789 Hilltop Dr, Whitefield, Hope Farm Junction, Bengaluru', pincode: '560066' },
-    { id: 495, name: 'Ocean Breeze Indiranagar', address: '10 Beach Ave, 100 Feet Rd, Indiranagar, Bengaluru', pincode: '560038' },
-  ], []);
-
-  // AG Grid column definitions with proper typing
-  const columnDefs = useMemo<ColDef<LocationData>[]>(() => [
-    {
-      headerName: 'ID',
-      field: 'id',
-      width: 100,
-    },
-    {
-      headerName: 'NAME',
-      field: 'name',
-      width: 250,
-      filter: 'agTextColumnFilter',
-    },
-    {
-      headerName: 'ADDRESS',
-      field: 'address',
-      flex: 1,
-      minWidth: 300,
-      wrapText: true,
-      autoHeight: true,
-      tooltipField: 'address',
-    },
-    {
-      headerName: 'PINCODE',
-      field: 'pincode',
-      width: 120,
-    },
-    {
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: ActionButtonRenderer,
-      sortable: false,
-      filter: false,
-      pinned: 'right',
-      cellClass: 'flex items-center justify-center',
-    }
-  ], []);
-
-  // AG Grid default column properties
-  const defaultColDef = useMemo<ColDef<LocationData>>(() => ({
-    resizable: true,
-    sortable: true,
-    filter: true,
-  }), []);
+  const locationsData = [
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -152,11 +62,14 @@ const Dashboard = () => {
       <nav className="bg-yellow-500 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+            {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <span className="text-xl font-bold">QikPod</span>
               </div>
             </div>
+
+            {/* Desktop Navigation */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {navigationItems.map((item) => (
@@ -182,6 +95,8 @@ const Dashboard = () => {
                 </Button>
               </div>
             </div>
+
+            {/* Mobile menu button */}
             <div className="md:hidden">
               <Button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -194,6 +109,8 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-yellow-600">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -254,25 +171,66 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Locations Table with AG Grid */}
+        {/* Locations Table */}
         <Card className="bg-white shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900">Locations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div
-              className="ag-theme-alpine"
-              style={{ height: 500, width: '100%' }}
-            >
-              <AgGridReact<LocationData>
-                rowData={locationsData}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 20, 50, 100]}
-                enableCellTextSelection={true}
-              />
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      NAME
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ADDRESS
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      PINCODE
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ACTION
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {locationsData.map((location, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {location.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {location.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                        {location.address}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {location.pincode}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
+              <div>
+                Page Size: <select className="ml-1 border rounded px-2 py-1">
+                  <option>100</option>
+                </select>
+              </div>
+              <div>1 to 100 of 501</div>
+              <div>Page 1 of 6</div>
             </div>
           </CardContent>
         </Card>
