@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -116,9 +115,10 @@ const Dashboard = () => {
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
-    { name: 'Logout', icon: LogOut,onClick: ()=>{ 
+    { name: 'Logout', icon: LogOut, onClick: () => { 
       setShowLogoutDialog(true);
-      setIsMobileMenuOpen(false);}},
+      setIsMobileMenuOpen(false);
+    }},
   ];
 
   const statsData = [
