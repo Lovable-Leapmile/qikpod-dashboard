@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, GridApi } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [loading, setLoading] = useState(true);
   const [recordCount, setRecordCount] = useState(25);
   const [searchText, setSearchText] = useState('');
+  const [gridApi, setGridApi] = useState<GridApi | null>(null);
 
   const ActionCellRenderer = ({ data }: { data: Location }) => (
     <Button
@@ -69,20 +70,21 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   }, [fetchData]);
 
   const onGridReady = (params: GridReadyEvent) => {
+    setGridApi(params.api);
     params.api.sizeColumnsToFit();
   };
 
-  const onQuickFilterChanged = () => {
-    if (gridRef.current?.api) {
-      gridRef.current.api.setQuickFilter(searchText);
-    }
-  };
-
-  const gridRef = React.useRef<AgGridReact>(null);
-
   useEffect(() => {
-    onQuickFilterChanged();
-  }, [searchText]);
+    if (gridApi) {
+      gridApi.setGridOption('quickFilterText', searchText);
+    }
+  }, [searchText, gridApi]);
+
+  const defaultColDef = {
+    resizable: true,
+    sortable: true,
+    filter: true,
+  };
 
   return (
     <Card className="bg-white shadow-sm">
@@ -119,17 +121,14 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       <CardContent>
         <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
           <AgGridReact
-            ref={gridRef}
             rowData={locations}
             columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
             loading={loading}
             onGridReady={onGridReady}
             animateRows={true}
             rowSelection="single"
             suppressCellFocus={true}
-            enableColResize={true}
-            enableSorting={true}
-            enableFilter={true}
             rowHeight={50}
           />
         </div>
