@@ -4,7 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { ColDef } from 'ag-grid-community';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
 import { ExternalLink } from 'lucide-react';
@@ -183,18 +183,20 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         <CardTitle className="text-xl font-semibold text-gray-900">
           Reservations
         </CardTitle>
-        <div className="flex items-center space-x-2">
-          <span className={`text-sm ${isStandardMode ? 'font-medium' : 'text-gray-500'}`}>
-            Standard Mode
-          </span>
-          <Toggle
-            pressed={!isStandardMode}
-            onPressedChange={(pressed) => setIsStandardMode(!pressed)}
-            className="data-[state=on]:bg-blue-600"
-          />
-          <span className={`text-sm ${!isStandardMode ? 'font-medium' : 'text-gray-500'}`}>
-            Adhoc Mode
-          </span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <span className={`text-sm font-medium ${isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
+              Standard Mode
+            </span>
+            <Switch
+              checked={!isStandardMode}
+              onCheckedChange={(checked) => setIsStandardMode(!checked)}
+              className="data-[state=checked]:bg-accent"
+            />
+            <span className={`text-sm font-medium ${!isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
+              Adhoc Mode
+            </span>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
