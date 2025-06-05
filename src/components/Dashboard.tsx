@@ -1,3 +1,4 @@
+
 "use client"; // Ensure this is at the top of the file
 
 import React, { useState, useMemo } from 'react';
@@ -26,33 +27,31 @@ import {
 
 // AG Grid imports
 import { AgGridReact } from 'ag-grid-react';
-// Use AllCommunityModules (plural) which is typically the correct export for all modules
-import { ModuleRegistry, AllCommunityModules } from 'ag-grid-community';
-import type { ColDef, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
+// Use AllCommunityModule (singular) which is the correct export
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+import type { ColDef, ICellRendererParams } from 'ag-grid-community';
 
 // AG Grid CSS
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS
-import 'ag-grid-community/styles/ag-theme-alpine.css'; // Alpine theme CSS (as per your import)
+import 'ag-grid-community/styles/ag-theme-alpine.css'; // Alpine theme CSS
 
 // Register AG Grid modules
-// AllCommunityModules is an array of all community modules.
-ModuleRegistry.registerModules(AllCommunityModules);
+// AllCommunityModule is the correct export for all community modules
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 // Define the data type for locations
 type LocationData = {
   id: number;
   name: string;
   address: string;
-  pincode: string; // Kept as string
+  pincode: string;
 };
 
 // Custom Cell Renderer for the Action Button
-// It's good practice to type params with ICellRendererParams
 const ActionButtonRenderer = (params: ICellRendererParams<LocationData>) => {
   const handleActionClick = () => {
     console.log("Settings clicked for location ID:", params.data?.id);
     // Implement action logic here, e.g., open a modal, navigate, etc.
-    // You have access to the full row data via params.data
   };
 
   return (
@@ -67,7 +66,6 @@ const ActionButtonRenderer = (params: ICellRendererParams<LocationData>) => {
   );
 };
 
-
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -78,7 +76,7 @@ const Dashboard = () => {
     setShowLogoutDialog(false);
   };
 
-  // Assuming these are defined elsewhere or you'll add them
+  // Navigation items
   const navigationItems = [
     { name: 'Dashboard', icon: Calendar, active: true },
     { name: 'Operations', icon: Settings },
@@ -107,23 +105,23 @@ const Dashboard = () => {
   const columnDefs = useMemo<ColDef<LocationData>[]>(() => [
     {
       headerName: 'ID',
-      field: 'id', // Direct key of LocationData
+      field: 'id',
       width: 100,
     },
     {
       headerName: 'NAME',
       field: 'name',
-      width: 250, // Increased width
-      filter: 'agTextColumnFilter', // Example of specific filter
+      width: 250,
+      filter: 'agTextColumnFilter',
     },
     {
       headerName: 'ADDRESS',
       field: 'address',
-      flex: 1, // Takes remaining width
-      minWidth: 300, // Minimum width for address
-      wrapText: true, // Enable text wrapping for long addresses
-      autoHeight: true, // Adjust row height to fit wrapped text
-      tooltipField: 'address', // Shows full address on hover
+      flex: 1,
+      minWidth: 300,
+      wrapText: true,
+      autoHeight: true,
+      tooltipField: 'address',
     },
     {
       headerName: 'PINCODE',
@@ -133,11 +131,11 @@ const Dashboard = () => {
     {
       headerName: 'ACTION',
       width: 100,
-      cellRenderer: ActionButtonRenderer, // Use the custom React component
-      sortable: false, // Actions are typically not sortable
-      filter: false,   // Or filterable
-      pinned: 'right', // Pin column to the right
-      cellClass: 'flex items-center justify-center', // Tailwind for centering
+      cellRenderer: ActionButtonRenderer,
+      sortable: false,
+      filter: false,
+      pinned: 'right',
+      cellClass: 'flex items-center justify-center',
     }
   ], []);
 
@@ -145,8 +143,7 @@ const Dashboard = () => {
   const defaultColDef = useMemo<ColDef<LocationData>>(() => ({
     resizable: true,
     sortable: true,
-    filter: true, // Enable basic filtering on all columns by default
-    // floatingFilter: true, // Optionally enable floating filters
+    filter: true,
   }), []);
 
   return (
@@ -264,19 +261,17 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div
-              className="ag-theme-alpine" // Using Alpine theme
-              style={{ height: 500, width: '100%' }} // Ensure grid has dimensions
+              className="ag-theme-alpine"
+              style={{ height: 500, width: '100%' }}
             >
-              <AgGridReact<LocationData> // Specify the row data type
+              <AgGridReact<LocationData>
                 rowData={locationsData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
                 paginationPageSize={10}
-                paginationPageSizeSelector={[10, 20, 50, 100]} // Options for page size
-                // domLayout='autoHeight' // Consider this if you want grid height to fit content. Can impact performance.
-                enableCellTextSelection={true} // Allows text selection in cells
-                // ensureDomOrder={true} // Retained from your code, useful for some testing/accessibility
+                paginationPageSizeSelector={[10, 20, 50, 100]}
+                enableCellTextSelection={true}
               />
             </div>
           </CardContent>
