@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,6 +22,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { AgGridReact } from 'ag-grid-react';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+// Register AG Grid modules
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -49,12 +56,63 @@ const Dashboard = () => {
   ];
 
   const locationsData = [
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
+    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
   ];
+
+  // AG Grid column definitions
+  const columnDefs = useMemo(() => [
+    { 
+      field: 'id', 
+      headerName: 'ID',
+      width: 100,
+      sortable: true,
+      filter: true
+    },
+    { 
+      field: 'name', 
+      headerName: 'NAME',
+      width: 150,
+      sortable: true,
+      filter: true
+    },
+    { 
+      field: 'address', 
+      headerName: 'ADDRESS',
+      flex: 1,
+      sortable: true,
+      filter: true,
+      tooltipField: 'address'
+    },
+    { 
+      field: 'pincode', 
+      headerName: 'PINCODE',
+      width: 120,
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'ACTION',
+      width: 100,
+      cellRenderer: () => (
+        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
+          <Settings className="w-4 h-4" />
+        </Button>
+      ),
+      sortable: false,
+      filter: false
+    }
+  ], []);
+
+  // AG Grid default column properties
+  const defaultColDef = useMemo(() => ({
+    resizable: true,
+    sortable: true,
+    filter: true,
+  }), []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -171,66 +229,24 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Locations Table */}
+        {/* Locations Table with AG Grid */}
         <Card className="bg-white shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900">Locations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      NAME
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ADDRESS
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      PINCODE
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ACTION
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {locationsData.map((location, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {location.address}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.pincode}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-                          <Settings className="w-4 h-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
-              <div>
-                Page Size: <select className="ml-1 border rounded px-2 py-1">
-                  <option>100</option>
-                </select>
-              </div>
-              <div>1 to 100 of 501</div>
-              <div>Page 1 of 6</div>
+            <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+              <AgGridReact
+                rowData={locationsData}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                paginationPageSize={10}
+                domLayout="normal"
+                suppressHorizontalScroll={false}
+                enableCellTextSelection={true}
+                ensureDomOrder={true}
+              />
             </div>
           </CardContent>
         </Card>
