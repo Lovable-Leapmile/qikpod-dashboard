@@ -116,6 +116,7 @@ const Dashboard = () => {
     { name: 'Users & Network', icon: Users },
     { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
+    { name: 'Logout', icon: ghost, onClick: () => setShowLogoutDialog(true) }
   ];
 
   const statsData = [
@@ -251,14 +252,14 @@ const Dashboard = () => {
                     </button>
                   )
                 ))}
-                <Button
-                  onClick={() => setShowLogoutDialog(true)}
+                {/* <Button
+                  onClick={() => }
                   variant="ghost"
                   className="text-black hover:bg-yellow-400 hover:text-black"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
-                </Button>
+                </Button> */}
               </div>
             </div>
 
