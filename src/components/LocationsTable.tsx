@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridReadyEvent, GridApi } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, GridApi, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,9 +13,50 @@ import { useAuth } from '@/contexts/AuthContext';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
+// Register AG Grid modules
+ModuleRegistry.registerModules([AllCommunityModule]);
+
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
 }
+
+const LocationCard: React.FC<{ location: Location; onLocationClick: (id: number) => void }> = ({ 
+  location, 
+  onLocationClick 
+}) => (
+  <Card className="mb-4 bg-white shadow-sm">
+    <CardContent className="p-4">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <h3 className="font-semibold text-lg text-gray-900">{location.primary_name}</h3>
+          <p className="text-sm text-gray-600">{location.location_name}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onLocationClick(location.id)}
+          className="text-blue-600 hover:text-blue-800"
+        >
+          <Eye className="w-4 h-4" />
+        </Button>
+      </div>
+      <div className="space-y-2 text-sm">
+        <div>
+          <span className="font-medium text-gray-700">ID: </span>
+          <span className="text-gray-600">{location.id}</span>
+        </div>
+        <div>
+          <span className="font-medium text-gray-700">Address: </span>
+          <span className="text-gray-600">{location.location_address}</span>
+        </div>
+        <div>
+          <span className="font-medium text-gray-700">Pincode: </span>
+          <span className="text-gray-600">{location.location_pincode}</span>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const { accessToken } = useAuth();
@@ -23,6 +65,18 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [recordCount, setRecordCount] = useState(25);
   const [searchText, setSearchText] = useState('');
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const ActionCellRenderer = ({ data }: { data: Location }) => (
     <Button
@@ -56,7 +110,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     
     setLoading(true);
     try {
+      console.log('Fetching locations with token:', accessToken);
+      console.log('Record count:', recordCount);
       const data = await dashboardApi.getLocations(accessToken, recordCount);
+      console.log('Received locations data:', data);
       setLocations(data);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -85,6 +142,19 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     sortable: true,
     filter: true,
   };
+
+  // Filter locations for mobile cards
+  const filteredLocations = locations.filter(location => {
+    if (!searchText) return true;
+    const searchLower = searchText.toLowerCase();
+    return (
+      location.primary_name?.toLowerCase().includes(searchLower) ||
+      location.location_name?.toLowerCase().includes(searchLower) ||
+      location.location_address?.toLowerCase().includes(searchLower) ||
+      location.location_pincode?.toLowerCase().includes(searchLower) ||
+      location.id.toString().includes(searchLower)
+    );
+  });
 
   return (
     <Card className="bg-white shadow-sm">
@@ -119,19 +189,44 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
-          <AgGridReact
-            rowData={locations}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            loading={loading}
-            onGridReady={onGridReady}
-            animateRows={true}
-            rowSelection="single"
-            suppressCellFocus={true}
-            rowHeight={50}
-          />
-        </div>
+        {isMobile ? (
+          <div className="space-y-4">
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
+                <p className="text-gray-500 mt-2">Loading locations...</p>
+              </div>
+            ) : filteredLocations.length > 0 ? (
+              <div className="max-h-96 overflow-y-auto">
+                {filteredLocations.map((location) => (
+                  <LocationCard
+                    key={location.id}
+                    location={location}
+                    onLocationClick={onLocationClick}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No locations found</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
+            <AgGridReact
+              rowData={locations}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              loading={loading}
+              onGridReady={onGridReady}
+              animateRows={true}
+              rowSelection="single"
+              suppressCellFocus={true}
+              rowHeight={50}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
