@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,11 +23,20 @@ import {
 } from '@/components/ui/dialog';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
+
+// Define the data type for locations
+type LocationData = {
+  id: number;
+  name: string;
+  address: string;
+  pincode: string;
+};
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -55,7 +63,7 @@ const Dashboard = () => {
     { title: 'RESERVATIONS', value: '40195', icon: Calendar },
   ];
 
-  const locationsData = [
+  const locationsData: LocationData[] = [
     { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
     { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
     { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
@@ -63,32 +71,32 @@ const Dashboard = () => {
     { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: '560095' },
   ];
 
-  // AG Grid column definitions
-  const columnDefs = useMemo(() => [
+  // AG Grid column definitions with proper typing
+  const columnDefs = useMemo<ColDef<LocationData>[]>(() => [
     { 
-      field: 'id', 
+      field: 'id' as keyof LocationData, 
       headerName: 'ID',
       width: 100,
       sortable: true,
       filter: true
     },
     { 
-      field: 'name', 
+      field: 'name' as keyof LocationData, 
       headerName: 'NAME',
       width: 150,
       sortable: true,
       filter: true
     },
     { 
-      field: 'address', 
+      field: 'address' as keyof LocationData, 
       headerName: 'ADDRESS',
       flex: 1,
       sortable: true,
       filter: true,
-      tooltipField: 'address'
+      tooltipField: 'address' as keyof LocationData
     },
     { 
-      field: 'pincode', 
+      field: 'pincode' as keyof LocationData, 
       headerName: 'PINCODE',
       width: 120,
       sortable: true,
@@ -103,7 +111,8 @@ const Dashboard = () => {
         </Button>
       ),
       sortable: false,
-      filter: false
+      filter: false,
+      pinned: 'right'
     }
   ], []);
 
@@ -236,7 +245,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
-              <AgGridReact
+              <AgGridReact<LocationData>
                 rowData={locationsData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
