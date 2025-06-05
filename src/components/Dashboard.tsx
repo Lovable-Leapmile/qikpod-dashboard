@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,7 +12,8 @@ import {
   HelpCircle,
   LogOut,
   Menu,
-  X
+  X,
+  Activity
 } from 'lucide-react';
 import {
   Dialog,
@@ -22,44 +23,183 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { dashboardApi } from '@/services/dashboardApi';
+import LocationsTable from './LocationsTable';
+import PodsTable from './PodsTable';
+import LocationDetail from './LocationDetail';
+import PodDetail from './PodDetail';
+
+type ViewType = 'dashboard' | 'locations' | 'pods' | 'locationDetail' | 'podDetail';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, accessToken } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
+  const [dashboardStats, setDashboardStats] = useState({
+    locations: 0,
+    pods: 0,
+    users: 0,
+    reservations: 0,
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
   };
 
+  const fetchDashboardStats = async () => {
+    if (!accessToken) return;
+    
+    setStatsLoading(true);
+    try {
+      const [locations, pods, users, reservations] = await Promise.all([
+        dashboardApi.getLocationsCount(accessToken),
+        dashboardApi.getPodsCount(accessToken),
+        dashboardApi.getUsersCount(accessToken),
+        dashboardApi.getReservationsCount(accessToken),
+      ]);
+      
+      setDashboardStats({ locations, pods, users, reservations });
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, [accessToken]);
+
   const navigationItems = [
-    { name: 'Dashboard', icon: Calendar, active: true },
+    { 
+      name: 'Dashboard', 
+      icon: Activity, 
+      active: currentView === 'dashboard',
+      onClick: () => setCurrentView('dashboard')
+    },
+    { 
+      name: 'Locations', 
+      icon: MapPin, 
+      active: currentView === 'locations',
+      onClick: () => setCurrentView('locations')
+    },
+    { 
+      name: 'Pods', 
+      icon: Package, 
+      active: currentView === 'pods',
+      onClick: () => setCurrentView('pods')
+    },
     { name: 'Operations', icon: Settings },
     { name: 'Users & Network', icon: Users },
-    { name: 'System & Finance', icon: Package },
+    { name: 'System & Finance', icon: HelpCircle },
     { name: 'Support', icon: HelpCircle },
   ];
 
   const statsData = [
-    { title: 'LOCATIONS', value: '459', icon: MapPin },
-    { title: 'PODS', value: '573', icon: Package },
-    { title: 'USERS', value: '11041', icon: Users },
-    { title: 'RESERVATIONS', value: '40195', icon: Calendar },
+    { title: 'LOCATIONS', value: dashboardStats.locations.toString(), icon: MapPin },
+    { title: 'PODS', value: dashboardStats.pods.toString(), icon: Package },
+    { title: 'USERS', value: dashboardStats.users.toString(), icon: Users },
+    { title: 'RESERVATIONS', value: dashboardStats.reservations.toString(), icon: Calendar },
   ];
 
-  const locationsData = [
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-    { id: 491, name: 'SV Paradies', address: '#9, 1st 3rd Cross, Opposite to Indian Oil, 80 ft Road,...', pincode: 560095 },
-  ];
+  const handleLocationClick = (locationId: number) => {
+    setSelectedLocationId(locationId);
+    setCurrentView('locationDetail');
+  };
+
+  const handlePodClick = (podId: number) => {
+    setSelectedPodId(podId);
+    setCurrentView('podDetail');
+  };
+
+  const handleBackToLocations = () => {
+    setCurrentView('locations');
+    setSelectedLocationId(null);
+  };
+
+  const handleBackToPods = () => {
+    setCurrentView('pods');
+    setSelectedPodId(null);
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'locations':
+        return <LocationsTable onLocationClick={handleLocationClick} />;
+      case 'pods':
+        return <PodsTable onPodClick={handlePodClick} />;
+      case 'locationDetail':
+        return selectedLocationId ? (
+          <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} />
+        ) : null;
+      case 'podDetail':
+        return selectedPodId ? (
+          <PodDetail podId={selectedPodId} onBack={handleBackToPods} />
+        ) : null;
+      default:
+        return (
+          <div className="space-y-8">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {statsData.map((stat, index) => (
+                <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-600">
+                      {stat.title}
+                    </CardTitle>
+                    <stat.icon className="h-4 w-4 text-yellow-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {statsLoading ? '...' : stat.value}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+                    onClick={() => setCurrentView('locations')}>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <MapPin className="w-5 h-5 mr-2 text-yellow-500" />
+                    Manage Locations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">View and manage all location data with advanced filtering and search capabilities.</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => setCurrentView('pods')}>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg">
+                    <Package className="w-5 h-5 mr-2 text-yellow-500" />
+                    Manage Pods
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">Monitor pod status, health, and performance across all locations.</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-yellow-500 text-white shadow-lg">
+      {/* Fixed Top Navigation */}
+      <nav className="bg-yellow-500 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -75,6 +215,7 @@ const Dashboard = () => {
                 {navigationItems.map((item) => (
                   <button
                     key={item.name}
+                    onClick={item.onClick}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       item.active
                         ? 'bg-yellow-600 text-white'
@@ -117,6 +258,7 @@ const Dashboard = () => {
               {navigationItems.map((item) => (
                 <button
                   key={item.name}
+                  onClick={item.onClick}
                   className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
                     item.active
                       ? 'bg-yellow-700 text-white'
@@ -140,100 +282,32 @@ const Dashboard = () => {
         )}
       </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Dashboard Header */}
+      {/* Main Content with top padding for fixed header */}
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pt-24">
+        {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center text-sm text-gray-500 mb-2">
-            <Calendar className="w-4 h-4 mr-2" />
-            Dashboard
+            <Activity className="w-4 h-4 mr-2" />
+            {currentView === 'dashboard' && 'Dashboard'}
+            {currentView === 'locations' && 'Locations Management'}
+            {currentView === 'pods' && 'Pods Management'}
+            {currentView === 'locationDetail' && 'Location Details'}
+            {currentView === 'podDetail' && 'Pod Details'}
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          {user && (
+          <h1 className="text-3xl font-bold text-gray-900">
+            {currentView === 'dashboard' && 'Dashboard'}
+            {currentView === 'locations' && 'Locations'}
+            {currentView === 'pods' && 'Pods'}
+            {currentView === 'locationDetail' && 'Location Details'}
+            {currentView === 'podDetail' && 'Pod Details'}
+          </h1>
+          {user && currentView === 'dashboard' && (
             <p className="text-gray-600 mt-1">Welcome back, {user.user_name}!</p>
           )}
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statsData.map((stat, index) => (
-            <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className="h-4 w-4 text-gray-400" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Locations Table */}
-        <Card className="bg-white shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-gray-900">Locations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      NAME
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ADDRESS
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      PINCODE
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ACTION
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {locationsData.map((location, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {location.address}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {location.pincode}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-                          <Settings className="w-4 h-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
-              <div>
-                Page Size: <select className="ml-1 border rounded px-2 py-1">
-                  <option>100</option>
-                </select>
-              </div>
-              <div>1 to 100 of 501</div>
-              <div>Page 1 of 6</div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Dynamic Content */}
+        {renderCurrentView()}
       </main>
 
       {/* Logout Confirmation Dialog */}
