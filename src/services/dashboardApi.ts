@@ -53,6 +53,35 @@ interface Pod {
   location_name: string;
 }
 
+interface PodDetail {
+  id: number;
+  pod_name: string;
+  pod_numtotaldoors: number;
+  location_name: string;
+  created_at: string;
+  updated_at: string;
+  pinged_at: string;
+  pod_health: string;
+  pod_state: string;
+  pod_power_status: string;
+  pod_production_version: string;
+  pod_production_version_update_to: string;
+  pod_touchless_enabled: boolean;
+  status: string;
+  pod_mode: string;
+  pod_configuration_version: string;
+  pod_root_version: string;
+  fe_tag: string;
+  fe_details: string;
+}
+
+interface LogEntry {
+  log_id: number;
+  updated_at: string;
+  log_type: string;
+  log_message: string;
+}
+
 interface User {
   id: number;
   user_name: string;
@@ -84,6 +113,7 @@ interface AdhocReservation {
 }
 
 const BASE_URL = 'https://robotmanagerv1test.qikpod.com:8989';
+const LOGS_BASE_URL = 'https://newproduction.qikpod.com:8988';
 
 const getAuthHeaders = (token: string) => ({
   'Authorization': `Bearer ${token}`,
@@ -198,6 +228,66 @@ export const dashboardApi = {
     const data: ApiResponse<AdhocReservation> = await response.json();
     return data.records || [];
   },
+
+  // Pod Detail APIs
+  getPodDetail: async (token: string, podId: number): Promise<PodDetail | null> => {
+    const response = await fetch(`${BASE_URL}/pods/?record_id=${podId}&num_records=1`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<PodDetail> = await response.json();
+    return data.records?.[0] || null;
+  },
+
+  getPodLogs: async (token: string, podId: number, numRecords: number = 100): Promise<LogEntry[]> => {
+    const response = await fetch(`${LOGS_BASE_URL}/logs/?record_id=${podId}&num_records=${numRecords}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<LogEntry> = await response.json();
+    return data.records || [];
+  },
+
+  // Pod Update APIs
+  updatePodMode: async (token: string, podId: number, podMode: string): Promise<void> => {
+    const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
+      method: 'PATCH',
+      headers: {
+        ...getAuthHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ pod_mode: podMode }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update pod mode');
+    }
+  },
+
+  updatePodVersion: async (token: string, podId: number, versionData: any): Promise<void> => {
+    const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
+      method: 'PATCH',
+      headers: {
+        ...getAuthHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(versionData),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update pod version');
+    }
+  },
+
+  updatePodFE: async (token: string, podId: number, feData: { fe_tag: string; fe_details: string }): Promise<void> => {
+    const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
+      method: 'PATCH',
+      headers: {
+        ...getAuthHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(feData),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update pod FE');
+    }
+  },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry };
