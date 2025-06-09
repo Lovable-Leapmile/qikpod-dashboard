@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,30 +10,31 @@ import { ArrowLeft, Package, Upload, Edit } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { dashboardApi, PodDetail as PodDetailType, PodLog } from '@/services/dashboardApi';
+
 interface PodDetailProps {
   podId: number;
   onBack: () => void;
 }
-const PodDetail: React.FC<PodDetailProps> = ({
-  podId,
-  onBack
-}) => {
-  const {
-    accessToken
-  } = useAuth();
-  const {
-    toast
-  } = useToast();
+
+const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
+  const { accessToken } = useAuth();
+  const { toast } = useToast();
   const [podDetail, setPodDetail] = useState<PodDetailType | null>(null);
   const [logs, setLogs] = useState<PodLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showVersionPopup, setShowVersionPopup] = useState(false);
   const [showFePopup, setShowFePopup] = useState(false);
+
   const fetchPodDetail = async () => {
     if (!accessToken) return;
+
     try {
       setIsLoading(true);
-      const [podData, logsData] = await Promise.all([dashboardApi.getPodDetail(accessToken, podId), dashboardApi.getPodLogs(accessToken, podId, 50)]);
+      const [podData, logsData] = await Promise.all([
+        dashboardApi.getPodDetail(accessToken, podId),
+        dashboardApi.getPodLogs(accessToken, podId, 50)
+      ]);
+
       setPodDetail(podData);
       setLogs(logsData);
     } catch (error) {
@@ -40,18 +42,21 @@ const PodDetail: React.FC<PodDetailProps> = ({
       toast({
         title: "Error",
         description: "Failed to fetch pod details",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     fetchPodDetail();
   }, [podId, accessToken]);
+
   const handleRefresh = () => {
     fetchPodDetail();
   };
+
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleString();
@@ -59,16 +64,24 @@ const PodDetail: React.FC<PodDetailProps> = ({
       return dateString;
     }
   };
+
   const getStatusDisplay = (status: string) => {
     return status?.toLowerCase() === 'success' ? 'Active' : 'Inactive';
   };
+
   const getStatusColor = (status: string) => {
     return status?.toLowerCase() === 'success' ? 'text-green-600' : 'text-red-600';
   };
+
   if (isLoading) {
-    return <div className="space-y-6">
+    return (
+      <div className="space-y-6">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={onBack}
+            className="flex items-center space-x-2"
+          >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Pods</span>
           </Button>
@@ -77,18 +90,26 @@ const PodDetail: React.FC<PodDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Loading pod details...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <div className="flex items-center space-x-4">
-        <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="flex items-center space-x-2"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Pods</span>
         </Button>
-        
+        <h1 className="text-2xl font-bold text-gray-900">Pod Details</h1>
       </div>
 
-      {podDetail ? <>
+      {podDetail ? (
+        <>
           {/* Pod Information Card */}
           <Card>
             <CardHeader>
@@ -155,11 +176,17 @@ const PodDetail: React.FC<PodDetailProps> = ({
 
           {/* Action Buttons */}
           <div className="flex space-x-4">
-            <Button onClick={() => setShowVersionPopup(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+            <Button
+              onClick={() => setShowVersionPopup(true)}
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black"
+            >
               <Upload className="w-4 h-4 mr-2" />
               Update Pod Version
             </Button>
-            <Button onClick={() => setShowFePopup(true)} variant="outline">
+            <Button
+              onClick={() => setShowFePopup(true)}
+              variant="outline"
+            >
               <Edit className="w-4 h-4 mr-2" />
               FE Update
             </Button>
@@ -171,7 +198,8 @@ const PodDetail: React.FC<PodDetailProps> = ({
               <CardTitle>Logs</CardTitle>
             </CardHeader>
             <CardContent>
-              {logs.length > 0 ? <div className="rounded-xl border overflow-hidden">
+              {logs.length > 0 ? (
+                <div className="rounded-xl border overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-gray-50/50">
@@ -182,27 +210,58 @@ const PodDetail: React.FC<PodDetailProps> = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {logs.map((log, index) => <TableRow key={log.log_id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'} hover:bg-gray-100/50 transition-colors`}>
+                      {logs.map((log, index) => (
+                        <TableRow 
+                          key={log.log_id}
+                          className={`${
+                            index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+                          } hover:bg-gray-100/50 transition-colors`}
+                        >
                           <TableCell className="py-3">{log.log_id}</TableCell>
                           <TableCell className="py-3">{formatDate(log.updated_at)}</TableCell>
                           <TableCell className="py-3">{log.log_type}</TableCell>
                           <TableCell className="py-3">{log.log_message}</TableCell>
-                        </TableRow>)}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
-                </div> : <NoDataIllustration title="No logs found" description="There are no logs available for this pod." />}
+                </div>
+              ) : (
+                <NoDataIllustration
+                  title="No logs found"
+                  description="There are no logs available for this pod."
+                />
+              )}
             </CardContent>
           </Card>
 
           {/* Popups */}
-          <UpdatePodVersionPopup open={showVersionPopup} onOpenChange={setShowVersionPopup} podId={podId} onSuccess={handleRefresh} />
+          <UpdatePodVersionPopup
+            open={showVersionPopup}
+            onOpenChange={setShowVersionPopup}
+            podId={podId}
+            onSuccess={handleRefresh}
+          />
 
-          <FeUpdatePopup open={showFePopup} onOpenChange={setShowFePopup} podId={podId} onSuccess={handleRefresh} />
-        </> : <Card>
+          <FeUpdatePopup
+            open={showFePopup}
+            onOpenChange={setShowFePopup}
+            podId={podId}
+            onSuccess={handleRefresh}
+          />
+        </>
+      ) : (
+        <Card>
           <CardContent>
-            <NoDataIllustration title="Pod not found" description="The requested pod could not be found." />
+            <NoDataIllustration
+              title="Pod not found"
+              description="The requested pod could not be found."
+            />
           </CardContent>
-        </Card>}
-    </div>;
+        </Card>
+      )}
+    </div>
+  );
 };
+
 export default PodDetail;
