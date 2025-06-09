@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Update } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
@@ -124,7 +124,7 @@ const FEUpdatePopup: React.FC<FEUpdatePopupProps> = ({
               disabled={loading || !feTag}
               className="flex items-center space-x-2"
             >
-              <Update className="w-4 h-4" />
+              <ArrowUp className="w-4 h-4" />
               <span>{loading ? 'Submitting...' : 'Submit'}</span>
             </Button>
           </div>

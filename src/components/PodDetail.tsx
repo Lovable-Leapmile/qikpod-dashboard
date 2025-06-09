@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Package, Eye, EyeOff, Edit, Trash2, Settings, Update } from 'lucide-react';
+import { ArrowLeft, Package, Eye, EyeOff, Edit, Trash2, Settings, ArrowUp } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, PodDetail as PodDetailType, LogEntry } from '@/services/dashboardApi';
@@ -291,7 +290,7 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
                 className="rounded-lg"
                 onClick={() => setShowUpdateVersionPopup(true)}
               >
-                <Update className="w-4 h-4 mr-2" />
+                <ArrowUp className="w-4 h-4 mr-2" />
                 Update Pod Version
               </Button>
               <Button 

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Update } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
@@ -84,7 +84,7 @@ const EditModePopup: React.FC<EditModePopupProps> = ({
               disabled={loading || !selectedMode}
               className="flex items-center space-x-2"
             >
-              <Update className="w-4 h-4" />
+              <ArrowUp className="w-4 h-4" />
               <span>{loading ? 'Updating...' : 'Update'}</span>
             </Button>
           </div>
