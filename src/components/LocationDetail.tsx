@@ -6,6 +6,10 @@ import { ArrowLeft, MapPin, Users, Package, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, LocationDetail as LocationDetailType } from '@/services/dashboardApi';
 import LocationReservationsTable from './LocationReservationsTable';
+import AssignFeBdPopup from './AssignFeBdPopup';
+import CreateUserPopup from './CreateUserPopup';
+import PaymentModePopup from './PaymentModePopup';
+import EditLocationPopup from './EditLocationPopup';
 
 interface LocationDetailProps {
   locationId: number;
@@ -24,6 +28,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHiddenSection, setShowHiddenSection] = useState(false);
+  const [showAssignFeBdPopup, setShowAssignFeBdPopup] = useState(false);
+  const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
+  const [showPaymentModePopup, setShowPaymentModePopup] = useState(false);
+  const [showEditLocationPopup, setShowEditLocationPopup] = useState(false);
 
   const fetchLocationDetail = async () => {
     if (!accessToken) return;
@@ -47,6 +55,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       return 'N/A';
     }
     return String(value);
+  };
+
+  const handlePopupSuccess = () => {
+    fetchLocationDetail();
   };
 
   if (loading) {
@@ -160,16 +172,32 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <CardContent className="pb-8">
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
-            <Button variant="outline" className="rounded-lg">
+            <Button 
+              variant="outline" 
+              className="rounded-lg"
+              onClick={() => setShowAssignFeBdPopup(true)}
+            >
               Assign FE/BD
             </Button>
-            <Button variant="outline" className="rounded-lg">
+            <Button 
+              variant="outline" 
+              className="rounded-lg"
+              onClick={() => setShowCreateUserPopup(true)}
+            >
               Create User
             </Button>
-            <Button variant="outline" className="rounded-lg">
+            <Button 
+              variant="outline" 
+              className="rounded-lg"
+              onClick={() => setShowPaymentModePopup(true)}
+            >
               Payment Mode
             </Button>
-            <Button variant="outline" className="rounded-lg">
+            <Button 
+              variant="outline" 
+              className="rounded-lg"
+              onClick={() => setShowEditLocationPopup(true)}
+            >
               Edit
             </Button>
             <Button variant="destructive" className="rounded-lg">
@@ -258,6 +286,41 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         locationId={locationId}
         onStandardReservationClick={onStandardReservationClick}
         onAdhocReservationClick={onAdhocReservationClick}
+      />
+
+      {/* Popups */}
+      <AssignFeBdPopup
+        open={showAssignFeBdPopup}
+        onOpenChange={setShowAssignFeBdPopup}
+        locationId={locationId}
+        initialValues={{
+          primary_fe: locationDetail.primary_fe,
+          secondary_fe: locationDetail.secondary_fe,
+          primary_bd: locationDetail.primary_bd,
+        }}
+        onSuccess={handlePopupSuccess}
+      />
+
+      <CreateUserPopup
+        open={showCreateUserPopup}
+        onOpenChange={setShowCreateUserPopup}
+        locationId={locationId}
+        onSuccess={handlePopupSuccess}
+      />
+
+      <PaymentModePopup
+        open={showPaymentModePopup}
+        onOpenChange={setShowPaymentModePopup}
+        locationId={locationId}
+        initialValue={locationDetail.payment_mode}
+        onSuccess={handlePopupSuccess}
+      />
+
+      <EditLocationPopup
+        open={showEditLocationPopup}
+        onOpenChange={setShowEditLocationPopup}
+        locationId={locationId}
+        onSuccess={handlePopupSuccess}
       />
     </div>
   );

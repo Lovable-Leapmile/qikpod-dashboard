@@ -222,7 +222,11 @@ const Dashboard = () => {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-xl font-bold text-black">QikPod</span>
+                <img 
+                  src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                  alt="QikPod Logo"
+                  className="h-10 w-auto"
+                />
               </div>
             </div>
 
