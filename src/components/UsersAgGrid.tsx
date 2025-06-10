@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi, ColumnApi } from 'ag-grid-community';
+import { ColDef, GridApi } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -129,7 +129,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
 
   const onQuickFilterChanged = () => {
     if (gridRef.current?.api) {
-      gridRef.current.api.setQuickFilter(searchText);
+      gridRef.current.api.setGridOption('quickFilterText', searchText);
     }
   };
 
@@ -230,9 +230,6 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             pagination={true}
             paginationPageSize={pageSize}
             onGridReady={onGridReady}
-            enableColResize={true}
-            enableSorting={true}
-            enableFilter={true}
             suppressMovableColumns={false}
             animateRows={true}
             rowSelection="single"
