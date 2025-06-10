@@ -7,7 +7,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Users as UsersIcon, Plus, Search, ArrowLeft } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, User } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
@@ -79,7 +79,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
       minWidth: 100,
     },
     {
-      headerName: 'CREATED BY',
+      headerName: 'CREATED DATE',
       field: 'created_at',
       sortable: true,
       filter: true,
@@ -166,22 +166,12 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Back Button */}
-      <Button
-        onClick={onBack}
-        variant="outline"
-        className="flex items-center space-x-2 mb-4"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Dashboard</span>
-      </Button>
-
-      {/* Header with title and Add User button */}
+    <div className="space-y-4">
+      {/* Header with Add User button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center space-x-3">
-          <UsersIcon className="w-6 h-6 text-gray-700" />
-          <h2 className="text-2xl font-bold text-gray-900">Users</h2>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Users Management</h3>
+          <p className="text-sm text-gray-500">Manage all users in your network</p>
         </div>
         <Button
           onClick={() => setShowAddUserPopup(true)}
