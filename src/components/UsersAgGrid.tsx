@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Search, Plus, Eye, Users } from 'lucide-react';
 import { User } from '@/services/dashboardApi';
 import AddUserPopup from './AddUserPopup';
+import UserCard from './UserCard';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
@@ -52,13 +53,28 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   const [searchText, setSearchText] = useState('');
   const [pageSize, setPageSize] = useState(25);
   const [showAddUserPopup, setShowAddUserPopup] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const columnDefs: ColDef[] = useMemo(() => [
     {
       headerName: 'NAME',
       field: 'user_name',
       sortable: true,
-      filter: true,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 1,
       minWidth: 150,
       cellStyle: { fontWeight: '500' }
@@ -67,7 +83,11 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
       headerName: 'TYPE',
       field: 'user_type',
       sortable: true,
-      filter: true,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 1,
       minWidth: 120
     },
@@ -75,7 +95,11 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
       headerName: 'PHONE',
       field: 'user_phone',
       sortable: true,
-      filter: true,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 1,
       minWidth: 130
     },
@@ -83,7 +107,11 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
       headerName: 'EMAIL',
       field: 'user_email',
       sortable: true,
-      filter: true,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 1.5,
       minWidth: 200
     },
@@ -91,7 +119,11 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
       headerName: 'FLAT NO',
       field: 'user_flatno',
       sortable: true,
-      filter: true,
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 0.8,
       minWidth: 100
     },
@@ -99,7 +131,11 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
       headerName: 'CREATED BY',
       field: 'created_at',
       sortable: true,
-      filter: true,
+      filter: 'agDateColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
       flex: 1,
       minWidth: 130,
       cellRenderer: DateCellRenderer
@@ -141,6 +177,19 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
     onRefreshUsers();
     setShowAddUserPopup(false);
   };
+
+  // Filter users for mobile cards
+  const filteredUsers = users.filter(user => {
+    if (!searchText) return true;
+    const searchLower = searchText.toLowerCase();
+    return (
+      user.user_name?.toLowerCase().includes(searchLower) ||
+      user.user_email?.toLowerCase().includes(searchLower) ||
+      user.user_phone?.toLowerCase().includes(searchLower) ||
+      user.user_type?.toLowerCase().includes(searchLower) ||
+      user.user_flatno?.toLowerCase().includes(searchLower)
+    );
+  });
 
   if (loading) {
     return (
@@ -199,48 +248,72 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             className="pl-10"
           />
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Show:</span>
-          <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="text-sm text-gray-600">per page</span>
-        </div>
+        {!isMobile && (
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Show:</span>
+            <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+              <SelectTrigger className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-gray-600">per page</span>
+          </div>
+        )}
       </div>
 
-      {/* AG Grid Table */}
-      <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm bg-white">
-        <div 
-          className="ag-theme-alpine" 
-          style={{ height: '600px', width: '100%' }}
-        >
-          <AgGridReact
-            ref={gridRef}
-            rowData={users}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            pagination={true}
-            paginationPageSize={pageSize}
-            onGridReady={onGridReady}
-            suppressMovableColumns={false}
-            animateRows={true}
-            rowSelection="single"
-            suppressRowClickSelection={true}
-            headerHeight={50}
-            rowHeight={60}
-            suppressHorizontalScroll={false}
-            domLayout="normal"
-          />
+      {/* Mobile Cards or Desktop Table */}
+      {isMobile ? (
+        <div className="space-y-3">
+          {filteredUsers.length > 0 ? (
+            <div className="max-h-[70vh] overflow-y-auto px-1">
+              {filteredUsers.map(user => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onUserClick={onUserClick}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No users found</p>
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm bg-white">
+          <div 
+            className="ag-theme-alpine" 
+            style={{ height: '600px', width: '100%' }}
+          >
+            <AgGridReact
+              ref={gridRef}
+              rowData={users}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              paginationPageSize={pageSize}
+              onGridReady={onGridReady}
+              suppressMovableColumns={false}
+              animateRows={true}
+              rowSelection="single"
+              suppressRowClickSelection={true}
+              headerHeight={50}
+              rowHeight={60}
+              suppressHorizontalScroll={false}
+              domLayout="normal"
+              suppressMenuHide={true}
+              suppressColumnVirtualisation={true}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Add User Popup */}
       <AddUserPopup

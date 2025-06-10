@@ -83,43 +83,75 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
       headerName: 'ID', 
       field: 'id',
       width: 80,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'USER NAME', 
       field: 'drop_by_name',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'LOCATION NAME', 
       field: 'location_name',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'CREATED BY', 
       field: 'created_by_name',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'STATUS', 
       field: 'status',
       width: 120,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'CREATED AT', 
       field: 'created_at',
       width: 150,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agDateColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     {
       headerName: 'ACTION',
       width: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: false,
+      sortable: false,
     }
   ];
 
@@ -128,49 +160,86 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
       headerName: 'ID', 
       field: 'id',
       width: 80,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'POD ID', 
       field: 'pod_name',
       width: 120,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'USER PHONE', 
       field: 'user_phone',
       width: 130,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'DROP TIME', 
       field: 'drop_time',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agDateColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'PICKUP TIME', 
       field: 'pickup_time',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agDateColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'RTO PICKUP TIME', 
       field: 'rto_picktime',
       flex: 1,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agDateColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     { 
       headerName: 'STATUS', 
       field: 'reservation_status',
       width: 120,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: 'agTextColumnFilter',
+      filterParams: {
+        suppressAndOrCondition: true,
+        suppressFilterButton: true,
+      },
     },
     {
       headerName: 'ACTION',
       width: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
-      cellClass: 'vertical-center'
+      cellClass: 'vertical-center',
+      filter: false,
+      sortable: false,
     }
   ];
 
@@ -218,6 +287,8 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
               loading={loading}
               suppressRowClickSelection={true}
               rowSelection="single"
+              suppressMenuHide={true}
+              suppressColumnVirtualisation={true}
             />
           </div>
         ) : (
