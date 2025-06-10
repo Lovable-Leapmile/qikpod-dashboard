@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi, ColumnApi } from 'ag-grid-community';
+import { ColDef, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
 
   const onQuickFilterChanged = () => {
     if (gridApi) {
-      gridApi.setQuickFilter(searchText);
+      gridApi.setGridOption('quickFilterText', searchText);
     }
   };
 
