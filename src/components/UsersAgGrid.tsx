@@ -181,10 +181,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   }
   return <div className="space-y-6">
       {/* Sticky Back Button */}
-      <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Dashboard</span>
-      </Button>
+      
 
       {/* Table Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
