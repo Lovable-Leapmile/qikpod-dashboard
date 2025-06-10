@@ -227,12 +227,14 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
           rowData={users}
           pagination={true}
           paginationPageSize={pageSize}
+          paginationPageSizeSelector={[10, 25, 50, 100]}
           suppressHorizontalScroll={false}
           onGridReady={onGridReady}
           loading={loading}
           animateRows={true}
-          rowSelection="single"
+          rowSelection={{ mode: 'singleRow' }}
           suppressRowClickSelection={true}
+          quickFilterText={searchText}
           defaultColDef={{
             sortable: true,
             resizable: true,
