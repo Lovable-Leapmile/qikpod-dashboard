@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { MapPin, Package, Users, Calendar, Settings, HelpCircle, LogOut, Menu, X, Activity, ChevronDown } from 'lucide-react';
+import { MapPin, Package, Users, Calendar, Settings, HelpCircle, LogOut, Menu, X, Activity, ChevronDown, UserPlus, Bell } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { dashboardApi } from '@/services/dashboardApi';
@@ -102,7 +103,20 @@ const Dashboard = () => {
     name: 'Users & Network',
     icon: Users,
     active: currentView === 'usersNetwork',
-    onClick: () => handleNavigationClick('usersNetwork')
+    isDropdown: true,
+    items: [{
+      name: 'Users',
+      icon: Users,
+      onClick: () => handleNavigationClick('usersNetwork')
+    }, {
+      name: 'Partner',
+      icon: UserPlus,
+      onClick: () => {} // TODO: Implement partner functionality
+    }, {
+      name: 'Notification',
+      icon: Bell,
+      onClick: () => {} // TODO: Implement notification functionality
+    }]
   }, {
     name: 'System & Finance',
     icon: HelpCircle
@@ -308,7 +322,7 @@ const Dashboard = () => {
             {currentView === 'locations' && 'Operations / Locations Management'}
             {currentView === 'pods' && 'Operations / Pods Management'}
             {currentView === 'reservations' && 'Operations / Reservations Management'}
-            {currentView === 'usersNetwork' && 'Users & Network'}
+            {currentView === 'usersNetwork' && 'Users & Network / Users Management'}
             {currentView === 'locationDetail' && 'Operations / Location Details'}
             {currentView === 'podDetail' && 'Operations / Pod Details'}
             {currentView === 'reservationDetail' && 'Operations / Reservation Details'}
@@ -319,7 +333,7 @@ const Dashboard = () => {
             {currentView === 'locations' && 'Locations'}
             {currentView === 'pods' && 'Pods'}
             {currentView === 'reservations' && 'Reservations'}
-            {currentView === 'usersNetwork' && 'Users & Network'}
+            {currentView === 'usersNetwork' && 'Users'}
             {currentView === 'locationDetail' && 'Location Details'}
             {currentView === 'podDetail' && 'Pod Details'}
             {currentView === 'reservationDetail' && 'Reservation Details'}
