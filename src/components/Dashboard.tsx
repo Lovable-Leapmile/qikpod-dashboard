@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +13,9 @@ import PodDetail from './PodDetail';
 import Reservations from './Reservations';
 import ReservationDetail from './ReservationDetail';
 import AdhocReservationDetail from './AdhocReservationDetail';
+import UsersNetworkSection from './UsersNetworkSection';
 
-type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail';
+type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork';
 
 const Dashboard = () => {
   const {
@@ -100,7 +100,9 @@ const Dashboard = () => {
     }]
   }, {
     name: 'Users & Network',
-    icon: Users
+    icon: Users,
+    active: currentView === 'usersNetwork',
+    onClick: () => handleNavigationClick('usersNetwork')
   }, {
     name: 'System & Finance',
     icon: HelpCircle
@@ -178,6 +180,8 @@ const Dashboard = () => {
           onStandardReservationClick={handleStandardReservationClick}
           onAdhocReservationClick={handleAdhocReservationClick}
         />;
+      case 'usersNetwork':
+        return <UsersNetworkSection onBack={handleBackToOperations} />;
       case 'locationDetail':
         return selectedLocationId ? <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} /> : null;
       case 'podDetail':
@@ -304,6 +308,7 @@ const Dashboard = () => {
             {currentView === 'locations' && 'Operations / Locations Management'}
             {currentView === 'pods' && 'Operations / Pods Management'}
             {currentView === 'reservations' && 'Operations / Reservations Management'}
+            {currentView === 'usersNetwork' && 'Users & Network'}
             {currentView === 'locationDetail' && 'Operations / Location Details'}
             {currentView === 'podDetail' && 'Operations / Pod Details'}
             {currentView === 'reservationDetail' && 'Operations / Reservation Details'}
@@ -314,6 +319,7 @@ const Dashboard = () => {
             {currentView === 'locations' && 'Locations'}
             {currentView === 'pods' && 'Pods'}
             {currentView === 'reservations' && 'Reservations'}
+            {currentView === 'usersNetwork' && 'Users & Network'}
             {currentView === 'locationDetail' && 'Location Details'}
             {currentView === 'podDetail' && 'Pod Details'}
             {currentView === 'reservationDetail' && 'Reservation Details'}

@@ -1,4 +1,3 @@
-
 interface ApiResponse<T> {
   status: string;
   status_code: number;
@@ -86,6 +85,10 @@ interface User {
   id: number;
   user_name: string;
   user_phone: string;
+  user_type?: string;
+  user_email?: string;
+  user_flatno?: string;
+  created_at?: string;
 }
 
 interface Reservation {
@@ -110,6 +113,15 @@ interface AdhocReservation {
   pickup_time: string;
   rto_picktime: string;
   reservation_status: string;
+}
+
+interface CreateUserData {
+  user_name: string;
+  user_type: string;
+  user_phone: string;
+  user_email: string;
+  user_flatno: string;
+  location_address: string;
 }
 
 const BASE_URL = 'https://robotmanagerv1test.qikpod.com:8989';
@@ -172,7 +184,7 @@ export const dashboardApi = {
   },
 
   getUsers: async (token: string, numRecords: number = 100): Promise<User[]> => {
-    const response = await fetch(`${BASE_URL}/users/?user_phone=9360155586&num_records=${numRecords}`, {
+    const response = await fetch(`${BASE_URL}/users/?num_records=${numRecords}`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<User> = await response.json();
@@ -288,6 +300,21 @@ export const dashboardApi = {
       throw new Error('Failed to update pod FE');
     }
   },
+
+  // User CRUD APIs
+  createUser: async (token: string, userData: CreateUserData): Promise<void> => {
+    const response = await fetch(`${BASE_URL}/users/`, {
+      method: 'POST',
+      headers: {
+        ...getAuthHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to create user');
+    }
+  },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry, CreateUserData };
