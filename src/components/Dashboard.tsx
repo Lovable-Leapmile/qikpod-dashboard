@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,9 +14,7 @@ import Reservations from './Reservations';
 import ReservationDetail from './ReservationDetail';
 import AdhocReservationDetail from './AdhocReservationDetail';
 import UsersNetworkSection from './UsersNetworkSection';
-
 type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork';
-
 const Dashboard = () => {
   const {
     user,
@@ -37,22 +34,15 @@ const Dashboard = () => {
     reservations: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
-
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
   };
-
   const fetchDashboardStats = async () => {
     if (!accessToken) return;
     setStatsLoading(true);
     try {
-      const [locations, pods, users, reservations] = await Promise.all([
-        dashboardApi.getLocationsCount(accessToken),
-        dashboardApi.getPodsCount(accessToken),
-        dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken)
-      ]);
+      const [locations, pods, users, reservations] = await Promise.all([dashboardApi.getLocationsCount(accessToken), dashboardApi.getPodsCount(accessToken), dashboardApi.getUsersCount(accessToken), dashboardApi.getReservationsCount(accessToken)]);
       setDashboardStats({
         locations,
         pods,
@@ -65,17 +55,14 @@ const Dashboard = () => {
       setStatsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchDashboardStats();
   }, [accessToken]);
-
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
     setCurrentView(view);
     setIsMobileMenuOpen(false);
   };
-
   const navigationItems = [{
     name: 'Dashboard',
     icon: Activity,
@@ -124,7 +111,6 @@ const Dashboard = () => {
     name: 'Support',
     icon: HelpCircle
   }];
-
   const statsData = [{
     title: 'LOCATIONS',
     value: dashboardStats.locations.toString(),
@@ -142,46 +128,37 @@ const Dashboard = () => {
     value: dashboardStats.reservations.toString(),
     icon: Calendar
   }];
-
   const handleLocationClick = (locationId: number) => {
     setSelectedLocationId(locationId);
     setCurrentView('locationDetail');
   };
-
   const handlePodClick = (podId: number) => {
     setSelectedPodId(podId);
     setCurrentView('podDetail');
   };
-
   const handleStandardReservationClick = (reservationId: number) => {
     setSelectedReservationId(reservationId);
     setCurrentView('reservationDetail');
   };
-
   const handleAdhocReservationClick = (reservationId: number) => {
     setSelectedReservationId(reservationId);
     setCurrentView('adhocReservationDetail');
   };
-
   const handleBackToLocations = () => {
     setCurrentView('locations');
     setSelectedLocationId(null);
   };
-
   const handleBackToPods = () => {
     setCurrentView('pods');
     setSelectedPodId(null);
   };
-
   const handleBackToReservations = () => {
     setCurrentView('reservations');
     setSelectedReservationId(null);
   };
-
   const handleBackToOperations = () => {
     setCurrentView('dashboard');
   };
-
   const renderCurrentView = () => {
     switch (currentView) {
       case 'locations':
@@ -189,11 +166,7 @@ const Dashboard = () => {
       case 'pods':
         return <PodsTable onPodClick={handlePodClick} />;
       case 'reservations':
-        return <Reservations 
-          onBack={handleBackToOperations}
-          onStandardReservationClick={handleStandardReservationClick}
-          onAdhocReservationClick={handleAdhocReservationClick}
-        />;
+        return <Reservations onBack={handleBackToOperations} onStandardReservationClick={handleStandardReservationClick} onAdhocReservationClick={handleAdhocReservationClick} />;
       case 'usersNetwork':
         return <UsersNetworkSection onBack={handleBackToOperations} />;
       case 'locationDetail':
@@ -231,7 +204,6 @@ const Dashboard = () => {
           </div>;
     }
   };
-
   return <div className="min-h-screen bg-gray-50 w-full">
       {/* Fixed Top Navigation */}
       <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
@@ -240,11 +212,7 @@ const Dashboard = () => {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <img 
-                  src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
-                  alt="QikPod Logo"
-                  className="h-10 w-auto"
-                />
+                <img src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" alt="QikPod Logo" className="h-10 w-auto" />
               </div>
             </div>
 
@@ -269,7 +237,7 @@ const Dashboard = () => {
                       <item.icon className="inline-block w-4 h-4 mr-2" />
                       {item.name}
                     </button>)}
-                <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-10 text-black hover:bg-yellow-400 hover:text-black">
+                <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-10 text-black hover:text-black bg-gray-50">
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </Button>
@@ -367,5 +335,4 @@ const Dashboard = () => {
       </Dialog>
     </div>;
 };
-
 export default Dashboard;
