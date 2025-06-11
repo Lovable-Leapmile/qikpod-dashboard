@@ -124,6 +124,49 @@ interface CreateUserData {
   location_address: string;
 }
 
+interface UserDetail {
+  id: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  user_name: string;
+  user_phone: string;
+  user_email: string | null;
+  user_token: string | null;
+  user_otp: string;
+  user_otp_expiry_at: string;
+  user_address: string | null;
+  merchant_type: string;
+  user_type: string;
+  sub_type: string | null;
+  user_flatno: string | null;
+  user_uniqueid: string | null;
+  user_dropcode: string;
+  user_pickupcode: string;
+  user_credit_limit: string;
+  user_credit_used: string;
+  location_address?: string;
+}
+
+interface UserLocation {
+  id: number;
+  location_name: string;
+  location_address: string;
+  primary_name: string;
+  primary_contact: string;
+  location_pincode: string;
+}
+
+interface UserReservation {
+  id: number;
+  reservation_status: string;
+  created_at: string;
+  drop_by_name: string;
+  location_name: string;
+  created_by_name: string;
+  status: string;
+}
+
 const BASE_URL = 'https://robotmanagerv1test.qikpod.com:8989';
 const LOGS_BASE_URL = 'https://newproduction.qikpod.com:8988';
 
@@ -315,6 +358,31 @@ export const dashboardApi = {
       throw new Error('Failed to create user');
     }
   },
+
+  // User Detail APIs
+  getUserDetail: async (token: string, userId: number): Promise<UserDetail | null> => {
+    const response = await fetch(`${BASE_URL}/users/?record_id=${userId}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<UserDetail> = await response.json();
+    return data.records?.[0] || null;
+  },
+
+  getUserLocations: async (token: string, userId: number): Promise<UserLocation[]> => {
+    const response = await fetch(`${BASE_URL}/users/locations/?user_id=${userId}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<UserLocation> = await response.json();
+    return data.records || [];
+  },
+
+  getUserReservations: async (token: string, phoneNum: string): Promise<UserReservation[]> => {
+    const response = await fetch(`${BASE_URL}/reservations/?phone_num=${phoneNum}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<UserReservation> = await response.json();
+    return data.records || [];
+  },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry, CreateUserData };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation };

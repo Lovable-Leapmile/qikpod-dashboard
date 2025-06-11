@@ -168,7 +168,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
     return user.user_name?.toLowerCase().includes(searchLower) || user.user_email?.toLowerCase().includes(searchLower) || user.user_phone?.toLowerCase().includes(searchLower) || user.user_type?.toLowerCase().includes(searchLower) || user.user_flatno?.toLowerCase().includes(searchLower);
   });
   if (loading) {
-    return <div className="space-y-6">
+    return <div className="mx-6 my-6 space-y-6">
         <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
@@ -179,7 +179,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
         </div>
       </div>;
   }
-  return <div className="space-y-6">
+  return <div className="mx-6 my-6 space-y-6">
       {/* Back Button */}
       <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
         <ArrowLeft className="w-4 h-4" />
@@ -207,7 +207,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             </div> : <div className="text-center py-8">
               <p className="text-gray-500">No users found</p>
             </div>}
-        </div> : <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
+        </div> : <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
           {/* Table Title and Controls */}
           <div className="p-6 border-b border-gray-200 bg-gray-100">
             <div className="flex items-center justify-between mb-4">
@@ -246,7 +246,26 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
           <div className="ag-theme-alpine w-full" style={{
         height: '600px'
       }}>
-            <AgGridReact ref={gridRef} rowData={users} columnDefs={columnDefs} defaultColDef={defaultColDef} pagination={true} paginationPageSize={pageSize} onGridReady={onGridReady} suppressMovableColumns={false} animateRows={true} rowSelection="single" suppressRowClickSelection={true} headerHeight={50} rowHeight={60} suppressHorizontalScroll={false} domLayout="normal" suppressMenuHide={true} suppressColumnVirtualisation={true} />
+            <AgGridReact
+              ref={gridRef}
+              rowData={users}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              paginationPageSize={pageSize}
+              paginationPageSizeSelector={[10, 25, 50, 100]}
+              onGridReady={onGridReady}
+              suppressMovableColumns={false}
+              animateRows={true}
+              rowSelection={{ mode: 'singleRow' }}
+              suppressRowClickSelection={true}
+              headerHeight={50}
+              rowHeight={60}
+              suppressHorizontalScroll={false}
+              domLayout="normal"
+              suppressMenuHide={true}
+              suppressColumnVirtualisation={true}
+            />
           </div>
         </div>}
 

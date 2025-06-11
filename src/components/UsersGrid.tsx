@@ -87,7 +87,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="mx-6 my-6 space-y-4">
       <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
