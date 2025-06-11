@@ -244,7 +244,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
 
           {/* AG Grid Table */}
           <div className="p-6">
-            <div className="ag-theme-alpine w-full" style={{
+            <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
         height: '600px'
       }}>
               <AgGridReact
@@ -258,7 +258,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
                 onGridReady={onGridReady}
                 suppressMovableColumns={false}
                 animateRows={true}
-                rowSelection={{ mode: 'singleRow' }}
+                rowSelection={null}
                 suppressRowClickSelection={true}
                 headerHeight={50}
                 rowHeight={60}

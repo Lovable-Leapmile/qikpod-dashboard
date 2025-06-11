@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,25 +7,29 @@ import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, UserDetail as UserDetailType, UserLocation, UserReservation } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
+import EditUserPopup from './EditUserPopup';
+import RemoveUserPopup from './RemoveUserPopup';
+import DeleteUserPopup from './DeleteUserPopup';
+
 interface UserDetailProps {
   userId: number;
   onBack: () => void;
 }
+
 const UserDetail: React.FC<UserDetailProps> = ({
   userId,
   onBack
 }) => {
-  const {
-    accessToken
-  } = useAuth();
-  const {
-    toast
-  } = useToast();
+  const { accessToken } = useAuth();
+  const { toast } = useToast();
   const [userDetail, setUserDetail] = useState<UserDetailType | null>(null);
   const [userLocations, setUserLocations] = useState<UserLocation[]>([]);
   const [userReservations, setUserReservations] = useState<UserReservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showRemovePopup, setShowRemovePopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -35,6 +40,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (!accessToken) return;
@@ -66,16 +72,41 @@ const UserDetail: React.FC<UserDetailProps> = ({
     };
     fetchUserDetails();
   }, [userId, accessToken, toast]);
+
   const formatValue = (value: any) => {
     if (value === null || value === undefined || value === '') {
       return 'N/A';
     }
     return value.toString();
   };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
   };
+
+  const handleEditSuccess = () => {
+    // Refresh user details after successful edit
+    const fetchUserDetails = async () => {
+      if (!accessToken) return;
+      try {
+        const userDetailData = await dashboardApi.getUserDetail(accessToken, userId);
+        setUserDetail(userDetailData);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+    fetchUserDetails();
+  };
+
+  const handleRemoveSuccess = () => {
+    onBack(); // Go back to users list after successful removal
+  };
+
+  const handleDeleteSuccess = () => {
+    onBack(); // Go back to users list after successful deletion
+  };
+
   if (loading) {
     return <div className="p-6 space-y-6">
         <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
@@ -87,6 +118,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
         </div>
       </div>;
   }
+
   if (!userDetail) {
     return <div className="p-6 space-y-6">
         <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
@@ -96,6 +128,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
         <NoDataIllustration title="User not found" description="The requested user could not be found." />
       </div>;
   }
+
   return <div className="p-6 space-y-6">
       {/* Back Button */}
       <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
@@ -118,65 +151,90 @@ const UserDetail: React.FC<UserDetailProps> = ({
 
             {/* User Information */}
             <div className="flex-grow">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 User Details: {userDetail.user_name}
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Name:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_name)}</p>
+              {/* Display information in rows */}
+              <div className="space-y-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Name:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_name)}</p>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Phone:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_phone)}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Phone:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_phone)}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Email:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_email)}</p>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Type:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_type)}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Email:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_email)}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Flat No:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_flatno)}</p>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Status:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.status)}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Type:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_type)}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Credit Limit:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_limit)}</p>
+                  </div>
+                  <div className="flex">
+                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Credit Used:</span>
+                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_used)}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Flat No:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_flatno)}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Status:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.status)}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Credit Limit:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_limit)}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Credit Used:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_used)}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Created:</span>
+                
+                <div className="flex">
+                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Created:</span>
                   <p className="text-gray-900 font-medium">{formatDate(userDetail.created_at)}</p>
                 </div>
-              </div>
-
-              <div className="mb-6">
-                <span className="text-sm font-medium text-gray-600 uppercase tracking-wider">Address:</span>
-                <p className="text-gray-900 font-medium">{formatValue(userDetail.user_address)}</p>
+                
+                <div className="flex">
+                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Address:</span>
+                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_address)}</p>
+                </div>
               </div>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                <Button variant="outline" className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center space-x-2"
+                  onClick={() => setShowEditPopup(true)}
+                >
                   <Edit className="w-4 h-4" />
                   <span>Edit</span>
                 </Button>
-                <Button variant="outline" className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center space-x-2"
+                  onClick={() => setShowRemovePopup(true)}
+                >
                   <Eye className="w-4 h-4" />
                   <span>Remove</span>
                 </Button>
-                <Button variant="destructive" className="flex items-center space-x-2">
+                <Button 
+                  variant="destructive" 
+                  className="flex items-center space-x-2"
+                  onClick={() => setShowDeletePopup(true)}
+                >
                   <Trash2 className="w-4 h-4" />
                   <span>Delete</span>
                 </Button>
@@ -212,8 +270,6 @@ const UserDetail: React.FC<UserDetailProps> = ({
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Name</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Address</th>
-                      
-                      
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Pincode</th>
                     </tr>
                   </thead>
@@ -221,8 +277,6 @@ const UserDetail: React.FC<UserDetailProps> = ({
                     {userLocations.map((location, index) => <tr key={location.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50/50 transition-colors`}>
                         <td className="px-6 py-4 text-sm text-gray-900 font-medium">{location.location_name}</td>
                         <td className="px-6 py-4 text-sm text-gray-700">{location.location_address}</td>
-                        
-                        
                         <td className="px-6 py-4 text-sm text-gray-700">{location.location_pincode}</td>
                       </tr>)}
                   </tbody>
@@ -281,6 +335,31 @@ const UserDetail: React.FC<UserDetailProps> = ({
               </div>}
           </div> : <NoDataIllustration title="No reservations found" description="This user has no reservations." />}
       </div>
+
+      {/* Popups */}
+      {userDetail && (
+        <>
+          <EditUserPopup 
+            open={showEditPopup} 
+            onOpenChange={setShowEditPopup} 
+            user={userDetail}
+            onSuccess={handleEditSuccess}
+          />
+          <RemoveUserPopup 
+            open={showRemovePopup} 
+            onOpenChange={setShowRemovePopup} 
+            user={userDetail}
+            onSuccess={handleRemoveSuccess}
+          />
+          <DeleteUserPopup 
+            open={showDeletePopup} 
+            onOpenChange={setShowDeletePopup} 
+            user={userDetail}
+            onSuccess={handleDeleteSuccess}
+          />
+        </>
+      )}
     </div>;
 };
+
 export default UserDetail;
