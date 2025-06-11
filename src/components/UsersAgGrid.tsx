@@ -243,29 +243,31 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
           </div>
 
           {/* AG Grid Table */}
-          <div className="ag-theme-alpine w-full" style={{
+          <div className="p-6">
+            <div className="ag-theme-alpine w-full" style={{
         height: '600px'
       }}>
-            <AgGridReact
-              ref={gridRef}
-              rowData={users}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              paginationPageSize={pageSize}
-              paginationPageSizeSelector={[10, 25, 50, 100]}
-              onGridReady={onGridReady}
-              suppressMovableColumns={false}
-              animateRows={true}
-              rowSelection={{ mode: 'singleRow' }}
-              suppressRowClickSelection={true}
-              headerHeight={50}
-              rowHeight={60}
-              suppressHorizontalScroll={false}
-              domLayout="normal"
-              suppressMenuHide={true}
-              suppressColumnVirtualisation={true}
-            />
+              <AgGridReact
+                ref={gridRef}
+                rowData={users}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                paginationPageSize={pageSize}
+                paginationPageSizeSelector={[10, 25, 50, 100]}
+                onGridReady={onGridReady}
+                suppressMovableColumns={false}
+                animateRows={true}
+                rowSelection={{ mode: 'singleRow' }}
+                suppressRowClickSelection={true}
+                headerHeight={50}
+                rowHeight={60}
+                suppressHorizontalScroll={false}
+                domLayout="normal"
+                suppressMenuHide={true}
+                suppressColumnVirtualisation={true}
+              />
+            </div>
           </div>
         </div>}
 
