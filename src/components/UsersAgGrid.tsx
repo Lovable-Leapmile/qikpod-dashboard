@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
@@ -321,7 +320,6 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
                 domLayout="normal"
                 suppressMenuHide={true}
                 suppressColumnVirtualisation={true}
-                suppressRowSelection={true}
               />
             </div>
           </div>
