@@ -87,7 +87,7 @@
 }
 
 .ag-theme-alpine .ag-header-cell {
-  border-right: none;
+  border-right: none !important;
   border-bottom: 1px solid #e5e7eb;
   font-weight: 600;
   color: #6b7280;
@@ -97,7 +97,7 @@
 }
 
 .ag-theme-alpine .ag-cell {
-  border-right: none;
+  border-right: none !important;
   border-bottom: none;
   display: flex;
   align-items: center;
@@ -156,4 +156,17 @@
 
 .ag-theme-alpine .ag-header-cell-filtered::after {
   display: none;
+}
+
+/* Hide all vertical lines in AG Grid */
+.ag-theme-alpine .ag-ltr .ag-cell {
+  border-right: none !important;
+}
+
+.ag-theme-alpine .ag-ltr .ag-header-cell {
+  border-right: none !important;
+}
+
+.ag-theme-alpine .ag-body-horizontal-scroll {
+  border-right: none !important;
 }
