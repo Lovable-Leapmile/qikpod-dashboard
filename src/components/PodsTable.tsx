@@ -246,11 +246,11 @@ const PodsTable: React.FC<PodsTableProps> = ({
             <div className="text-center space-y-4">
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-2">Total Pods</p>
-                <p className="text-4xl font-bold text-gray-900">0</p>
+                <p className="text-4xl text-gray-900 font-thin">0</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-2">Field Pods</p>
-                <p className="text-4xl font-bold text-gray-900">0</p>
+                <p className="text-4xl text-gray-900 font-thin">0</p>
               </div>
             </div>
 
