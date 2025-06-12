@@ -14,11 +14,9 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
-
 interface PodsTableProps {
   onPodClick: (id: number) => void;
 }
-
 const PodCard: React.FC<{
   pod: Pod;
   onPodClick: (id: number) => void;
@@ -68,7 +66,6 @@ const PodCard: React.FC<{
       </div>
     </CardContent>
   </Card>;
-
 const PodsTable: React.FC<PodsTableProps> = ({
   onPodClick
 }) => {
@@ -91,7 +88,6 @@ const PodsTable: React.FC<PodsTableProps> = ({
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
   const ActionCellRenderer = ({
     data
   }: {
@@ -101,7 +97,6 @@ const PodsTable: React.FC<PodsTableProps> = ({
         <Eye className="w-4 h-4" />
       </Button>
     </div>;
-
   const StatusCellRenderer = ({
     value
   }: {
@@ -111,7 +106,6 @@ const PodsTable: React.FC<PodsTableProps> = ({
         {value}
       </span>
     </div>;
-
   const PowerStatusCellRenderer = ({
     value
   }: {
@@ -121,64 +115,60 @@ const PodsTable: React.FC<PodsTableProps> = ({
         {value}
       </span>
     </div>;
-
-  const columnDefs: ColDef[] = [
-    {
-      field: 'id',
-      headerName: 'POD ID',
-      width: 120,
-      sortable: true,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'pod_name',
-      headerName: 'POD NAME',
-      width: 200,
-      sortable: true,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'pod_power_status',
-      headerName: 'POWER STATUS',
-      width: 150,
-      sortable: true,
-      cellRenderer: PowerStatusCellRenderer,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'status',
-      headerName: 'STATUS',
-      width: 130,
-      sortable: true,
-      cellRenderer: StatusCellRenderer,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'pod_health',
-      headerName: 'HEALTH',
-      width: 150,
-      sortable: true,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'pod_numtotaldoors',
-      headerName: 'TOTAL DOORS',
-      width: 140,
-      sortable: true,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'location_name',
-      headerName: 'LOCATION NAME',
-      flex: 1,
-      minWidth: 200,
-      sortable: true,
-      cellClass: 'vertical-center'
-    }, {
-      field: 'action',
-      headerName: 'ACTION',
-      width: 120,
-      cellRenderer: ActionCellRenderer,
-      sortable: false,
-      filter: false,
-      cellClass: 'vertical-center'
-    }
-  ];
-
+  const columnDefs: ColDef[] = [{
+    field: 'id',
+    headerName: 'POD ID',
+    width: 120,
+    sortable: true,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'pod_name',
+    headerName: 'POD NAME',
+    width: 200,
+    sortable: true,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'pod_power_status',
+    headerName: 'POWER STATUS',
+    width: 150,
+    sortable: true,
+    cellRenderer: PowerStatusCellRenderer,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'status',
+    headerName: 'STATUS',
+    width: 130,
+    sortable: true,
+    cellRenderer: StatusCellRenderer,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'pod_health',
+    headerName: 'HEALTH',
+    width: 150,
+    sortable: true,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'pod_numtotaldoors',
+    headerName: 'TOTAL DOORS',
+    width: 140,
+    sortable: true,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'location_name',
+    headerName: 'LOCATION NAME',
+    flex: 1,
+    minWidth: 200,
+    sortable: true,
+    cellClass: 'vertical-center'
+  }, {
+    field: 'action',
+    headerName: 'ACTION',
+    width: 120,
+    cellRenderer: ActionCellRenderer,
+    sortable: false,
+    filter: false,
+    cellClass: 'vertical-center'
+  }];
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -194,21 +184,17 @@ const PodsTable: React.FC<PodsTableProps> = ({
       setLoading(false);
     }
   }, [accessToken, recordCount]);
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
   const onGridReady = (params: GridReadyEvent) => {
     setGridApi(params.api);
   };
-
   useEffect(() => {
     if (gridApi) {
       gridApi.setGridOption('quickFilterText', searchText);
     }
   }, [searchText, gridApi]);
-
   const defaultColDef = {
     resizable: true,
     sortable: true,
@@ -222,9 +208,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
     const searchLower = searchText.toLowerCase();
     return pod.pod_name?.toLowerCase().includes(searchLower) || pod.location_name?.toLowerCase().includes(searchLower) || pod.status?.toLowerCase().includes(searchLower) || pod.pod_power_status?.toLowerCase().includes(searchLower) || pod.pod_health?.toLowerCase().includes(searchLower) || pod.id.toString().includes(searchLower);
   });
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Pod Dashboard Manager */}
       <Card className="bg-white shadow-sm rounded-xl">
         <CardHeader className="pb-4 pt-6 bg-gray-50 rounded-t-xl">
@@ -242,19 +226,19 @@ const PodsTable: React.FC<PodsTableProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Reservation Pods</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Ignore Pods</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Unregistered</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Certified</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
             </div>
 
@@ -286,11 +270,11 @@ const PodsTable: React.FC<PodsTableProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Active</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">Inactive</span>
-                <span className="text-sm text-gray-600">0</span>
+                <span className="text-sm text-gray-600 mx-[12px]">0</span>
               </div>
             </div>
           </div>
@@ -324,8 +308,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          {isMobile ? (
-            <div className="space-y-3">
+          {isMobile ? <div className="space-y-3">
               {loading ? <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FDDC4E] mx-auto"></div>
                   <p className="text-gray-500 mt-2">Loading pods...</p>
@@ -334,26 +317,21 @@ const PodsTable: React.FC<PodsTableProps> = ({
                 </div> : <div className="text-center py-8">
                   <p className="text-gray-500">No pods found</p>
                 </div>}
-            </div>
-          ) : (
-            <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
-              height: 500,
-              '--ag-header-background-color': '#FFFBEB',
-              '--ag-row-hover-color': '#FEF3C7',
-              '--ag-odd-row-background-color': '#FEFEFE',
-              '--ag-even-row-background-color': '#F9F9F9',
-              '--ag-header-cell-border': '1px solid #E5E7EB',
-              '--ag-row-border-color': '#E5E7EB',
-              '--ag-border-radius': '0.5rem',
-              '--ag-selected-row-background-color': 'transparent'
-            } as React.CSSProperties}>
+            </div> : <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
+          height: 500,
+          '--ag-header-background-color': '#FFFBEB',
+          '--ag-row-hover-color': '#FEF3C7',
+          '--ag-odd-row-background-color': '#FEFEFE',
+          '--ag-even-row-background-color': '#F9F9F9',
+          '--ag-header-cell-border': '1px solid #E5E7EB',
+          '--ag-row-border-color': '#E5E7EB',
+          '--ag-border-radius': '0.5rem',
+          '--ag-selected-row-background-color': 'transparent'
+        } as React.CSSProperties}>
               <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={60} headerHeight={50} pagination={true} paginationPageSize={10} paginationPageSizeSelector={[10, 25, 50]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default PodsTable;
