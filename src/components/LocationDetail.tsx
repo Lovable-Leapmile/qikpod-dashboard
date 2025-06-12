@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,21 +9,21 @@ import AssignFeBdPopup from './AssignFeBdPopup';
 import CreateUserPopup from './CreateUserPopup';
 import PaymentModePopup from './PaymentModePopup';
 import EditLocationPopup from './EditLocationPopup';
-
 interface LocationDetailProps {
   locationId: number;
   onBack: () => void;
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
-
-const LocationDetail: React.FC<LocationDetailProps> = ({ 
-  locationId, 
+const LocationDetail: React.FC<LocationDetailProps> = ({
+  locationId,
   onBack,
   onStandardReservationClick,
-  onAdhocReservationClick 
+  onAdhocReservationClick
 }) => {
-  const { accessToken } = useAuth();
+  const {
+    accessToken
+  } = useAuth();
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHiddenSection, setShowHiddenSection] = useState(false);
@@ -32,7 +31,6 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
   const [showPaymentModePopup, setShowPaymentModePopup] = useState(false);
   const [showEditLocationPopup, setShowEditLocationPopup] = useState(false);
-
   const fetchLocationDetail = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -45,31 +43,22 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchLocationDetail();
   }, [locationId, accessToken]);
-
   const formatValue = (value: any): string => {
     if (value === null || value === undefined || value === 'null' || value === '') {
       return 'N/A';
     }
     return String(value);
   };
-
   const handlePopupSuccess = () => {
     fetchLocationDetail();
   };
-
   if (loading) {
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="flex items-center space-x-2"
-          >
+          <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Locations</span>
           </Button>
@@ -77,19 +66,12 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Loading location details...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!locationDetail) {
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="flex items-center space-x-2"
-          >
+          <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Locations</span>
           </Button>
@@ -97,19 +79,12 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Location not found</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Navigation */}
       <div className="flex items-center space-x-4">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          className="flex items-center space-x-2"
-        >
+        <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Locations</span>
         </Button>
@@ -120,11 +95,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <CardHeader className="pb-6 pt-8">
           <div className="flex items-start space-x-4">
             <div className="w-32 h-40 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0">
-              <img 
-                src="/lovable-uploads/10ae1ee2-d8e4-4863-8041-f983e231b5a3.png" 
-                alt="Qikpod Logo"
-                className="w-20 h-auto"
-              />
+              <img alt="Qikpod Logo" src="/lovable-uploads/cb0256d6-2513-4ed8-af3c-637c2631975d.png" className="w-10 h-auto object-fill" />
             </div>
             <div className="flex-1">
               <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
@@ -172,32 +143,16 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <CardContent className="pb-8">
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
-            <Button 
-              variant="outline" 
-              className="rounded-lg"
-              onClick={() => setShowAssignFeBdPopup(true)}
-            >
+            <Button variant="outline" className="rounded-lg" onClick={() => setShowAssignFeBdPopup(true)}>
               Assign FE/BD
             </Button>
-            <Button 
-              variant="outline" 
-              className="rounded-lg"
-              onClick={() => setShowCreateUserPopup(true)}
-            >
+            <Button variant="outline" className="rounded-lg" onClick={() => setShowCreateUserPopup(true)}>
               Create User
             </Button>
-            <Button 
-              variant="outline" 
-              className="rounded-lg"
-              onClick={() => setShowPaymentModePopup(true)}
-            >
+            <Button variant="outline" className="rounded-lg" onClick={() => setShowPaymentModePopup(true)}>
               Payment Mode
             </Button>
-            <Button 
-              variant="outline" 
-              className="rounded-lg"
-              onClick={() => setShowEditLocationPopup(true)}
-            >
+            <Button variant="outline" className="rounded-lg" onClick={() => setShowEditLocationPopup(true)}>
               Edit
             </Button>
             <Button variant="destructive" className="rounded-lg">
@@ -207,19 +162,14 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
           {/* Hide/Show Toggle */}
           <div className="mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowHiddenSection(!showHiddenSection)}
-              className="flex items-center space-x-2 text-gray-600"
-            >
+            <Button variant="ghost" onClick={() => setShowHiddenSection(!showHiddenSection)} className="flex items-center space-x-2 text-gray-600">
               {showHiddenSection ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               <span>{showHiddenSection ? 'Hide' : 'Show More Details'}</span>
             </Button>
           </div>
 
           {/* Additional Details (Hidden by default) */}
-          {showHiddenSection && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm border-t pt-6">
+          {showHiddenSection && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm border-t pt-6">
               <div>
                 <span className="text-gray-600 font-medium">STATUS:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.status)}</span>
@@ -276,54 +226,25 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                 <span className="text-gray-600 font-medium">UPDATED AT:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.updated_at)}</span>
               </div>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
 
       {/* Reservations Tables */}
-      <LocationReservationsTable 
-        locationId={locationId}
-        onStandardReservationClick={onStandardReservationClick}
-        onAdhocReservationClick={onAdhocReservationClick}
-      />
+      <LocationReservationsTable locationId={locationId} onStandardReservationClick={onStandardReservationClick} onAdhocReservationClick={onAdhocReservationClick} />
 
       {/* Popups */}
-      <AssignFeBdPopup
-        open={showAssignFeBdPopup}
-        onOpenChange={setShowAssignFeBdPopup}
-        locationId={locationId}
-        initialValues={{
-          primary_fe: locationDetail.primary_fe,
-          secondary_fe: locationDetail.secondary_fe,
-          primary_bd: locationDetail.primary_bd,
-        }}
-        onSuccess={handlePopupSuccess}
-      />
+      <AssignFeBdPopup open={showAssignFeBdPopup} onOpenChange={setShowAssignFeBdPopup} locationId={locationId} initialValues={{
+      primary_fe: locationDetail.primary_fe,
+      secondary_fe: locationDetail.secondary_fe,
+      primary_bd: locationDetail.primary_bd
+    }} onSuccess={handlePopupSuccess} />
 
-      <CreateUserPopup
-        open={showCreateUserPopup}
-        onOpenChange={setShowCreateUserPopup}
-        locationId={locationId}
-        onSuccess={handlePopupSuccess}
-      />
+      <CreateUserPopup open={showCreateUserPopup} onOpenChange={setShowCreateUserPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
 
-      <PaymentModePopup
-        open={showPaymentModePopup}
-        onOpenChange={setShowPaymentModePopup}
-        locationId={locationId}
-        initialValue={locationDetail.payment_mode}
-        onSuccess={handlePopupSuccess}
-      />
+      <PaymentModePopup open={showPaymentModePopup} onOpenChange={setShowPaymentModePopup} locationId={locationId} initialValue={locationDetail.payment_mode} onSuccess={handlePopupSuccess} />
 
-      <EditLocationPopup
-        open={showEditLocationPopup}
-        onOpenChange={setShowEditLocationPopup}
-        locationId={locationId}
-        onSuccess={handlePopupSuccess}
-      />
-    </div>
-  );
+      <EditLocationPopup open={showEditLocationPopup} onOpenChange={setShowEditLocationPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
+    </div>;
 };
-
 export default LocationDetail;
