@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Send, X, Mail } from 'lucide-react';
+import { Send, X, Mail, Copy, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SupportPopupProps {
@@ -23,6 +23,7 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [showEmailTemplate, setShowEmailTemplate] = useState(false);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,6 +45,45 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
       }
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const generateEmailContent = () => {
+    const subject = `Support Request from ${formData.name} (${formData.fromEmail})`;
+    const emailBody = `Hi Support Team,
+
+I am reaching out for assistance with the following:
+
+From: ${formData.fromEmail}
+Name: ${formData.name}
+Phone: ${formData.phone}
+
+Details:
+${formData.details}
+
+Submitted on: ${new Date().toLocaleString()}
+
+Please get back to me at your earliest convenience.
+
+Thank you!`;
+
+    return { subject, emailBody };
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied to Clipboard",
+        description: "Email content has been copied to your clipboard.",
+      });
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      toast({
+        title: "Copy Failed",
+        description: "Please manually copy the email content.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -72,125 +112,163 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      // Create email content
-      const emailBody = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            .support-card {
-              max-width: 600px;
-              margin: 20px auto;
-              background: #ffffff;
-              border-radius: 12px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-              border: 2px solid #FDDC4E;
-              overflow: hidden;
-            }
-            .header {
-              background: linear-gradient(135deg, #FDDC4E 0%, #F5D020 100%);
-              padding: 24px;
-              text-align: center;
-            }
-            .header h1 {
-              margin: 0;
-              color: #000;
-              font-size: 24px;
-              font-weight: bold;
-            }
-            .content {
-              padding: 24px;
-            }
-            .field {
-              margin-bottom: 16px;
-              padding: 16px;
-              background: #f8f9fa;
-              border-radius: 8px;
-              border-left: 4px solid #FDDC4E;
-            }
-            .field-label {
-              font-weight: bold;
-              color: #333;
-              margin-bottom: 8px;
-              font-size: 14px;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-            }
-            .field-value {
-              color: #555;
-              font-size: 16px;
-              line-height: 1.5;
-            }
-            .footer {
-              padding: 16px 24px;
-              background: #f8f9fa;
-              text-align: center;
-              color: #666;
-              font-size: 12px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="support-card">
-            <div class="header">
-              <h1>🎧 Support Request</h1>
-            </div>
-            <div class="content">
-              <div class="field">
-                <div class="field-label">📧 From Email</div>
-                <div class="field-value">${formData.fromEmail}</div>
-              </div>
-              <div class="field">
-                <div class="field-label">👤 Contact Name</div>
-                <div class="field-value">${formData.name}</div>
-              </div>
-              <div class="field">
-                <div class="field-label">📞 Phone Number</div>
-                <div class="field-value">${formData.phone}</div>
-              </div>
-              <div class="field">
-                <div class="field-label">📝 Support Details</div>
-                <div class="field-value">${formData.details}</div>
-              </div>
-            </div>
-            <div class="footer">
-              Submitted on ${new Date().toLocaleString()}
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
+      const { subject, emailBody } = generateEmailContent();
+      
+      // Try to open email client as primary method
+      const mailtoLink = `mailto:magesh.thalamurugan@qikpod.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+      
+      // Create a temporary link and click it
+      const link = document.createElement('a');
+      link.href = mailtoLink;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      // Create mailto link with from address in the subject and body
-      const subject = `Support Request from ${formData.name} (${formData.fromEmail})`;
-      const plainTextBody = `From: ${formData.fromEmail}\nName: ${formData.name}\nPhone: ${formData.phone}\nDetails: ${formData.details}\n\nSubmitted on: ${new Date().toLocaleString()}`;
-      
-      const mailtoLink = `mailto:magesh.thalamurugan@qikpod.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainTextBody)}`;
-      
-      // Open email client
-      window.location.href = mailtoLink;
+      // Show email template as backup
+      setShowEmailTemplate(true);
 
       toast({
-        title: "Support Request Sent",
-        description: "Your support request has been sent successfully. We'll get back to you soon!",
+        title: "Email Client Opened",
+        description: "If your email client didn't open, you can copy the email content below and send it manually.",
       });
 
-      // Reset form and close popup
-      setFormData({ fromEmail: '', name: '', phone: '', details: '' });
-      setEmailError('');
-      onClose();
-
     } catch (error) {
-      console.error('Error sending support request:', error);
+      console.error('Error opening email client:', error);
+      setShowEmailTemplate(true);
       toast({
-        title: "Error",
-        description: "Failed to send support request. Please try again.",
+        title: "Email Client Not Available",
+        description: "Please copy the email content below and send it manually to our support team.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleBackupEmailSend = () => {
+    const { subject, emailBody } = generateEmailContent();
+    
+    // Try Gmail web interface
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=magesh.thalamurugan@qikpod.com&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(gmailUrl, '_blank');
+    
+    toast({
+      title: "Gmail Opened",
+      description: "Gmail web interface has been opened in a new tab.",
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({ fromEmail: '', name: '', phone: '', details: '' });
+    setEmailError('');
+    setShowEmailTemplate(false);
+    onClose();
+  };
+
+  if (showEmailTemplate) {
+    const { subject, emailBody } = generateEmailContent();
+    
+    return (
+      <Dialog open={isOpen} onOpenChange={resetForm}>
+        <DialogContent className="sm:max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
+              📧 Copy Email Content
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm text-yellow-800">
+                <strong>Instructions:</strong> Copy the email content below and send it manually to <strong>magesh.thalamurugan@qikpod.com</strong>
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  To: magesh.thalamurugan@qikpod.com
+                </Label>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Subject:
+                </Label>
+                <div className="relative">
+                  <Input
+                    value={subject}
+                    readOnly
+                    className="bg-gray-50 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1 h-8 w-8 p-0"
+                    onClick={() => copyToClipboard(subject)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Email Body:
+                </Label>
+                <div className="relative">
+                  <Textarea
+                    value={emailBody}
+                    readOnly
+                    className="bg-gray-50 min-h-[200px] pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-1 top-1 h-8 w-8 p-0"
+                    onClick={() => copyToClipboard(emailBody)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                className="flex-1"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Close
+              </Button>
+              <Button
+                type="button"
+                onClick={() => copyToClipboard(`Subject: ${subject}\n\n${emailBody}`)}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy All
+              </Button>
+              <Button
+                type="button"
+                onClick={handleBackupEmailSend}
+                className="flex-1 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open Gmail
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
