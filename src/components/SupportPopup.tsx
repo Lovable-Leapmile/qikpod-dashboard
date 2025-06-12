@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Send, X } from 'lucide-react';
+import { Send, X, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SupportPopupProps {
@@ -16,17 +16,32 @@ interface SupportPopupProps {
 const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
+    fromEmail: '',
     name: '',
     phone: '',
     details: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleInputChange = (field: string, value: string) => {
     if (field === 'phone') {
       // Only allow numeric input for phone
       const numericValue = value.replace(/[^0-9]/g, '');
       setFormData(prev => ({ ...prev, [field]: numericValue }));
+    } else if (field === 'fromEmail') {
+      setFormData(prev => ({ ...prev, [field]: value }));
+      // Validate email on change
+      if (value && !validateEmail(value)) {
+        setEmailError('Please enter a valid email address');
+      } else {
+        setEmailError('');
+      }
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
@@ -35,10 +50,20 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.phone.trim() || !formData.details.trim()) {
+    if (!formData.fromEmail.trim() || !formData.name.trim() || !formData.phone.trim() || !formData.details.trim()) {
       toast({
         title: "Validation Error",
         description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!validateEmail(formData.fromEmail)) {
+      setEmailError('Please enter a valid email address');
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
         variant: "destructive",
       });
       return;
@@ -112,6 +137,10 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
             </div>
             <div class="content">
               <div class="field">
+                <div class="field-label">📧 From Email</div>
+                <div class="field-value">${formData.fromEmail}</div>
+              </div>
+              <div class="field">
                 <div class="field-label">👤 Contact Name</div>
                 <div class="field-value">${formData.name}</div>
               </div>
@@ -132,9 +161,11 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
         </html>
       `;
 
-      // Create mailto link
-      const subject = `Support Request from ${formData.name}`;
-      const mailtoLink = `mailto:magesh.thalamurugan@qikpod.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Please view this support request in an HTML-capable email client.\n\nName: ${formData.name}\nPhone: ${formData.phone}\nDetails: ${formData.details}`)}`;
+      // Create mailto link with from address in the subject and body
+      const subject = `Support Request from ${formData.name} (${formData.fromEmail})`;
+      const plainTextBody = `From: ${formData.fromEmail}\nName: ${formData.name}\nPhone: ${formData.phone}\nDetails: ${formData.details}\n\nSubmitted on: ${new Date().toLocaleString()}`;
+      
+      const mailtoLink = `mailto:magesh.thalamurugan@qikpod.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainTextBody)}`;
       
       // Open email client
       window.location.href = mailtoLink;
@@ -145,7 +176,8 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
       });
 
       // Reset form and close popup
-      setFormData({ name: '', phone: '', details: '' });
+      setFormData({ fromEmail: '', name: '', phone: '', details: '' });
+      setEmailError('');
       onClose();
 
     } catch (error) {
@@ -170,6 +202,27 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="fromEmail" className="text-sm font-medium text-gray-700">
+              From Address
+            </Label>
+            <div className="relative">
+              <Input
+                id="fromEmail"
+                type="email"
+                value={formData.fromEmail}
+                onChange={(e) => handleInputChange('fromEmail', e.target.value)}
+                placeholder="Enter your email address"
+                className={`focus:ring-2 focus:ring-[#FDDC4E] focus:border-[#FDDC4E] ${emailError ? 'border-red-500' : ''}`}
+                required
+              />
+              <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            </div>
+            {emailError && (
+              <p className="text-sm text-red-500">{emailError}</p>
+            )}
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium text-gray-700">
               Name
@@ -226,7 +279,7 @@ const SupportPopup: React.FC<SupportPopupProps> = ({ isOpen, onClose }) => {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!emailError}
               className="flex-1 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
             >
               <Send className="w-4 h-4 mr-2" />
