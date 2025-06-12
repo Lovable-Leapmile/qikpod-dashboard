@@ -211,7 +211,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
   return <div className="space-y-6">
       {/* Pod Dashboard Manager */}
       <Card className="bg-white shadow-sm rounded-xl">
-        <CardHeader className="pb-4 pt-6 bg-gray-50 rounded-t-xl">
+        <CardHeader className="pb-4 pt-6 rounded-t-xl bg-gray-100">
           <CardTitle className="text-xl font-semibold text-gray-900 text-center">
             Pod Dashboard Manager
           </CardTitle>
