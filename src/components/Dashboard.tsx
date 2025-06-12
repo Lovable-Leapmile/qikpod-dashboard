@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { MapPin, Package, Users, Calendar, Settings, HelpCircle, LogOut, Menu, X, Activity, ChevronDown, UserPlus, Bell } from 'lucide-react';
+import { MapPin, Package, Users, Calendar, Settings, HelpCircle, LogOut, Menu, X, Activity, ChevronDown, UserPlus, Bell, CreditCard, FileText, Map } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { dashboardApi } from '@/services/dashboardApi';
@@ -115,7 +115,21 @@ const Dashboard = () => {
     }]
   }, {
     name: 'System & Finance',
-    icon: HelpCircle
+    icon: Settings,
+    isDropdown: true,
+    items: [{
+      name: 'Payments',
+      icon: CreditCard,
+      onClick: () => {} // TODO: Implement payments functionality
+    }, {
+      name: 'Logs',
+      icon: FileText,
+      onClick: () => {} // TODO: Implement logs functionality
+    }, {
+      name: 'FE Map',
+      icon: Map,
+      onClick: () => {} // TODO: Implement FE Map functionality
+    }]
   }, {
     name: 'Support',
     icon: HelpCircle,
