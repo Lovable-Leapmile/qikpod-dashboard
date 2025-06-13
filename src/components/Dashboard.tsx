@@ -100,7 +100,7 @@ const Dashboard = () => {
     }, {
       name: 'Partner',
       icon: UserPlus,
-      onClick: () => {} // TODO: Implement partner functionality
+      onClick: () => window.location.href = '/partner'
     }, {
       name: 'Notification',
       icon: Bell,
