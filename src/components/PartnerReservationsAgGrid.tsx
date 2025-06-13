@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -207,7 +206,6 @@ const PartnerReservationsAgGrid: React.FC = () => {
       filter: true,
       resizable: true,
     },
-    rowSelection: 'none' as const,
     suppressRowClickSelection: true,
     suppressCellSelection: true,
   };
