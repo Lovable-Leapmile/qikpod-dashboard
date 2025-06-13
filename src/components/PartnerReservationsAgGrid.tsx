@@ -6,7 +6,6 @@ import { ColDef } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download } from 'lucide-react';
-
 interface PartnerReservation {
   reservation_type: string;
   reservation_awbno: string;
@@ -21,102 +20,82 @@ interface PartnerReservation {
   payment_amount: number | null;
   payment_status: string;
 }
-
 const PartnerReservationsAgGrid: React.FC = () => {
   const [rowData, setRowData] = useState<PartnerReservation[]>([]);
   const [filteredData, setFilteredData] = useState<PartnerReservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
-
-  const columnDefs: ColDef[] = useMemo(() => [
-    {
-      headerName: 'TYPE',
-      field: 'reservation_type',
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      headerName: 'AWB NO',
-      field: 'reservation_awbno',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'STATUS',
-      field: 'reservation_status',
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      headerName: 'CREATED NAME',
-      field: 'created_by_name',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'CREATED PHONE',
-      field: 'created_by_phone',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'DELIVERY NAME',
-      field: 'drop_by_name',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'DELIVERY PHONE',
-      field: 'drop_by_phone',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'PICKUP NAME',
-      field: 'pickup_by_name',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'PICKUP PHONE',
-      field: 'pickup_by_phone',
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      headerName: 'PAYMENT MODE',
-      field: 'payment_mode',
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      headerName: 'PAYMENT AMOUNT',
-      field: 'payment_amount',
-      flex: 1,
-      minWidth: 140,
-      valueFormatter: (params) => params.value ? `₹${params.value}` : '-',
-    },
-    {
-      headerName: 'PAYMENT STATUS',
-      field: 'payment_status',
-      flex: 1,
-      minWidth: 140,
-    },
-  ], []);
-
+  const columnDefs: ColDef[] = useMemo(() => [{
+    headerName: 'TYPE',
+    field: 'reservation_type',
+    flex: 1,
+    minWidth: 120
+  }, {
+    headerName: 'AWB NO',
+    field: 'reservation_awbno',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'STATUS',
+    field: 'reservation_status',
+    flex: 1,
+    minWidth: 120
+  }, {
+    headerName: 'CREATED NAME',
+    field: 'created_by_name',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'CREATED PHONE',
+    field: 'created_by_phone',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'DELIVERY NAME',
+    field: 'drop_by_name',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'DELIVERY PHONE',
+    field: 'drop_by_phone',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'PICKUP NAME',
+    field: 'pickup_by_name',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'PICKUP PHONE',
+    field: 'pickup_by_phone',
+    flex: 1,
+    minWidth: 150
+  }, {
+    headerName: 'PAYMENT MODE',
+    field: 'payment_mode',
+    flex: 1,
+    minWidth: 120
+  }, {
+    headerName: 'PAYMENT AMOUNT',
+    field: 'payment_amount',
+    flex: 1,
+    minWidth: 140,
+    valueFormatter: params => params.value ? `₹${params.value}` : '-'
+  }, {
+    headerName: 'PAYMENT STATUS',
+    field: 'payment_status',
+    flex: 1,
+    minWidth: 140
+  }], []);
   const fetchPartnerReservations = async (reservationType: string = 'FK_Delivery') => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `https://robotmanagerv1test.qikpod.com:8989/get_partner_reservation/?reservation_type=${reservationType}`,
-        {
-          headers: {
-            'accept': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NTc1Njg1Mzd9.00FEXZbI7rsMGvJR2R8Z89zd-A69nuQmFYwJvUd7Ttw'
-          },
+      const response = await fetch(`https://robotmanagerv1test.qikpod.com:8989/get_partner_reservation/?reservation_type=${reservationType}`, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NTc1Njg1Mzd9.00FEXZbI7rsMGvJR2R8Z89zd-A69nuQmFYwJvUd7Ttw'
         }
-      );
-      
+      });
       if (response.ok) {
         const data = await response.json();
         const reservations = data.records || [];
@@ -135,24 +114,18 @@ const PartnerReservationsAgGrid: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchPartnerReservations();
   }, []);
-
   const handleFilterChange = (value: string) => {
     setSelectedFilter(value);
-    
     if (value === 'all') {
       setFilteredData(rowData);
     } else {
-      const filtered = rowData.filter(item => 
-        item.reservation_status?.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = rowData.filter(item => item.reservation_status?.toLowerCase().includes(value.toLowerCase()));
       setFilteredData(filtered);
     }
   };
-
   const downloadCSV = (jsonDataList: PartnerReservation[]) => {
     // Check if the JSON list is null or empty
     if (!Array.isArray(jsonDataList) || jsonDataList.length === 0) {
@@ -166,27 +139,20 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
     // Loop through the objects and add their values
     jsonDataList.forEach(json => {
-      const values = headers.map(header =>
-        json[header] !== null && json[header] !== undefined ? json[header].toString() : ""
-      );
+      const values = headers.map(header => json[header] !== null && json[header] !== undefined ? json[header].toString() : "");
       csvData += values.join(",") + "\n";
     });
 
     // Generate a formatted timestamp (yyyyMMdd_HHmmss)
     const now = new Date();
-    const pad = (n: number) => (n < 10 ? "0" + n : n);
-    const formattedDateTime = 
-      now.getFullYear().toString() +
-      pad(now.getMonth() + 1) +
-      pad(now.getDate()) + "_" +
-      pad(now.getHours()) +
-      pad(now.getMinutes()) +
-      pad(now.getSeconds());
-
+    const pad = (n: number) => n < 10 ? "0" + n : n;
+    const formattedDateTime = now.getFullYear().toString() + pad(now.getMonth() + 1) + pad(now.getDate()) + "_" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
     const fileName = `QikPod_${formattedDateTime}.csv`;
 
     // Create a Blob and download the file
-    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvData], {
+      type: 'text/csv;charset=utf-8;'
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
@@ -195,24 +161,20 @@ const PartnerReservationsAgGrid: React.FC = () => {
     link.click();
     document.body.removeChild(link);
   };
-
   const handleDownloadCSV = () => {
     downloadCSV(filteredData);
   };
-
   const gridOptions = {
     defaultColDef: {
       sortable: true,
       filter: true,
-      resizable: true,
+      resizable: true
     },
     suppressRowClickSelection: true,
-    suppressCellSelection: true,
+    suppressCellSelection: true
   };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 m-6">
-      <div className="p-6 border-b border-gray-200">
+  return <div className="bg-white rounded-xl shadow-sm border border-gray-200 m-6">
+      <div className="p-6 border-b border-gray-200 bg-gray-100">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900">Partner Reservations</h2>
           <div className="flex items-center gap-4">
@@ -229,11 +191,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
                 <SelectItem value="rtocompleted">RTO Completed</SelectItem>
               </SelectContent>
             </Select>
-            <Button 
-              onClick={handleDownloadCSV}
-              className="flex items-center gap-2"
-              variant="outline"
-            >
+            <Button onClick={handleDownloadCSV} className="flex items-center gap-2" variant="outline">
               <Download className="w-4 h-4" />
               Download CSV
             </Button>
@@ -241,19 +199,12 @@ const PartnerReservationsAgGrid: React.FC = () => {
         </div>
       </div>
       
-      <div className="ag-theme-alpine" style={{ height: '600px', width: '100%' }}>
-        <AgGridReact
-          rowData={filteredData}
-          columnDefs={columnDefs}
-          gridOptions={gridOptions}
-          loading={loading}
-          animateRows={true}
-          headerHeight={50}
-          rowHeight={50}
-        />
+      <div className="ag-theme-alpine" style={{
+      height: '600px',
+      width: '100%'
+    }}>
+        <AgGridReact rowData={filteredData} columnDefs={columnDefs} gridOptions={gridOptions} loading={loading} animateRows={true} headerHeight={50} rowHeight={50} />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PartnerReservationsAgGrid;
