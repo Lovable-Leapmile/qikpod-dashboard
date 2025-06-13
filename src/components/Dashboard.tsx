@@ -14,11 +14,8 @@ import Reservations from './Reservations';
 import ReservationDetail from './ReservationDetail';
 import AdhocReservationDetail from './AdhocReservationDetail';
 import UsersNetworkSection from './UsersNetworkSection';
-import Partner from './Partner';
 import SupportPopup from './SupportPopup';
-
-type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner';
-
+type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork';
 const Dashboard = () => {
   const {
     user,
@@ -39,12 +36,10 @@ const Dashboard = () => {
     reservations: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
-
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
   };
-
   const fetchDashboardStats = async () => {
     if (!accessToken) return;
     setStatsLoading(true);
@@ -62,17 +57,14 @@ const Dashboard = () => {
       setStatsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchDashboardStats();
   }, [accessToken]);
-
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
     setCurrentView(view);
     setIsMobileMenuOpen(false);
   };
-
   const navigationItems = [{
     name: 'Dashboard',
     icon: Activity,
@@ -99,7 +91,7 @@ const Dashboard = () => {
   }, {
     name: 'Users & Network',
     icon: Users,
-    active: currentView === 'usersNetwork' || currentView === 'partner',
+    active: currentView === 'usersNetwork',
     isDropdown: true,
     items: [{
       name: 'Users',
@@ -108,7 +100,7 @@ const Dashboard = () => {
     }, {
       name: 'Partner',
       icon: UserPlus,
-      onClick: () => handleNavigationClick('partner')
+      onClick: () => {} // TODO: Implement partner functionality
     }, {
       name: 'Notification',
       icon: Bell,
@@ -136,7 +128,6 @@ const Dashboard = () => {
     icon: HelpCircle,
     onClick: () => setShowSupportPopup(true)
   }];
-
   const statsData = [{
     title: 'LOCATIONS',
     value: dashboardStats.locations.toString(),
@@ -154,46 +145,37 @@ const Dashboard = () => {
     value: dashboardStats.reservations.toString(),
     icon: Calendar
   }];
-
   const handleLocationClick = (locationId: number) => {
     setSelectedLocationId(locationId);
     setCurrentView('locationDetail');
   };
-
   const handlePodClick = (podId: number) => {
     setSelectedPodId(podId);
     setCurrentView('podDetail');
   };
-
   const handleStandardReservationClick = (reservationId: number) => {
     setSelectedReservationId(reservationId);
     setCurrentView('reservationDetail');
   };
-
   const handleAdhocReservationClick = (reservationId: number) => {
     setSelectedReservationId(reservationId);
     setCurrentView('adhocReservationDetail');
   };
-
   const handleBackToLocations = () => {
     setCurrentView('locations');
     setSelectedLocationId(null);
   };
-
   const handleBackToPods = () => {
     setCurrentView('pods');
     setSelectedPodId(null);
   };
-
   const handleBackToReservations = () => {
     setCurrentView('reservations');
     setSelectedReservationId(null);
   };
-
   const handleBackToOperations = () => {
     setCurrentView('dashboard');
   };
-
   const renderCurrentView = () => {
     switch (currentView) {
       case 'locations':
@@ -204,8 +186,6 @@ const Dashboard = () => {
         return <Reservations onBack={handleBackToOperations} onStandardReservationClick={handleStandardReservationClick} onAdhocReservationClick={handleAdhocReservationClick} />;
       case 'usersNetwork':
         return <UsersNetworkSection onBack={handleBackToOperations} />;
-      case 'partner':
-        return <Partner onBack={handleBackToOperations} />;
       case 'locationDetail':
         return selectedLocationId ? <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} /> : null;
       case 'podDetail':
@@ -241,7 +221,6 @@ const Dashboard = () => {
           </div>;
     }
   };
-
   return <div className="min-h-screen bg-gray-50 w-full">
       {/* Fixed Top Navigation */}
       <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
@@ -329,7 +308,6 @@ const Dashboard = () => {
             {currentView === 'pods' && 'Operations / Pods Management'}
             {currentView === 'reservations' && 'Operations / Reservations Management'}
             {currentView === 'usersNetwork' && 'Users & Network / Users Management'}
-            {currentView === 'partner' && 'Users & Network / Partner Management'}
             {currentView === 'locationDetail' && 'Operations / Location Details'}
             {currentView === 'podDetail' && 'Operations / Pod Details'}
             {currentView === 'reservationDetail' && 'Operations / Reservation Details'}
@@ -341,7 +319,6 @@ const Dashboard = () => {
             {currentView === 'pods' && 'Pods'}
             {currentView === 'reservations' && 'Reservations'}
             {currentView === 'usersNetwork' && 'Users'}
-            {currentView === 'partner' && 'Partner'}
             {currentView === 'locationDetail' && 'Location Details'}
             {currentView === 'podDetail' && 'Pod Details'}
             {currentView === 'reservationDetail' && 'Reservation Details'}
@@ -378,5 +355,4 @@ const Dashboard = () => {
       <SupportPopup isOpen={showSupportPopup} onClose={() => setShowSupportPopup(false)} />
     </div>;
 };
-
 export default Dashboard;
