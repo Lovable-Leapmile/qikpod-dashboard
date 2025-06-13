@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef } from 'ag-grid-community';
@@ -9,22 +8,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
 import { ExternalLink } from 'lucide-react';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
-
 interface ReservationsTableProps {
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
-
-const ReservationsTable: React.FC<ReservationsTableProps> = ({ 
+const ReservationsTable: React.FC<ReservationsTableProps> = ({
   onStandardReservationClick,
-  onAdhocReservationClick 
+  onAdhocReservationClick
 }) => {
-  const { accessToken } = useAuth();
+  const {
+    accessToken
+  } = useAuth();
   const [isStandardMode, setIsStandardMode] = useState(true);
   const [standardReservations, setStandardReservations] = useState<StandardReservation[]>([]);
   const [adhocReservations, setAdhocReservations] = useState<AdhocReservation[]>([]);
   const [loading, setLoading] = useState(false);
-
   const fetchStandardReservations = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -37,7 +35,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       setLoading(false);
     }
   };
-
   const fetchAdhocReservations = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -50,7 +47,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       setLoading(false);
     }
   };
-
   useEffect(() => {
     if (isStandardMode) {
       fetchStandardReservations();
@@ -58,131 +54,106 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       fetchAdhocReservations();
     }
   }, [isStandardMode, accessToken]);
-
-  const ActionCellRenderer = ({ data, isStandard }: { data: any; isStandard: boolean }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => {
-        if (isStandard && onStandardReservationClick) {
-          onStandardReservationClick(data.id);
-        } else if (!isStandard && onAdhocReservationClick) {
-          onAdhocReservationClick(data.id);
-        }
-      }}
-      className="h-8 px-2"
-    >
+  const ActionCellRenderer = ({
+    data,
+    isStandard
+  }: {
+    data: any;
+    isStandard: boolean;
+  }) => <Button variant="ghost" size="sm" onClick={() => {
+    if (isStandard && onStandardReservationClick) {
+      onStandardReservationClick(data.id);
+    } else if (!isStandard && onAdhocReservationClick) {
+      onAdhocReservationClick(data.id);
+    }
+  }} className="text-gray-800 bg-gray-100">
       <ExternalLink className="h-4 w-4" />
-    </Button>
-  );
-
-  const standardColumnDefs: ColDef[] = [
-    { 
-      headerName: 'ID', 
-      field: 'id',
-      width: 80,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'USER NAME', 
-      field: 'drop_by_name',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'LOCATION NAME', 
-      field: 'location_name',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'CREATED BY', 
-      field: 'created_by_name',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'STATUS', 
-      field: 'status',
-      width: 120,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'CREATED AT', 
-      field: 'created_at',
-      width: 150,
-      cellClass: 'vertical-center'
-    },
-    {
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
-      cellClass: 'vertical-center'
-    }
-  ];
-
-  const adhocColumnDefs: ColDef[] = [
-    { 
-      headerName: 'ID', 
-      field: 'id',
-      width: 80,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'POD ID', 
-      field: 'pod_name',
-      width: 120,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'USER PHONE', 
-      field: 'user_phone',
-      width: 130,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'DROP TIME', 
-      field: 'drop_time',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'PICKUP TIME', 
-      field: 'pickup_time',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'RTO PICKUP TIME', 
-      field: 'rto_picktime',
-      flex: 1,
-      cellClass: 'vertical-center'
-    },
-    { 
-      headerName: 'STATUS', 
-      field: 'reservation_status',
-      width: 120,
-      cellClass: 'vertical-center'
-    },
-    {
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
-      cellClass: 'vertical-center'
-    }
-  ];
-
+    </Button>;
+  const standardColumnDefs: ColDef[] = [{
+    headerName: 'ID',
+    field: 'id',
+    width: 80,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'USER NAME',
+    field: 'drop_by_name',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'LOCATION NAME',
+    field: 'location_name',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'CREATED BY',
+    field: 'created_by_name',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'STATUS',
+    field: 'status',
+    width: 120,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'CREATED AT',
+    field: 'created_at',
+    width: 150,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'ACTION',
+    width: 100,
+    cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
+    cellClass: 'vertical-center'
+  }];
+  const adhocColumnDefs: ColDef[] = [{
+    headerName: 'ID',
+    field: 'id',
+    width: 80,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'POD ID',
+    field: 'pod_name',
+    width: 120,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'USER PHONE',
+    field: 'user_phone',
+    width: 130,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'DROP TIME',
+    field: 'drop_time',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'PICKUP TIME',
+    field: 'pickup_time',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'RTO PICKUP TIME',
+    field: 'rto_picktime',
+    flex: 1,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'STATUS',
+    field: 'reservation_status',
+    width: 120,
+    cellClass: 'vertical-center'
+  }, {
+    headerName: 'ACTION',
+    width: 100,
+    cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
+    cellClass: 'vertical-center'
+  }];
   const defaultColDef = {
     sortable: true,
     filter: true,
-    resizable: true,
+    resizable: true
   };
-
   const currentData = isStandardMode ? standardReservations : adhocReservations;
   const hasData = currentData && currentData.length > 0;
-
-  return (
-    <Card className="bg-white shadow-sm rounded-xl border-gray-200">
+  return <Card className="bg-white shadow-sm rounded-xl border-gray-200">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 pt-8 px-8">
         <CardTitle className="text-xl font-semibold text-gray-900">
           Reservations
@@ -192,11 +163,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
             <span className={`text-sm font-medium ${isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
               Standard Mode
             </span>
-            <Switch
-              checked={!isStandardMode}
-              onCheckedChange={(checked) => setIsStandardMode(!checked)}
-              className="data-[state=checked]:bg-accent"
-            />
+            <Switch checked={!isStandardMode} onCheckedChange={checked => setIsStandardMode(!checked)} className="data-[state=checked]:bg-accent" />
             <span className={`text-sm font-medium ${!isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
               Adhoc Mode
             </span>
@@ -204,35 +171,13 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         </div>
       </CardHeader>
       <CardContent className="pb-8 px-8">
-        {hasData ? (
-          <div 
-            className="ag-theme-alpine rounded-xl overflow-hidden border border-gray-200" 
-            style={{ height: '500px', width: '100%' }}
-          >
-            <AgGridReact
-              rowData={currentData}
-              columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              paginationPageSize={25}
-              domLayout="normal"
-              loading={loading}
-              suppressRowClickSelection={true}
-              rowSelection="single"
-              headerHeight={60}
-              rowHeight={55}
-            />
-          </div>
-        ) : (
-          <NoDataIllustration
-            title="No reservations found"
-            description={`No ${isStandardMode ? 'standard' : 'adhoc'} reservations found.`}
-            icon="inbox"
-          />
-        )}
+        {hasData ? <div className="ag-theme-alpine rounded-xl overflow-hidden border border-gray-200" style={{
+        height: '500px',
+        width: '100%'
+      }}>
+            <AgGridReact rowData={currentData} columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs} defaultColDef={defaultColDef} pagination={true} paginationPageSize={25} domLayout="normal" loading={loading} suppressRowClickSelection={true} rowSelection="single" headerHeight={60} rowHeight={55} />
+          </div> : <NoDataIllustration title="No reservations found" description={`No ${isStandardMode ? 'standard' : 'adhoc'} reservations found.`} icon="inbox" />}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default ReservationsTable;
