@@ -65,6 +65,11 @@ const Dashboard = () => {
     setCurrentView(view);
     setIsMobileMenuOpen(false);
   };
+
+  const handlePartnerNavigation = () => {
+    window.location.href = '/partner';
+  };
+
   const navigationItems = [{
     name: 'Dashboard',
     icon: Activity,
@@ -100,7 +105,7 @@ const Dashboard = () => {
     }, {
       name: 'Partner',
       icon: UserPlus,
-      onClick: () => {} // TODO: Implement partner functionality
+      onClick: handlePartnerNavigation
     }, {
       name: 'Notification',
       icon: Bell,
