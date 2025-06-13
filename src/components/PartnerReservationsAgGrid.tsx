@@ -174,7 +174,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
     suppressCellSelection: true
   };
   return <div className="bg-white rounded-xl shadow-sm border border-gray-200 m-6">
-      <div className="pb-6 pt-6 rounded-t-xl bg-gray-100">
+      <div className="pb-6 pt-6 rounded-t-xl bg-gray-100 px-[14px]">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900">Partner Reservations</h2>
           <div className="flex items-center gap-4">
