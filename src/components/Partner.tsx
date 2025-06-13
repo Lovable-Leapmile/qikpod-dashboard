@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Play, Download, Upload, X, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import PartnerReservationsAgGrid from './PartnerReservationsAgGrid';
 
 interface PartnerProps {
   onBack: () => void;
@@ -14,14 +14,13 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // Mock dashboard data
+  // Mock dashboard data (without duplicate records)
   const dashboardStats = [
     { title: 'Pickup Pending', value: 20, color: 'text-orange-600' },
     { title: 'Pickup Completed', value: 20, color: 'text-green-600' },
     { title: 'RTO Pending', value: 20, color: 'text-orange-600' },
     { title: 'RTO Completed', value: 50, color: 'text-green-600' },
-    { title: 'Drop Pending', value: 50, color: 'text-orange-600' },
-    { title: 'Duplicate Records', value: 0, color: 'text-red-600' }
+    { title: 'Drop Pending', value: 50, color: 'text-orange-600' }
   ];
 
   const downloadSampleCSV = () => {
@@ -158,6 +157,9 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Partner Reservations AG Grid Table */}
+      <PartnerReservationsAgGrid />
 
       {/* Batch Reservation Modal */}
       <Dialog open={showModal} onOpenChange={(open) => {
