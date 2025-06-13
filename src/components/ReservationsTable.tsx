@@ -183,7 +183,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
 
   return (
     <Card className="bg-white shadow-sm rounded-xl border-gray-200">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 pt-8">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 pt-8 px-8">
         <CardTitle className="text-xl font-semibold text-gray-900">
           Reservations
         </CardTitle>
@@ -203,9 +203,12 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pb-8">
+      <CardContent className="pb-8 px-8">
         {hasData ? (
-          <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+          <div 
+            className="ag-theme-alpine rounded-xl overflow-hidden border border-gray-200" 
+            style={{ height: '500px', width: '100%' }}
+          >
             <AgGridReact
               rowData={currentData}
               columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
@@ -216,6 +219,8 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
               loading={loading}
               suppressRowClickSelection={true}
               rowSelection="single"
+              headerHeight={60}
+              rowHeight={55}
             />
           </div>
         ) : (

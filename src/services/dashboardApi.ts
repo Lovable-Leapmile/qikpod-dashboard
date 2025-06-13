@@ -115,6 +115,52 @@ interface AdhocReservation {
   reservation_status: string;
 }
 
+interface StandardReservationDetail {
+  id: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  drop_by_name: string;
+  drop_by_phone: string;
+  pickup_by_name: string;
+  pickup_by_phone: string;
+  location_name: string;
+  created_by_name: string;
+  created_by_phone: string;
+  drop_otp: string;
+  pickup_otp: string;
+  payment_mode: string;
+  payment_amount: number;
+  payment_status: string;
+  notes: string;
+  reservation_type: string;
+  location_id: number;
+  user_id: number;
+  created_by_user_id: number;
+}
+
+interface AdhocReservationDetail {
+  id: number;
+  reservation_status: string;
+  created_at: string;
+  updated_at: string;
+  pod_name: string;
+  user_phone: string;
+  drop_time: string;
+  pickup_time: string;
+  rto_picktime: string;
+  drop_otp: string;
+  pickup_otp: string;
+  rto_otp: string;
+  payment_mode: string;
+  payment_amount: number;
+  payment_status: string;
+  notes: string;
+  location_id: number;
+  pod_id: number;
+  user_id: number;
+}
+
 interface CreateUserData {
   user_name: string;
   user_type: string;
@@ -259,6 +305,23 @@ export const dashboardApi = {
     return data.records || [];
   },
 
+  // Reservation Detail APIs
+  getStandardReservationDetail: async (token: string, reservationId: number): Promise<StandardReservationDetail | null> => {
+    const response = await fetch(`${BASE_URL}/reservations/${reservationId}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<StandardReservationDetail> = await response.json();
+    return data.records?.[0] || null;
+  },
+
+  getAdhocReservationDetail: async (token: string, reservationId: number): Promise<AdhocReservationDetail | null> => {
+    const response = await fetch(`${BASE_URL}/adhoc/reservations/?record_id=${reservationId}`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<AdhocReservationDetail> = await response.json();
+    return data.records?.[0] || null;
+  },
+
   // Location Detail APIs
   getLocationDetail: async (token: string, locationId: number): Promise<LocationDetail | null> => {
     const response = await fetch(`${BASE_URL}/locations/?record_id=${locationId}`, {
@@ -385,4 +448,4 @@ export const dashboardApi = {
   },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, StandardReservationDetail, AdhocReservationDetail, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation };
