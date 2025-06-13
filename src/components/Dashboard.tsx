@@ -15,7 +15,8 @@ import ReservationDetail from './ReservationDetail';
 import AdhocReservationDetail from './AdhocReservationDetail';
 import UsersNetworkSection from './UsersNetworkSection';
 import SupportPopup from './SupportPopup';
-type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork';
+import Partner from './Partner';
+type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner';
 const Dashboard = () => {
   const {
     user,
@@ -91,7 +92,7 @@ const Dashboard = () => {
   }, {
     name: 'Users & Network',
     icon: Users,
-    active: currentView === 'usersNetwork',
+    active: currentView === 'usersNetwork' || currentView === 'partner',
     isDropdown: true,
     items: [{
       name: 'Users',
@@ -100,7 +101,7 @@ const Dashboard = () => {
     }, {
       name: 'Partner',
       icon: UserPlus,
-      onClick: () => {} // TODO: Implement partner functionality
+      onClick: () => handleNavigationClick('partner')
     }, {
       name: 'Notification',
       icon: Bell,
@@ -186,6 +187,8 @@ const Dashboard = () => {
         return <Reservations onBack={handleBackToOperations} onStandardReservationClick={handleStandardReservationClick} onAdhocReservationClick={handleAdhocReservationClick} />;
       case 'usersNetwork':
         return <UsersNetworkSection onBack={handleBackToOperations} />;
+      case 'partner':
+        return <Partner onBack={handleBackToOperations} />;
       case 'locationDetail':
         return selectedLocationId ? <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} /> : null;
       case 'podDetail':
@@ -308,6 +311,7 @@ const Dashboard = () => {
             {currentView === 'pods' && 'Operations / Pods Management'}
             {currentView === 'reservations' && 'Operations / Reservations Management'}
             {currentView === 'usersNetwork' && 'Users & Network / Users Management'}
+            {currentView === 'partner' && 'Users & Network / Partner Management'}
             {currentView === 'locationDetail' && 'Operations / Location Details'}
             {currentView === 'podDetail' && 'Operations / Pod Details'}
             {currentView === 'reservationDetail' && 'Operations / Reservation Details'}
@@ -319,6 +323,7 @@ const Dashboard = () => {
             {currentView === 'pods' && 'Pods'}
             {currentView === 'reservations' && 'Reservations'}
             {currentView === 'usersNetwork' && 'Users'}
+            {currentView === 'partner' && 'Partner'}
             {currentView === 'locationDetail' && 'Location Details'}
             {currentView === 'podDetail' && 'Pod Details'}
             {currentView === 'reservationDetail' && 'Reservation Details'}
