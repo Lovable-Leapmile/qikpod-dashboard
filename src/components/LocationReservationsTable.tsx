@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef } from 'ag-grid-community';
@@ -7,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
-import { ExternalLink } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 
 interface LocationReservationsTableProps {
@@ -74,7 +73,7 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
       }}
       className="h-8 px-2"
     >
-      <ExternalLink className="h-4 w-4" />
+      <Eye className="h-4 w-4" />
     </Button>
   );
 

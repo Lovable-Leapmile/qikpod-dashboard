@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
-import { ExternalLink } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
+
 interface ReservationsTableProps {
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
+
 const ReservationsTable: React.FC<ReservationsTableProps> = ({
   onStandardReservationClick,
   onAdhocReservationClick
@@ -23,6 +25,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const [standardReservations, setStandardReservations] = useState<StandardReservation[]>([]);
   const [adhocReservations, setAdhocReservations] = useState<AdhocReservation[]>([]);
   const [loading, setLoading] = useState(false);
+
   const fetchStandardReservations = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -35,6 +38,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       setLoading(false);
     }
   };
+
   const fetchAdhocReservations = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -47,6 +51,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (isStandardMode) {
       fetchStandardReservations();
@@ -54,6 +59,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       fetchAdhocReservations();
     }
   }, [isStandardMode, accessToken]);
+
   const ActionCellRenderer = ({
     data,
     isStandard
@@ -67,8 +73,9 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       onAdhocReservationClick(data.id);
     }
   }} className="text-gray-800 bg-gray-100">
-      <ExternalLink className="h-4 w-4" />
+      <Eye className="h-4 w-4" />
     </Button>;
+
   const standardColumnDefs: ColDef[] = [{
     headerName: 'ID',
     field: 'id',
@@ -105,6 +112,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
     cellClass: 'vertical-center'
   }];
+
   const adhocColumnDefs: ColDef[] = [{
     headerName: 'ID',
     field: 'id',
@@ -146,13 +154,16 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
     cellClass: 'vertical-center'
   }];
+
   const defaultColDef = {
     sortable: true,
     filter: true,
     resizable: true
   };
+
   const currentData = isStandardMode ? standardReservations : adhocReservations;
   const hasData = currentData && currentData.length > 0;
+
   return <Card className="bg-white shadow-sm rounded-xl border-gray-200">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 pt-8 px-8">
         <CardTitle className="text-xl font-semibold text-gray-900">
@@ -180,4 +191,5 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       </CardContent>
     </Card>;
 };
+
 export default ReservationsTable;
