@@ -3,25 +3,39 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogOut, Menu, X, ChevronDown } from 'lucide-react';
 import { NavigationItem } from './NavigationItems';
+
 interface DashboardNavigationProps {
   navigationItems: NavigationItem[];
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
   setShowLogoutDialog: (show: boolean) => void;
 }
+
 const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   navigationItems,
   isMobileMenuOpen,
   setIsMobileMenuOpen,
   setShowLogoutDialog
 }) => {
-  return <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
+  const handleLogoClick = () => {
+    window.location.reload();
+  };
+
+  return (
+    <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <img src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" alt="QikPod Logo" className="h-7 w-auto" />
+            <div 
+              className="flex-shrink-0 cursor-pointer" 
+              onClick={handleLogoClick}
+            >
+              <img 
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                alt="QikPod Logo" 
+                className="h-7 w-auto" 
+              />
             </div>
           </div>
 
@@ -87,6 +101,8 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
             </Button>
           </div>
         </div>}
-    </nav>;
+    </nav>
+  );
 };
+
 export default DashboardNavigation;

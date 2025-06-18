@@ -105,7 +105,7 @@ html::-webkit-scrollbar {
 
 /* AG Grid Custom Styles */
 .ag-theme-alpine {
-  --ag-header-background-color: #f9fafb;
+  --ag-header-background-color: transparent;
   --ag-header-foreground-color: #374151;
   --ag-border-color: transparent;
   --ag-row-hover-color: #f3f4f6;
@@ -126,6 +126,7 @@ html::-webkit-scrollbar {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  background-color: transparent !important;
 }
 
 .ag-theme-alpine .ag-cell {
