@@ -1,5 +1,6 @@
 
-import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, CreditCard, FileText, Map, HelpCircle } from 'lucide-react';
+
+import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, HelpCircle } from 'lucide-react';
 
 export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner';
 
@@ -74,30 +75,9 @@ export const createNavigationItems = (
     ]
   },
   {
-    name: 'System & Finance',
-    icon: Settings,
-    isDropdown: true,
-    items: [
-      {
-        name: 'Payments',
-        icon: CreditCard,
-        onClick: () => {} // TODO: Implement payments functionality
-      },
-      {
-        name: 'Logs',
-        icon: FileText,
-        onClick: () => {} // TODO: Implement logs functionality
-      },
-      {
-        name: 'FE Map',
-        icon: Map,
-        onClick: () => {} // TODO: Implement FE Map functionality
-      }
-    ]
-  },
-  {
     name: 'Support',
     icon: HelpCircle,
     onClick: () => setShowSupportPopup(true)
   }
 ];
+
