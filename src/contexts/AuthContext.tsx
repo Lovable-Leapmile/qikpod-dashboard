@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const generateOTP = async (mobile: string): Promise<boolean> => {
     try {
       const response = await fetch(
-        `https://robotmanagerv1test.qikpod.com:8989/generate_otp/?user_phone=${mobile}`,
+        `https://stagingv3.leapmile.com/podcore/generate_otp/?user_phone=${mobile}`,
         {
           method: 'GET',
           headers: {
