@@ -105,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const validateOTP = async (mobile: string, otp: string): Promise<{ success: boolean; data?: any }> => {
     try {
       const response = await fetch(
-        `https://robotmanagerv1test.qikpod.com:8989/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
+        `https://stagingv3.leapmile.com/podcore/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
         {
           method: 'GET',
           headers: {
