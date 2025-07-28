@@ -213,7 +213,7 @@ interface UserReservation {
   status: string;
 }
 
-const BASE_URL = 'https://robotmanagerv1test.qikpod.com:8989';
+const BASE_URL = 'https://stagingv3.leapmile.com/podcore';
 const LOGS_BASE_URL = 'https://newproduction.qikpod.com:8988';
 
 const getAuthHeaders = (token: string) => ({

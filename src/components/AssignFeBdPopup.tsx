@@ -47,7 +47,7 @@ const AssignFeBdPopup: React.FC<AssignFeBdPopupProps> = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`https://robotmanagerv1test.qikpod.com:8989/locations/${locationId}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/podcore/locations/${locationId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

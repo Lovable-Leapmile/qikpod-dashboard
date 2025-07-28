@@ -27,7 +27,7 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`https://robotmanagerv1test.qikpod.com:8989/users/locations/${user.id}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/podcore/users/locations/${user.id}`, {
         method: 'DELETE',
         headers: {
           'accept': 'application/json',

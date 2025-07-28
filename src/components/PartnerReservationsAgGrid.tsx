@@ -97,10 +97,10 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const fetchPartnerReservations = async (reservationType: string = 'FK_Delivery') => {
     try {
       setLoading(true);
-      const response = await fetch(`https://robotmanagerv1test.qikpod.com:8989/get_partner_reservation/?reservation_type=${reservationType}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/podcore/get_partner_reservation/?reservation_type=${reservationType}`, {
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NTc1Njg1Mzd9.00FEXZbI7rsMGvJR2R8Z89zd-A69nuQmFYwJvUd7Ttw'
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY'
         }
       });
       if (response.ok) {

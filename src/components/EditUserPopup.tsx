@@ -54,7 +54,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`https://robotmanagerv1test.qikpod.com:8989/users/${user.id}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/podcore/users/${user.id}`, {
         method: 'PATCH',
         headers: {
           'accept': 'application/json',

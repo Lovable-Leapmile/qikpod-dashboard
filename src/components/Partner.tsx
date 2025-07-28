@@ -85,11 +85,11 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
     formData.append('in_file', selectedFile);
 
     try {
-      const response = await fetch('https://robotmanagerv1test.qikpod.com:8989/upload_csv/', {
+      const response = await fetch('https://stagingv3.leapmile.com/podcore/upload_csv/', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NTc1Njg1Mzd9.00FEXZbI7rsMGvJR2R8Z89zd-A69nuQmFYwJvUd7Ttw'
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY'
         },
         body: formData
       });
