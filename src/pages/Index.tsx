@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AppContent = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -22,11 +22,7 @@ const AppContent = () => {
 };
 
 const Index = () => {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
+  return <AppContent />;
 };
 
 export default Index;

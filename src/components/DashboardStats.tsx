@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Package, Users, Calendar } from 'lucide-react';
+import { usePodStats } from '@/hooks/usePodStats';
 
 interface DashboardStatsProps {
   dashboardStats: {
@@ -14,6 +15,8 @@ interface DashboardStatsProps {
 }
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({ dashboardStats, statsLoading }) => {
+  const { podStats } = usePodStats();
+  
   const statsData = [
     {
       title: 'LOCATIONS',
@@ -22,7 +25,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ dashboardStats, statsLo
     },
     {
       title: 'PODS',
-      value: dashboardStats.pods.toString(),
+      value: podStats.total_pods.toString(),
       icon: Package
     },
     {

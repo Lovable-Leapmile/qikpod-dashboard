@@ -96,6 +96,24 @@ interface Reservation {
   reservation_status: string;
 }
 
+interface PodStats {
+  total_pods: number;
+  certified_pods: number;
+  unregistered_pods: number;
+  green_pods: number;
+  red_pods: number;
+  yellow_pods: number;
+  active_pods: number;
+  inactive_pods: number;
+}
+
+interface PodMonitorResponse {
+  status: string;
+  status_code: number;
+  message: string;
+  count: number;
+}
+
 interface StandardReservation {
   id: number;
   drop_by_name: string;
@@ -253,6 +271,58 @@ export const dashboardApi = {
     });
     const data: ApiResponse<Reservation> = await response.json();
     return data.total_count || data.total_records || 0;
+  },
+
+  // Pod Statistics APIs
+  getPodStats: async (token: string): Promise<PodStats> => {
+    const response = await fetch(`${BASE_URL}/pods/?order_by_field=updated_at&order_by_type=DESC`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: ApiResponse<PodDetail> = await response.json();
+    const pods = data.records || [];
+
+    return {
+      total_pods: pods.length,
+      certified_pods: pods.filter(pod => pod.pod_state === 'Certified' || pod.pod_state === 'certified').length,
+      unregistered_pods: pods.filter(pod => pod.pod_state === 'Unregistered' || pod.pod_state === 'unregistered').length,
+      green_pods: pods.filter(pod => pod.pod_health === 'Green' || pod.pod_health === 'green').length,
+      red_pods: pods.filter(pod => pod.pod_health === 'Red' || pod.pod_health === 'red').length,
+      yellow_pods: pods.filter(pod => pod.pod_health === 'Yellow' || pod.pod_health === 'yellow').length,
+      active_pods: pods.filter(pod => pod.status === 'active').length,
+      inactive_pods: pods.filter(pod => pod.status === 'inactive').length,
+    };
+  },
+
+  getAlertPodsCount: async (token: string): Promise<number> => {
+    const response = await fetch(`${BASE_URL}/pod_monitor/?pod_type=field_alert_pods`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: PodMonitorResponse = await response.json();
+    return data.count || 0;
+  },
+
+  getReservationPodsCount: async (token: string): Promise<number> => {
+    const response = await fetch(`${BASE_URL}/pod_monitor/?pod_type=alert_pods_reservation`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: PodMonitorResponse = await response.json();
+    return data.count || 0;
+  },
+
+  getFieldPodsCount: async (token: string): Promise<number> => {
+    const response = await fetch(`${BASE_URL}/pod_monitor/?pod_type=field_pods`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: PodMonitorResponse = await response.json();
+    return data.count || 0;
+  },
+
+  getIgnorePodsCount: async (token: string): Promise<number> => {
+    const response = await fetch(`${BASE_URL}/pod_monitor/?pod_type=field_ignored_pods`, {
+      headers: getAuthHeaders(token),
+    });
+    const data: PodMonitorResponse = await response.json();
+    return data.count || 0;
   },
 
   // Data APIs
@@ -448,4 +518,4 @@ export const dashboardApi = {
   },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, StandardReservationDetail, AdhocReservationDetail, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation };
+export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, StandardReservationDetail, AdhocReservationDetail, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation, PodStats, PodMonitorResponse };
