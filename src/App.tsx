@@ -10,6 +10,7 @@ import LocationsPage from "./pages/Locations";
 import ReservationsPage from "./pages/Reservations";
 import UsersPage from "./pages/Users";
 import PartnerPage from "./pages/Partner";
+import NotificationsPage from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/reservations" element={<ReservationsPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/partner" element={<PartnerPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
