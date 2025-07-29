@@ -1,26 +1,26 @@
 import React from 'react';
-import PodsTable from '@/components/PodsTable';
+import Partner from '@/components/Partner';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 
-const PodsPage: React.FC = () => {
+const PartnerPage: React.FC = () => {
   const { accessToken } = useAuth();
   
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Please log in to view pods.</p>
+          <p className="text-gray-600">Please log in to view partner.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <Layout title="Pods Management" breadcrumb="Operations / Pods Management">
-      <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+    <Layout title="Partner Management" breadcrumb="Users & Network / Partner Management">
+      <Partner onBack={() => window.history.back()} />
     </Layout>
   );
 };
 
-export default PodsPage;
+export default PartnerPage;

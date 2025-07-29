@@ -6,6 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import DashboardPage from "./pages/Dashboard";
 import PodsPage from "./pages/Pods";
+import LocationsPage from "./pages/Locations";
+import ReservationsPage from "./pages/Reservations";
+import UsersPage from "./pages/Users";
+import PartnerPage from "./pages/Partner";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -21,7 +25,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/locations" element={<LocationsPage />} />
             <Route path="/pods" element={<PodsPage />} />
+            <Route path="/reservations" element={<ReservationsPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/partner" element={<PartnerPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
