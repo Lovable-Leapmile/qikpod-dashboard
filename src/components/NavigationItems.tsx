@@ -70,7 +70,7 @@ export const createNavigationItems = (
       {
         name: 'Notification',
         icon: Bell,
-        onClick: () => handleNavigationClick('notification')
+        onClick: () => handleNavigationClick('notifications')
       }
     ]
   },
