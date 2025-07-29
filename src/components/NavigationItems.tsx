@@ -2,7 +2,7 @@
 
 import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, HelpCircle } from 'lucide-react';
 
-export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notifications';
+export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notification';
 
 export interface NavigationItem {
   name: string;
@@ -54,7 +54,7 @@ export const createNavigationItems = (
   {
     name: 'Users & Network',
     icon: Users,
-    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notifications',
+    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notification',
     isDropdown: true,
     items: [
       {
@@ -70,7 +70,7 @@ export const createNavigationItems = (
       {
         name: 'Notification',
         icon: Bell,
-        onClick: () => handleNavigationClick('notifications')
+        onClick: () => handleNavigationClick('notification')
       }
     ]
   },
