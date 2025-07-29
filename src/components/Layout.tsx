@@ -37,8 +37,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         return 'usersNetwork';
       case '/partner':
         return 'partner';
-      case '/notifications':
-        return 'notifications';
+      case '/notification':
+        return 'notification';
       default:
         return 'dashboard';
     }
@@ -73,8 +73,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       case 'partner':
         navigate('/partner');
         break;
-      case 'notifications':
-        navigate('/notifications');
+      case 'notification':
+        navigate('/notification');
         break;
     }
     
