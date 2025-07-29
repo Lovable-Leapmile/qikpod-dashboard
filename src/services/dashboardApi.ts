@@ -224,7 +224,7 @@ const getAuthHeaders = (token: string) => ({
 export const dashboardApi = {
   // Count APIs
   getLocationsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/locations/?num_records=-2`, {
+    const response = await fetch(`${BASE_URL}/locations/?num_records=1`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<Location> = await response.json();
