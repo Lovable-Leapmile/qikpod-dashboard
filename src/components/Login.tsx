@@ -52,7 +52,7 @@ const Login = () => {
               <Lock className="w-16 h-16 text-yellow-700" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold mb-4">Welcome to QikPod.</h1>
+          <h1 className="text-4xl font-bold mb-4">Welcome to QikPod</h1>
           <p className="text-xl text-yellow-100">Your Smart Locker Management System</p>
         </div>
       </div>
