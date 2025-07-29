@@ -4,7 +4,7 @@ interface ApiResponse<T> {
   message: string;
   records: T[];
   total_records?: number;
-  count?: number;
+  total_count?: number;
 }
 
 interface Location {
@@ -228,31 +228,31 @@ export const dashboardApi = {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<Location> = await response.json();
-    return data.count || data.total_records || 0;
+    return data.total_count || data.total_records || 0;
   },
 
   getPodsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/pods/?num_records=-2`, {
+    const response = await fetch(`${BASE_URL}/pods/?num_records=1`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<Pod> = await response.json();
-    return data.count || data.total_records || 0;
+    return data.total_count || data.total_records || 0;
   },
 
   getUsersCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/users/?user_phone=9360155586&num_records=-2`, {
+    const response = await fetch(`${BASE_URL}/users/?order_by_field=updated_at&order_by_type=DESC&num_records=1`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<User> = await response.json();
-    return data.count || data.total_records || 0;
+    return data.total_count || data.total_records || 0;
   },
 
   getReservationsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/reservations/?num_records=-2`, {
+    const response = await fetch(`${BASE_URL}/reservations/?num_records=1`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<Reservation> = await response.json();
-    return data.count || data.total_records || 0;
+    return data.total_count || data.total_records || 0;
   },
 
   // Data APIs
