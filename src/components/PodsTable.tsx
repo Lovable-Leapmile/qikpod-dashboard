@@ -24,38 +24,38 @@ const PodCard: React.FC<{
 }> = ({
   pod,
   onPodClick
-}) => <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
-    <CardContent className="p-6">
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex-1 pr-3">
-          <h3 className="font-semibold text-lg text-gray-900 mb-1">{pod.pod_name}</h3>
-          <p className="text-sm text-gray-600 mb-2">{pod.location_name}</p>
+}) => <Card className="mb-2 bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg">
+    <CardContent className="p-3">
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex-1 pr-2">
+          <h3 className="font-semibold text-sm text-gray-900 mb-1">{pod.pod_name}</h3>
+          <p className="text-xs text-gray-600">{pod.location_name}</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => onPodClick(pod.id)} className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50 shrink-0">
-          <Eye className="w-4 h-4" />
+        <Button variant="ghost" size="sm" onClick={() => onPodClick(pod.id)} className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50 shrink-0 h-6 w-6 p-0">
+          <Eye className="w-3 h-3" />
         </Button>
       </div>
-      <div className="space-y-2 text-sm">
-        <div className="flex flex-wrap gap-x-4 gap-y-1">
+      <div className="space-y-1 text-xs">
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
           <div>
-            <span className="font-medium text-gray-700">Pod ID: </span>
+            <span className="font-medium text-gray-700">ID: </span>
             <span className="text-gray-600">{pod.id}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Total Doors: </span>
+            <span className="font-medium text-gray-700">Doors: </span>
             <span className="text-gray-600">{pod.pod_numtotaldoors}</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1">
           <div className="flex items-center">
-            <span className="font-medium text-gray-700 mr-2">Power: </span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${pod.pod_power_status === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            <span className="font-medium text-gray-700 mr-1 text-xs">Power: </span>
+            <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${pod.pod_power_status === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
               {pod.pod_power_status}
             </span>
           </div>
           <div className="flex items-center">
-            <span className="font-medium text-gray-700 mr-2">Status: </span>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${pod.status === 'active' ? 'bg-green-100 text-green-800' : pod.status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+            <span className="font-medium text-gray-700 mr-1 text-xs">Status: </span>
+            <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${pod.status === 'active' ? 'bg-green-100 text-green-800' : pod.status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
               {pod.status}
             </span>
           </div>
@@ -209,48 +209,46 @@ const PodsTable: React.FC<PodsTableProps> = ({
     const searchLower = searchText.toLowerCase();
     return pod.pod_name?.toLowerCase().includes(searchLower) || pod.location_name?.toLowerCase().includes(searchLower) || pod.status?.toLowerCase().includes(searchLower) || pod.pod_power_status?.toLowerCase().includes(searchLower) || pod.pod_health?.toLowerCase().includes(searchLower) || pod.id.toString().includes(searchLower);
   });
-  return <div className="space-y-6">
+  return <div className="space-y-4">
       {/* Pod Dashboard Manager */}
       <PodDashboardManager />
 
       {/* Existing Pods Table */}
-      <Card className="bg-white shadow-sm rounded-xl">
-        <CardHeader className="pb-6 pt-6 rounded-t-xl bg-gray-100">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-              <Package className="w-5 h-5 mr-2 text-[#1f2937]" />
+      <Card className="bg-white shadow-sm rounded-lg">
+        <CardHeader className="pb-3 pt-4 px-4 rounded-t-lg bg-gray-50">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <CardTitle className="text-base font-semibold text-gray-900 flex items-center">
+              <Package className="w-4 h-4 mr-2 text-[#1f2937]" />
               Pods
             </CardTitle>
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <Input placeholder="Search pods..." value={searchText} onChange={e => setSearchText(e.target.value)} className="w-full md:w-64 rounded-lg" />
-              </div>
+            <div className="flex flex-col md:flex-row md:items-center gap-2">
+              <Input placeholder="Search..." value={searchText} onChange={e => setSearchText(e.target.value)} className="w-full md:w-48 rounded text-sm h-8" />
               <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
-                <SelectTrigger className="w-full md:w-32 rounded-lg">
+                <SelectTrigger className="w-full md:w-24 rounded text-sm h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="10">10 records</SelectItem>
-                  <SelectItem value="25">25 records</SelectItem>
-                  <SelectItem value="50">50 records</SelectItem>
-                  <SelectItem value="100">100 records</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
-          {isMobile ? <div className="space-y-3">
-              {loading ? <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FDDC4E] mx-auto"></div>
-                  <p className="text-gray-500 mt-2">Loading pods...</p>
-                </div> : filteredPods.length > 0 ? <div className="max-h-[70vh] overflow-y-auto px-1">
+        <CardContent className="p-4">
+          {isMobile ? <div className="space-y-2">
+              {loading ? <div className="text-center py-6">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FDDC4E] mx-auto"></div>
+                  <p className="text-gray-500 mt-2 text-sm">Loading...</p>
+                </div> : filteredPods.length > 0 ? <div className="max-h-[50vh] overflow-y-auto">
                   {filteredPods.map(pod => <PodCard key={pod.id} pod={pod} onPodClick={onPodClick} />)}
-                </div> : <div className="text-center py-8">
-                  <p className="text-gray-500">No pods found</p>
+                </div> : <div className="text-center py-6">
+                  <p className="text-gray-500 text-sm">No pods found</p>
                 </div>}
-            </div> : <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
-          height: 500,
+            </div> : <div className="ag-theme-alpine w-full rounded overflow-hidden" style={{
+          height: 320,
           '--ag-header-background-color': '#FFFBEB',
           '--ag-row-hover-color': '#FEF3C7',
           '--ag-odd-row-background-color': '#FEFEFE',
@@ -260,7 +258,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
           '--ag-border-radius': '0.5rem',
           '--ag-selected-row-background-color': 'transparent'
         } as React.CSSProperties}>
-              <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={60} headerHeight={50} pagination={true} paginationPageSize={10} paginationPageSizeSelector={[10, 25, 50]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
+              <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={40} headerHeight={36} pagination={true} paginationPageSize={8} paginationPageSizeSelector={[8, 15, 25]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
             </div>}
         </CardContent>
       </Card>

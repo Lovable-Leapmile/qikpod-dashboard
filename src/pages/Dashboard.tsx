@@ -56,9 +56,9 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Layout title="Dashboard" breadcrumb="Dashboard">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
-        <div className="grid gap-6">
+        <div className="grid gap-4">
           <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
           <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
         </div>
