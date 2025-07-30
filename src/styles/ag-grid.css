@@ -1,28 +1,50 @@
 
-/* AG Grid Custom Styles */
+/* AG Grid Custom Styles with Enhanced Design */
 .ag-theme-alpine {
-  --ag-header-background-color: transparent;
-  --ag-header-foreground-color: #374151;
-  --ag-border-color: transparent;
-  --ag-row-hover-color: #f3f4f6;
-  --ag-odd-row-background-color: #ffffff;
-  --ag-even-row-background-color: #f9fafb;
-  --ag-selected-row-background-color: transparent;
-  --ag-font-family: "Inter", sans-serif;
+  --ag-header-background-color: hsl(var(--card));
+  --ag-header-foreground-color: hsl(var(--foreground));
+  --ag-border-color: hsl(var(--border));
+  --ag-row-hover-color: hsl(var(--muted) / 0.5);
+  --ag-odd-row-background-color: hsl(var(--background));
+  --ag-even-row-background-color: hsl(var(--muted) / 0.3);
+  --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
+  --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --ag-font-size: 14px;
   --ag-header-font-weight: 600;
-  --ag-cell-horizontal-padding: 16px;
+  --ag-cell-horizontal-padding: 20px;
+  --ag-header-height: 56px;
+  --ag-row-height: 52px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.ag-theme-alpine .ag-root-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ag-theme-alpine .ag-header {
+  background: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
 }
 
 .ag-theme-alpine .ag-header-cell {
   border-right: none !important;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid hsl(var(--border));
   font-weight: 600;
-  color: #6b7280;
-  font-size: 12px;
+  color: hsl(var(--foreground));
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background-color: transparent !important;
+  background-color: hsl(var(--card)) !important;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.ag-theme-alpine .ag-header-cell:hover {
+  background-color: hsl(var(--muted) / 0.5) !important;
 }
 
 .ag-theme-alpine .ag-cell {
@@ -30,30 +52,36 @@
   border-bottom: none;
   display: flex;
   align-items: center;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
 }
 
 .ag-theme-alpine .ag-row {
-  border-bottom: none;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  transition: all 0.2s ease;
 }
 
 .ag-theme-alpine .ag-row:hover {
-  background-color: #f3f4f6 !important;
+  background-color: hsl(var(--muted) / 0.3) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.1);
 }
 
 .ag-theme-alpine .ag-row.ag-row-even {
-  background-color: #f9fafb;
+  background-color: hsl(var(--muted) / 0.2);
 }
 
 .ag-theme-alpine .ag-row.ag-row-odd {
-  background-color: #ffffff;
+  background-color: hsl(var(--background));
 }
 
 .ag-theme-alpine .ag-row.ag-row-selected {
-  background-color: transparent !important;
+  background-color: hsl(var(--primary) / 0.1) !important;
+  border-left: 3px solid hsl(var(--primary));
 }
 
 .ag-theme-alpine .ag-row.ag-row-focus {
-  background-color: transparent !important;
+  background-color: hsl(var(--primary) / 0.05) !important;
 }
 
 .ag-theme-alpine .ag-cell-focus {
@@ -61,13 +89,15 @@
 }
 
 .ag-theme-alpine .ag-cell-range-selected {
-  background-color: transparent !important;
+  background-color: hsl(var(--primary) / 0.1) !important;
 }
 
 .ag-theme-alpine .ag-paging-panel {
-  border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
-  padding: 12px 16px;
+  border-top: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  padding: 16px 20px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 /* Remove search icons from filter headers */
@@ -98,4 +128,79 @@
 
 .ag-theme-alpine .ag-body-horizontal-scroll {
   border-right: none !important;
+}
+
+/* Enhanced scrollbars */
+.ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar,
+.ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-track,
+.ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 3px;
+}
+
+.ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
+.ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.4);
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
+.ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+}
+
+/* Status badge styling */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: all 0.2s ease;
+}
+
+.status-paid {
+  background-color: rgb(220 252 231);
+  color: rgb(22 163 74);
+}
+
+.status-pending {
+  background-color: rgb(254 249 195);
+  color: rgb(161 98 7);
+}
+
+.status-cancelled {
+  background-color: rgb(254 226 226);
+  color: rgb(220 38 38);
+}
+
+.status-inactive {
+  background-color: rgb(243 244 246);
+  color: rgb(107 114 128);
+}
+
+/* Action button styling */
+.action-button {
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-button:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  transform: scale(1.1);
 }
