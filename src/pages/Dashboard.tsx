@@ -1,5 +1,7 @@
 import React from 'react';
 import DashboardStats from '@/components/DashboardStats';
+import LocationsTable from '@/components/LocationsTable';
+import PodsTable from '@/components/PodsTable';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
@@ -54,7 +56,13 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Layout title="Dashboard" breadcrumb="Dashboard">
-      <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
+      <div className="space-y-6">
+        <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
+        <div className="grid gap-6">
+          <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
+          <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+        </div>
+      </div>
     </Layout>
   );
 };
