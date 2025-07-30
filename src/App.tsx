@@ -12,6 +12,7 @@ import UsersPage from "./pages/Users";
 import PartnerPage from "./pages/Partner";
 import NotificationsPage from "./pages/Notifications";
 import PaymentsPage from "./pages/Payments";
+import LogsPage from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/partner" element={<PartnerPage />} />
             <Route path="/notification" element={<NotificationsPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/logs" element={<LogsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

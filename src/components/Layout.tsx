@@ -41,6 +41,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         return 'notification';
       case '/payments':
         return 'payments';
+      case '/logs':
+        return 'logs';
       default:
         return 'dashboard';
     }
@@ -80,6 +82,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         break;
       case 'payments':
         navigate('/payments');
+        break;
+      case 'logs':
+        navigate('/logs');
         break;
     }
     

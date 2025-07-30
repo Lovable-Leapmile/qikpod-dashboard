@@ -1,8 +1,8 @@
 
 
-import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, HelpCircle, CreditCard } from 'lucide-react';
+import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, HelpCircle, CreditCard, FileText } from 'lucide-react';
 
-export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notification' | 'payments';
+export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notification' | 'payments' | 'logs';
 
 export interface NavigationItem {
   name: string;
@@ -54,7 +54,7 @@ export const createNavigationItems = (
   {
     name: 'Users & Network',
     icon: Users,
-    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notification' || currentView === 'payments',
+    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notification' || currentView === 'payments' || currentView === 'logs',
     isDropdown: true,
     items: [
       {
@@ -76,6 +76,11 @@ export const createNavigationItems = (
         name: 'Payments',
         icon: CreditCard,
         onClick: () => handleNavigationClick('payments')
+      },
+      {
+        name: 'Logs',
+        icon: FileText,
+        onClick: () => handleNavigationClick('logs')
       }
     ]
   },
