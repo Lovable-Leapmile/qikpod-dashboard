@@ -22,9 +22,9 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   };
 
   return (
-    <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50 border-b border-yellow-300">
+      <div className="w-full px-3 sm:px-4 lg:px-6">
+        <div className="flex justify-between items-center h-12">
           {/* Logo */}
           <div className="flex items-center">
             <div 
@@ -34,20 +34,20 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
               <img 
                 src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
                 alt="QikPod Logo" 
-                className="h-7 w-auto" 
+                className="h-5 w-auto" 
               />
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-6 flex items-baseline space-x-2">
               {navigationItems.map(item => item.isDropdown ? <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
-                      <button className={`h-10 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
-                        <item.icon className="inline-block w-4 h-4 mr-2" />
+                      <button className={`h-8 px-2 py-1 rounded-md text-xs font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                        <item.icon className="inline-block w-3 h-3 mr-1" />
                         {item.name}
-                        <ChevronDown className="w-4 h-4 ml-1" />
+                        <ChevronDown className="w-3 h-3 ml-1" />
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -56,12 +56,12 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                           {subItem.name}
                         </DropdownMenuItem>)}
                     </DropdownMenuContent>
-                  </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`h-10 px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
-                    <item.icon className="inline-block w-4 h-4 mr-2" />
+                  </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`h-8 px-2 py-1 rounded-md text-xs font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                    <item.icon className="inline-block w-3 h-3 mr-1" />
                     {item.name}
                   </button>)}
-              <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-10 text-black hover:text-black bg-gray-50">
-                <LogOut className="w-4 h-4 mr-2" />
+              <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-8 px-2 text-xs text-black hover:text-black bg-gray-50">
+                <LogOut className="w-3 h-3 mr-1" />
                 Logout
               </Button>
             </div>

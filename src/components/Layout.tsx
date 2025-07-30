@@ -105,18 +105,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       />
 
       {/* Main Content with top padding for fixed header */}
-      <main className="w-full py-6 px-4 sm:px-6 lg:px-8 pt-24">
+      <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
         {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center text-sm text-gray-500 mb-2">
-            <Activity className="w-4 h-4 mr-2" />
+        <div className="mb-4">
+          <div className="flex items-center text-xs text-gray-500 mb-1">
+            <Activity className="w-3 h-3 mr-1" />
             {breadcrumb}
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-xl font-semibold text-gray-900">
             {title}
           </h1>
           {user && currentView === 'dashboard' && (
-            <p className="text-gray-600 mt-1">Welcome back, {user.user_name}!</p>
+            <p className="text-gray-600 mt-0.5 text-sm">Welcome back, {user.user_name}!</p>
           )}
         </div>
 
