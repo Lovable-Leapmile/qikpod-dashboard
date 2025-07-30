@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Activity } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { dashboardApi } from '@/services/dashboardApi';
@@ -12,6 +13,7 @@ import { ViewType, createNavigationItems } from './NavigationItems';
 
 const Dashboard = () => {
   const { user, logout, accessToken } = useAuth();
+  const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -61,7 +63,34 @@ const Dashboard = () => {
 
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
-    setCurrentView(view);
+    
+    // Navigate to appropriate route
+    switch (view) {
+      case 'dashboard':
+        navigate('/dashboard');
+        break;
+      case 'locations':
+        navigate('/locations');
+        break;
+      case 'pods':
+        navigate('/pods');
+        break;
+      case 'reservations':
+        navigate('/reservations');
+        break;
+      case 'usersNetwork':
+        navigate('/users');
+        break;
+      case 'partner':
+        navigate('/partner');
+        break;
+      case 'notification':
+        navigate('/notification');
+        break;
+      default:
+        setCurrentView(view);
+        break;
+    }
     setIsMobileMenuOpen(false);
   };
 
