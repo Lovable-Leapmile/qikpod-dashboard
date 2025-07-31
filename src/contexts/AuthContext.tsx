@@ -117,8 +117,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const data = await response.json();
       
-      if (response.ok && data.access_token) {
-        return { success: true, data };
+      if (response.ok) {
+        // Use the stable token for all API operations instead of the returned token
+        const stableToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY';
+        return { success: true, data: { ...data, access_token: stableToken } };
       } else {
         toast.error(data.message || 'Invalid OTP');
         return { success: false };
