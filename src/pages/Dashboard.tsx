@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardStats from '@/components/DashboardStats';
 import LocationsTable from '@/components/LocationsTable';
 import PodsTable from '@/components/PodsTable';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
-import { useState, useEffect } from 'react';
 
 const DashboardPage: React.FC = () => {
   const { accessToken } = useAuth();
@@ -56,18 +55,18 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Layout title="" breadcrumb="">
-      <div className="flex gap-4 h-[calc(100vh-120px)]">
-        {/* Left Panel - Stats Cards (20% width) */}
-        <div className="w-1/5 flex-shrink-0">
+      <div className="flex h-[calc(100vh-120px)] overflow-hidden">
+        {/* Left Panel - Stats Cards */}
+        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </div>
-        
-        {/* Right Panel - Tables (80% width) */}
-        <div className="w-4/5 flex flex-col gap-4 overflow-hidden">
-          <div className="flex-1 overflow-hidden">
+
+        {/* Right Panel - Scrollable Tables */}
+        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-4 pr-2 py-1">
+          <div className="min-h-[300px] bg-white rounded-md shadow p-4 overflow-auto">
             <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
           </div>
-          <div className="flex-1 overflow-hidden">
+          <div className="min-h-[300px] bg-white rounded-md shadow p-4 overflow-auto">
             <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
           </div>
         </div>
