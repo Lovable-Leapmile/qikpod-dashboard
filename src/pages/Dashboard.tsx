@@ -26,12 +26,7 @@ const DashboardPage: React.FC = () => {
         dashboardApi.getUsersCount(accessToken),
         dashboardApi.getReservationsCount(accessToken)
       ]);
-      setDashboardStats({
-        locations,
-        pods,
-        users,
-        reservations
-      });
+      setDashboardStats({ locations, pods, users, reservations });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -54,26 +49,24 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <Layout title="" breadcrumb="">
-      <div className="flex min-h-screen gap-4 px-4 py-4 bg-[#f9fafb]">
+    <Layout title="Dashboard" breadcrumb="">
+      <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#f9fafb]">
         {/* Left Panel - Stats Cards */}
-        <div className="w-1/5 flex flex-col justify-between gap-4">
+        <aside className="w-1/5 flex flex-col justify-between gap-4 p-4 bg-white border-r border-gray-200 h-full">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
-        </div>
+        </aside>
 
-        {/* Right Panel - Combined Card for Tables */}
-        <div className="w-4/5 flex flex-col">
-          <div className="bg-white shadow-md rounded-xl p-6 w-full">
+        {/* Right Panel - Scrollable Tables */}
+        <main className="flex-1 overflow-y-auto p-6 space-y-10">
+          <div className="bg-white shadow-md rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-6">Locations</h2>
-            <div className="mb-10">
-              <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
-            </div>
-            <h2 className="text-xl font-semibold mb-6">Pods</h2>
-            <div>
-              <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
-            </div>
+            <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
           </div>
-        </div>
+          <div className="bg-white shadow-md rounded-xl p-6">
+            <h2 className="text-xl font-semibold mb-6">Pods</h2>
+            <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+          </div>
+        </main>
       </div>
     </Layout>
   );
