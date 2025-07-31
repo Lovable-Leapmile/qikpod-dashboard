@@ -49,12 +49,12 @@ const DashboardPage: React.FC = () => {
   return (
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
-        {/* Left Panel - Responsive */}
-        <aside className="w-full lg:w-1/5 flex-shrink-0 px-2 py-4">
+        {/* Left Panel - Full height only on desktop */}
+        <aside className="w-full lg:w-1/5 flex-shrink-0 px-2 py-4 lg:h-[calc(100vh-64px)]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel - Responsive & scrolls on small screens */}
+        {/* Right Panel - Full page scrollable content */}
         <main className="w-full lg:flex-1 px-4 py-6">
           <div className="space-y-10 w-full">
             {/* Locations Table */}
