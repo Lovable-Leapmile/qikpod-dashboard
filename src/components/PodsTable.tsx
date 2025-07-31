@@ -212,8 +212,8 @@ const PodsTable: React.FC<PodsTableProps> = ({
     <Card className="bg-white shadow-sm rounded-lg">
       <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-          <CardTitle className="text-sm font-semibold text-gray-900 flex items-center">
-            <Package className="w-3 h-3 mr-1 text-[#1f2937]" />
+          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
+            <Package className="w-4 h-5 mr-1 text-[#1f2937]" />
             Pods
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-2">
