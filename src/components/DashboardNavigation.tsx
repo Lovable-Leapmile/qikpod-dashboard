@@ -1,8 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LogOut, Menu, X, ChevronDown } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LogOut, Menu, X, ChevronDown, User } from 'lucide-react';
 import { NavigationItem } from './NavigationItems';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardNavigationProps {
   navigationItems: NavigationItem[];
@@ -17,6 +19,8 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   setIsMobileMenuOpen,
   setShowLogoutDialog
 }) => {
+  const { user } = useAuth();
+  
   const handleLogoClick = () => {
     window.location.reload();
   };
@@ -41,7 +45,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-6 flex items-baseline space-x-2">
+            <div className="ml-6 flex items-center space-x-2">
               {navigationItems.map(item => item.isDropdown ? <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
                       <button className={`h-8 px-2 py-1 rounded-md text-xs font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
@@ -60,6 +64,20 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                     <item.icon className="inline-block w-3 h-3 mr-1" />
                     {item.name}
                   </button>)}
+              
+              {/* User Profile Section */}
+              {user && (
+                <div className="flex items-center space-x-2 ml-4">
+                  <span className="text-xs text-black font-medium">Welcome {user.user_name}</span>
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="bg-yellow-600 text-white text-xs">
+                      <User className="h-3 w-3" />
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              )}
+              
               <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-8 px-2 text-xs text-black hover:text-black bg-gray-50">
                 <LogOut className="w-3 h-3 mr-1" />
                 Logout

@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Package, Eye } from 'lucide-react';
 import { dashboardApi, Pod } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
-import PodDashboardManager from './PodDashboardManager';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
@@ -209,35 +208,31 @@ const PodsTable: React.FC<PodsTableProps> = ({
     const searchLower = searchText.toLowerCase();
     return pod.pod_name?.toLowerCase().includes(searchLower) || pod.location_name?.toLowerCase().includes(searchLower) || pod.status?.toLowerCase().includes(searchLower) || pod.pod_power_status?.toLowerCase().includes(searchLower) || pod.pod_health?.toLowerCase().includes(searchLower) || pod.id.toString().includes(searchLower);
   });
-  return <div className="space-y-4">
-      {/* Pod Dashboard Manager */}
-      <PodDashboardManager />
-
-      {/* Existing Pods Table */}
-      <Card className="bg-white shadow-sm rounded-lg">
-        <CardHeader className="pb-3 pt-4 px-4 rounded-t-lg bg-gray-50">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <CardTitle className="text-base font-semibold text-gray-900 flex items-center">
-              <Package className="w-4 h-4 mr-2 text-[#1f2937]" />
-              Pods
-            </CardTitle>
-            <div className="flex flex-col md:flex-row md:items-center gap-2">
-              <Input placeholder="Search..." value={searchText} onChange={e => setSearchText(e.target.value)} className="w-full md:w-48 rounded text-sm h-8" />
-              <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
-                <SelectTrigger className="w-full md:w-24 rounded text-sm h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+  return (
+    <Card className="bg-white shadow-sm rounded-lg">
+      <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <CardTitle className="text-sm font-semibold text-gray-900 flex items-center">
+            <Package className="w-3 h-3 mr-1 text-[#1f2937]" />
+            Pods
+          </CardTitle>
+          <div className="flex flex-col md:flex-row md:items-center gap-2">
+            <Input placeholder="Search..." value={searchText} onChange={e => setSearchText(e.target.value)} className="w-full md:w-40 rounded text-xs h-7" />
+            <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
+              <SelectTrigger className="w-full md:w-20 rounded text-xs h-7">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </CardHeader>
-        <CardContent className="p-4">
+        </div>
+      </CardHeader>
+      <CardContent className="p-3">
           {isMobile ? <div className="space-y-2">
               {loading ? <div className="text-center py-6">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FDDC4E] mx-auto"></div>
@@ -258,10 +253,10 @@ const PodsTable: React.FC<PodsTableProps> = ({
           '--ag-border-radius': '0.5rem',
           '--ag-selected-row-background-color': 'transparent'
         } as React.CSSProperties}>
-              <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={40} headerHeight={36} pagination={true} paginationPageSize={8} paginationPageSizeSelector={[8, 15, 25]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
+              <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={32} headerHeight={28} pagination={true} paginationPageSize={10} paginationPageSizeSelector={[8, 15, 25]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
             </div>}
         </CardContent>
-      </Card>
-    </div>;
+    </Card>
+  );
 };
 export default PodsTable;

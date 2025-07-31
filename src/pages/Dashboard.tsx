@@ -55,12 +55,21 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <Layout title="Dashboard" breadcrumb="Dashboard">
-      <div className="space-y-4">
-        <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
-        <div className="grid gap-4">
-          <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
-          <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+    <Layout title="" breadcrumb="">
+      <div className="flex gap-4 h-[calc(100vh-120px)]">
+        {/* Left Panel - Stats Cards (20% width) */}
+        <div className="w-1/5 flex-shrink-0">
+          <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
+        </div>
+        
+        {/* Right Panel - Tables (80% width) */}
+        <div className="w-4/5 flex flex-col gap-4 overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+          </div>
         </div>
       </div>
     </Layout>

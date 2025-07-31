@@ -22,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const getCurrentView = (): ViewType => {
+  const getCurrentView = (): ViewType | 'dashboard' => {
     const path = location.pathname;
     switch (path) {
       case '/dashboard':
@@ -106,19 +106,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
       {/* Main Content with top padding for fixed header */}
       <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
-        {/* Page Header */}
-        <div className="mb-4">
-          <div className="flex items-center text-xs text-gray-500 mb-1">
-            <Activity className="w-3 h-3 mr-1" />
-            {breadcrumb}
+        {/* Page Header - Only show for non-dashboard pages */}
+        {currentView !== 'dashboard' && (
+          <div className="mb-4">
+            <div className="flex items-center text-xs text-gray-500 mb-1">
+              <Activity className="w-3 h-3 mr-1" />
+              {breadcrumb}
+            </div>
+            <h1 className="text-xl font-semibold text-gray-900">
+              {title}
+            </h1>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            {title}
-          </h1>
-          {user && currentView === 'dashboard' && (
-            <p className="text-gray-600 mt-0.5 text-sm">Welcome back, {user.user_name}!</p>
-          )}
-        </div>
+        )}
 
         {/* Dynamic Content */}
         {children}

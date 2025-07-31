@@ -217,10 +217,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
 
   return (
     <Card className="bg-white shadow-sm rounded-lg">
-      <CardHeader className="pb-3 pt-4 px-4 rounded-t-lg bg-gray-50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <CardTitle className="text-base font-semibold text-gray-900 flex items-center">
-            <MapPin className="w-4 h-4 mr-2 text-[#1f2937]" />
+      <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <CardTitle className="text-sm font-semibold text-gray-900 flex items-center">
+            <MapPin className="w-3 h-3 mr-1 text-[#1f2937]" />
             Locations
           </CardTitle>
           <div className="flex flex-col md:flex-row md:items-center gap-2">
@@ -228,10 +228,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               placeholder="Search..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="w-full md:w-48 rounded text-sm h-8"
+              className="w-full md:w-40 rounded text-xs h-7"
             />
             <Select value={recordCount.toString()} onValueChange={(value) => setRecordCount(Number(value))}>
-              <SelectTrigger className="w-full md:w-24 rounded text-sm h-8">
+              <SelectTrigger className="w-full md:w-20 rounded text-xs h-7">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -244,7 +244,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         {isMobile ? (
           <div className="space-y-2">
             {loading ? (
@@ -284,10 +284,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               animateRows={true}
               suppressCellFocus={true}
               suppressRowClickSelection={true}
-              rowHeight={40}
-              headerHeight={36}
+              rowHeight={32}
+              headerHeight={28}
               pagination={true}
-              paginationPageSize={8}
+              paginationPageSize={10}
               paginationPageSizeSelector={[8, 15, 25]}
               suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
