@@ -50,7 +50,7 @@ const DashboardPage: React.FC = () => {
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
         {/* Left Panel - Full height only on desktop */}
-        <aside className="w-full lg:w-1/5 flex-shrink-0 px-2 py-4 lg:h-[calc(100vh-64px)]">
+        <aside className="w-full lg:w-1/5 flex-shrink-0 px-4 py-6 lg:h-[calc(100vh-64px)]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
