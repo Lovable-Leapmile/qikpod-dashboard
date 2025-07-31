@@ -48,7 +48,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
   ];
 
   return (
-    <div className="h-full grid grid-rows-4 gap-2">
+    <div className="h-full grid grid-rows-4 gap-3">
       {statsData.map((stat, index) => (
         <Card
           key={index}
