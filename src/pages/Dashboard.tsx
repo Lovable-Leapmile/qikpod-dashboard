@@ -12,7 +12,7 @@ const DashboardPage: React.FC = () => {
     locations: 0,
     pods: 0,
     users: 0,
-    reservations: 0
+    reservations: 0,
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -24,13 +24,13 @@ const DashboardPage: React.FC = () => {
         dashboardApi.getLocationsCount(accessToken),
         dashboardApi.getPodsCount(accessToken),
         dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken)
+        dashboardApi.getReservationsCount(accessToken),
       ]);
       setDashboardStats({
         locations,
         pods,
         users,
-        reservations
+        reservations,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -46,9 +46,7 @@ const DashboardPage: React.FC = () => {
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to view dashboard.</p>
-        </div>
+        <p className="text-gray-600">Please log in to view the dashboard.</p>
       </div>
     );
   }
@@ -57,12 +55,12 @@ const DashboardPage: React.FC = () => {
     <Layout title="" breadcrumb="">
       <div className="flex h-[calc(100vh-120px)] overflow-hidden">
         {/* Left Panel - Stats Cards */}
-        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between">
+        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between pr-2">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </div>
 
         {/* Right Panel - Scrollable Tables */}
-        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-4 pr-2 py-1">
+        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-2 pr-4 py-2">
           <div className="min-h-[300px] bg-white rounded-md shadow p-4 overflow-auto">
             <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
           </div>
