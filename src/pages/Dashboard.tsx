@@ -26,12 +26,7 @@ const DashboardPage: React.FC = () => {
         dashboardApi.getUsersCount(accessToken),
         dashboardApi.getReservationsCount(accessToken),
       ]);
-      setDashboardStats({
-        locations,
-        pods,
-        users,
-        reservations,
-      });
+      setDashboardStats({ locations, pods, users, reservations });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -46,25 +41,27 @@ const DashboardPage: React.FC = () => {
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Please log in to view the dashboard.</p>
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to view dashboard.</p>
+        </div>
       </div>
     );
   }
 
   return (
     <Layout title="" breadcrumb="">
-      <div className="flex h-[calc(100vh-120px)] overflow-hidden">
-        {/* Left Panel - Stats Cards */}
-        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between pr-2">
+      <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+        {/* Left Panel - Stretchy cards column */}
+        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </div>
 
-        {/* Right Panel - Scrollable Tables */}
-        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-2 pr-4 py-2">
-          <div className="min-h-[300px] bg-white rounded-md shadow p-4 overflow-auto">
+        {/* Right Panel - Scrollable, well-spaced tables */}
+        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-4 pr-2 py-2">
+          <div className="min-h-[350px] bg-white rounded-2xl shadow p-4 overflow-auto">
             <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
           </div>
-          <div className="min-h-[300px] bg-white rounded-md shadow p-4 overflow-auto">
+          <div className="min-h-[350px] bg-white rounded-2xl shadow p-4 overflow-auto">
             <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
           </div>
         </div>
