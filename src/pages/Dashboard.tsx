@@ -12,7 +12,7 @@ const DashboardPage: React.FC = () => {
     locations: 0,
     pods: 0,
     users: 0,
-    reservations: 0,
+    reservations: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -24,9 +24,14 @@ const DashboardPage: React.FC = () => {
         dashboardApi.getLocationsCount(accessToken),
         dashboardApi.getPodsCount(accessToken),
         dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken),
+        dashboardApi.getReservationsCount(accessToken)
       ]);
-      setDashboardStats({ locations, pods, users, reservations });
+      setDashboardStats({
+        locations,
+        pods,
+        users,
+        reservations
+      });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -41,26 +46,29 @@ const DashboardPage: React.FC = () => {
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Please log in to view dashboard.</p>
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to view dashboard.</p>
+        </div>
       </div>
     );
   }
 
   return (
     <Layout title="" breadcrumb="">
-      <div className="flex min-h-screen overflow-hidden">
-        {/* Left Panel - Stats */}
-        <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between">
+      <div className="flex min-h-screen gap-4 px-4 py-4 bg-[#f9fafb]">
+        {/* Left Panel - Stats Cards */}
+        <div className="w-1/5 flex flex-col justify-between gap-4">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </div>
 
-        {/* Right Panel - Combined Card */}
-        <div className="w-4/5 pl-4 pr-2 py-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold mb-4">Locations & Pods Overview</h2>
-            <div className="mb-6">
+        {/* Right Panel - Combined Card for Tables */}
+        <div className="w-4/5 flex flex-col">
+          <div className="bg-white shadow-md rounded-xl p-6 w-full">
+            <h2 className="text-xl font-semibold mb-6">Locations</h2>
+            <div className="mb-10">
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
+            <h2 className="text-xl font-semibold mb-6">Pods</h2>
             <div>
               <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
             </div>
