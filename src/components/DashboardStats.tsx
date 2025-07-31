@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Package, Users, Calendar } from 'lucide-react';
@@ -16,7 +15,7 @@ interface DashboardStatsProps {
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({ dashboardStats, statsLoading }) => {
   const { podStats } = usePodStats();
-  
+
   const statsData = [
     {
       title: 'LOCATIONS',
@@ -41,9 +40,12 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ dashboardStats, statsLo
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="h-full flex flex-col justify-between">
       {statsData.map((stat, index) => (
-        <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border-gray-200">
+        <Card
+          key={index}
+          className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200"
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
             <CardTitle className="text-sm font-medium text-gray-600 uppercase tracking-wide">
               {stat.title}
