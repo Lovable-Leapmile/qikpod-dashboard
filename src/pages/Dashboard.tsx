@@ -41,28 +41,29 @@ const DashboardPage: React.FC = () => {
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to view dashboard.</p>
-        </div>
+        <p className="text-gray-600">Please log in to view dashboard.</p>
       </div>
     );
   }
 
   return (
     <Layout title="" breadcrumb="">
-      <div className="flex h-[calc(100vh-80px)] overflow-hidden">
-        {/* Left Panel - Stretchy cards column */}
+      <div className="flex min-h-screen overflow-hidden">
+        {/* Left Panel - Stats */}
         <div className="w-1/5 flex-shrink-0 h-full flex flex-col justify-between">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </div>
 
-        {/* Right Panel - Scrollable, well-spaced tables */}
-        <div className="w-4/5 h-full overflow-y-auto flex flex-col gap-4 pl-4 pr-2 py-2">
-          <div className="min-h-[350px] bg-white rounded-2xl shadow p-4 overflow-auto">
-            <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
-          </div>
-          <div className="min-h-[350px] bg-white rounded-2xl shadow p-4 overflow-auto">
-            <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+        {/* Right Panel - Combined Card */}
+        <div className="w-4/5 pl-4 pr-2 py-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <h2 className="text-lg font-semibold mb-4">Locations & Pods Overview</h2>
+            <div className="mb-6">
+              <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
+            </div>
+            <div>
+              <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+            </div>
           </div>
         </div>
       </div>
