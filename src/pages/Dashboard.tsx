@@ -51,18 +51,18 @@ const DashboardPage: React.FC = () => {
   return (
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#f9fafb]">
-        {/* Left Panel - Stats Cards (no background or border now) */}
+        {/* Left Panel - Stats Cards */}
         <aside className="w-1/5 flex flex-col justify-between gap-4 p-4 h-full">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel - Combined Tables in One Card */}
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="bg-white shadow-md rounded-xl p-6 w-full space-y-10">
-            <div style={{ maxHeight: '480px', overflowY: 'auto' }}>
+        {/* Right Panel - Scrollable Tables Only (Stretched) */}
+        <main className="flex-1 overflow-y-auto px-4 py-6 pr-6">
+          <div className="space-y-10 w-full">
+            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
-            <div style={{ maxHeight: '480px', overflowY: 'auto' }}>
+            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
               <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
             </div>
           </div>
