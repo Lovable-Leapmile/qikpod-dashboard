@@ -12,7 +12,7 @@ const DashboardPage: React.FC = () => {
     locations: 0,
     pods: 0,
     users: 0,
-    reservations: 0
+    reservations: 0,
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -24,7 +24,7 @@ const DashboardPage: React.FC = () => {
         dashboardApi.getLocationsCount(accessToken),
         dashboardApi.getPodsCount(accessToken),
         dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken)
+        dashboardApi.getReservationsCount(accessToken),
       ]);
       setDashboardStats({ locations, pods, users, reservations });
     } catch (error) {
@@ -51,18 +51,21 @@ const DashboardPage: React.FC = () => {
   return (
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#f9fafb]">
-        {/* Left Panel - Stats Cards */}
-        <aside className="w-1/5 flex flex-col justify-between gap-4 p-4 h-full">
+        {/* Left Panel - Stats Cards (reduced left padding) */}
+        <aside className="w-1/5 flex flex-col gap-4 pl-2 pr-3 py-4 h-full">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel - Scrollable Tables Only (Stretched) */}
-        <main className="flex-1 overflow-y-auto px-4 py-6 pr-6">
+        {/* Right Panel - Stretched and aligned with scroll */}
+        <main className="w-4/5 overflow-y-auto pr-4 pl-2 py-6">
           <div className="space-y-10 w-full">
-            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+            {/* Locations Table */}
+            <div style={{ maxHeight: '520px', overflowY: 'auto' }}>
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
-            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+
+            {/* Pods Table */}
+            <div style={{ maxHeight: '520px', overflowY: 'auto' }}>
               <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
             </div>
           </div>
