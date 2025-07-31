@@ -41,31 +41,26 @@ const DashboardPage: React.FC = () => {
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to view dashboard.</p>
-        </div>
+        <p className="text-gray-600">Please log in to view dashboard.</p>
       </div>
     );
   }
 
   return (
     <Layout title="Dashboard" breadcrumb="">
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#f9fafb]">
-        {/* Left Panel - Stats Cards (reduced left padding) */}
-        <aside className="w-1/5 flex flex-col gap-4 pl-2 pr-3 py-4 h-full">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] bg-[#f9fafb]">
+        {/* Left Panel - Responsive width & full height */}
+        <aside className="w-full lg:w-1/5 flex-shrink-0 pl-2 pr-3 py-4">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel - Stretched and aligned with scroll */}
-        <main className="w-4/5 overflow-y-auto pr-4 pl-2 py-6">
+        {/* Right Panel - Responsive + Scrollable */}
+        <main className="flex-1 overflow-y-auto pl-2 pr-4 py-6">
           <div className="space-y-10 w-full">
-            {/* Locations Table */}
-            <div style={{ maxHeight: '520px', overflowY: 'auto' }}>
+            <div className="max-h-[520px] overflow-y-auto">
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
-
-            {/* Pods Table */}
-            <div style={{ maxHeight: '520px', overflowY: 'auto' }}>
+            <div className="max-h-[520px] overflow-y-auto">
               <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
             </div>
           </div>
