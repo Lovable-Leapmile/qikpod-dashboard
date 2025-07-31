@@ -57,7 +57,7 @@ const DashboardPage: React.FC = () => {
         {/* Right Panel - Full page scrollable content */}
         <main className="w-full lg:flex-1 px-4 py-6">
           <div className="space-y-10 w-full">
-            {/* Locations Table */}
+            {/* Locations Table. */}
             <div className="w-full">
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
