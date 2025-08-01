@@ -225,22 +225,19 @@ const PartnerReservationsAgGrid: React.FC = () => {
         
         {/* Desktop Table View */}
         <div className="hidden lg:block">
-           <div className="ag-theme-alpine rounded-b-xl overflow-hidden border border-gray-200" style={{
-             height: '600px',
-             width: '100%'
-           }}>
-             <AgGridReact 
-               rowData={filteredData} 
-               columnDefs={columnDefs} 
-               gridOptions={gridOptions} 
-               loading={loading} 
-               animateRows={true} 
-               headerHeight={60} 
-               rowHeight={55}
-               pagination={true}
-               paginationPageSize={25}
-               suppressMenuHide={true}
-             />
+          <div className="ag-theme-alpine rounded-b-xl overflow-hidden" style={{
+            height: '600px',
+            width: '100%'
+          }}>
+            <AgGridReact 
+              rowData={filteredData} 
+              columnDefs={columnDefs} 
+              gridOptions={gridOptions} 
+              loading={loading} 
+              animateRows={true} 
+              headerHeight={50} 
+              rowHeight={50} 
+            />
           </div>
         </div>
 

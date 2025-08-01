@@ -286,11 +286,11 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               animateRows={true}
               suppressCellFocus={true}
               suppressRowClickSelection={true}
-              rowHeight={55}
-              headerHeight={60}
+              rowHeight={32}
+              headerHeight={28}
               pagination={true}
-              paginationPageSize={25}
-              paginationPageSizeSelector={[10, 25, 50, 100]}
+              paginationPageSize={10}
+              paginationPageSizeSelector={[8, 15, 25]}
               suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
               rowClass="cursor-default"

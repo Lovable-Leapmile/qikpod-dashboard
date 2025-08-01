@@ -346,21 +346,16 @@ const NotificationsPage: React.FC = () => {
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">SMS Details</h2>
           </div>
-           <div className="ag-theme-alpine h-96 border border-gray-200 rounded-xl overflow-hidden" style={{ width: '100%' }}>
-             <AgGridReact
-               rowData={smsData}
-               columnDefs={smsColumnDefs}
-               defaultColDef={defaultColDef}
-               pagination={true}
-               paginationPageSize={25}
-               headerHeight={60}
-               rowHeight={55}
-               suppressCellFocus={true}
-               suppressRowClickSelection={true}
-               onGridReady={(params) => setSmsGridApi(params.api)}
-               suppressMenuHide={true}
-               enableRangeSelection={true}
-             />
+          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
+            <AgGridReact
+              rowData={smsData}
+              columnDefs={smsColumnDefs}
+              defaultColDef={defaultColDef}
+              gridOptions={gridOptions}
+              onGridReady={(params) => setSmsGridApi(params.api)}
+              suppressMenuHide={true}
+              enableRangeSelection={true}
+            />
           </div>
         </div>
 
@@ -369,21 +364,16 @@ const NotificationsPage: React.FC = () => {
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Email Details</h2>
           </div>
-           <div className="ag-theme-alpine h-96 border border-gray-200 rounded-xl overflow-hidden" style={{ width: '100%' }}>
-             <AgGridReact
-               rowData={emailData}
-               columnDefs={emailColumnDefs}
-               defaultColDef={defaultColDef}
-               pagination={true}
-               paginationPageSize={25}
-               headerHeight={60}
-               rowHeight={55}
-               suppressCellFocus={true}
-               suppressRowClickSelection={true}
-               onGridReady={(params) => setEmailGridApi(params.api)}
-               suppressMenuHide={true}
-               enableRangeSelection={true}
-             />
+          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
+            <AgGridReact
+              rowData={emailData}
+              columnDefs={emailColumnDefs}
+              defaultColDef={defaultColDef}
+              gridOptions={gridOptions}
+              onGridReady={(params) => setEmailGridApi(params.api)}
+              suppressMenuHide={true}
+              enableRangeSelection={true}
+            />
           </div>
         </div>
 
