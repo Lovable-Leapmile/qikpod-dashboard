@@ -226,7 +226,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
         {/* Desktop Table View */}
         <div className="hidden lg:block">
           <div className="ag-theme-alpine rounded-b-xl overflow-hidden" style={{
-            height: '500px',
+            height: '600px',
             width: '100%'
           }}>
             <AgGridReact 

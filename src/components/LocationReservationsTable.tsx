@@ -277,7 +277,7 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
         {hasData ? (
           <div 
             className="ag-theme-alpine rounded-xl overflow-hidden border border-gray-200" 
-            style={{ height: '500px', width: '100%' }}
+            style={{ height: '400px', width: '100%' }}
           >
             <AgGridReact
               rowData={currentData}

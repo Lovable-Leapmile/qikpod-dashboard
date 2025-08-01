@@ -216,8 +216,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   });
 
   return (
-    <Card className="bg-white shadow-sm rounded-lg h-full flex flex-col">
-      <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50 flex-shrink-0">
+    <Card className="bg-white shadow-sm rounded-lg">
+      <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
             <MapPin className="w-4 h-5 mr-1 text-[#1f2937]" />
@@ -246,7 +246,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-3 flex-1 flex flex-col min-h-0">
+      <CardContent className="p-3">
         {isMobile ? (
           <div className="space-y-2">
             {loading ? (
@@ -272,10 +272,9 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </div>
         ) : (
           <div 
-            className="ag-theme-alpine dashboard-table w-full rounded overflow-hidden" 
+            className="ag-theme-alpine w-full rounded overflow-hidden" 
             style={{
-              height: '100%',
-              minHeight: '400px'
+              height: 320,
             }}
           >
             <AgGridReact
@@ -290,13 +289,12 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               rowHeight={32}
               headerHeight={28}
               pagination={true}
-              paginationPageSize={15}
-              paginationPageSizeSelector={[10, 15, 25, 50]}
+              paginationPageSize={10}
+              paginationPageSizeSelector={[8, 15, 25]}
               suppressPaginationPanel={false}
               suppressColumnVirtualisation={true}
               rowClass="cursor-default"
               suppressMenuHide={true}
-              domLayout="normal"
             />
           </div>
         )}

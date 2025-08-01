@@ -346,7 +346,7 @@ const NotificationsPage: React.FC = () => {
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">SMS Details</h2>
           </div>
-          <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
             <AgGridReact
               rowData={smsData}
               columnDefs={smsColumnDefs}
@@ -364,7 +364,7 @@ const NotificationsPage: React.FC = () => {
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Email Details</h2>
           </div>
-          <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
             <AgGridReact
               rowData={emailData}
               columnDefs={emailColumnDefs}

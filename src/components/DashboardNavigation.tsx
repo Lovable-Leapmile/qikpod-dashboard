@@ -38,7 +38,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
               <img 
                 src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
                 alt="QikPod Logo" 
-                className="h-6 w-auto" 
+                className="h-5 w-auto" 
               />
             </div>
           </div>
@@ -48,7 +48,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
             <div className="ml-6 flex items-center space-x-2">
               {navigationItems.map(item => item.isDropdown ? <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
-                      <button className={`h-8 px-2 py-1 rounded-md text-sm font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                      <button className={`h-8 px-2 py-1 rounded-md text-xs font-medium transition-colors flex items-center ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
                         <item.icon className="inline-block w-3 h-3 mr-1" />
                         {item.name}
                         <ChevronDown className="w-3 h-3 ml-1" />
@@ -60,7 +60,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                           {subItem.name}
                         </DropdownMenuItem>)}
                     </DropdownMenuContent>
-                  </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`h-8 px-2 py-1 rounded-md text-sm font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
+                  </DropdownMenu> : <button key={item.name} onClick={item.onClick} className={`h-8 px-2 py-1 rounded-md text-xs font-medium transition-colors ${item.active ? 'bg-yellow-400 text-black' : 'text-black hover:bg-yellow-400 hover:text-black'}`}>
                     <item.icon className="inline-block w-3 h-3 mr-1" />
                     {item.name}
                   </button>)}
@@ -68,7 +68,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
               {/* User Profile Section */}
               {user && (
                 <div className="flex items-center space-x-2 ml-4">
-                  <span className="text-sm text-black font-medium">Welcome {user.user_name}</span>
+                  <span className="text-xs text-black font-medium">Welcome {user.user_name}</span>
                   <Avatar className="h-6 w-6">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-yellow-600 text-white text-xs">
@@ -78,7 +78,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                 </div>
               )}
               
-              <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-8 px-2 text-sm text-black hover:text-black bg-gray-50">
+              <Button onClick={() => setShowLogoutDialog(true)} variant="ghost" className="h-8 px-2 text-xs text-black hover:text-black bg-gray-50">
                 <LogOut className="w-3 h-3 mr-1" />
                 Logout
               </Button>

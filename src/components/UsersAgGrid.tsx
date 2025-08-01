@@ -300,7 +300,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
           <div className="p-6">
             <div 
               className="ag-theme-alpine w-full rounded-lg overflow-hidden" 
-              style={{ height: '500px' }}
+              style={{ height: '600px' }}
             >
               <AgGridReact
                 ref={gridRef}

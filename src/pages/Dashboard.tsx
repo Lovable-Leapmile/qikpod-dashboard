@@ -48,22 +48,22 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Layout title="Dashboard" breadcrumb="">
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] bg-[#f9fafb] overflow-hidden">
+      <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
         {/* Left Panel - Full height only on desktop */}
-        <aside className="w-full lg:w-1/5 flex-shrink-0 px-4 py-6 lg:h-full">
+        <aside className="w-full lg:w-1/5 flex-shrink-0 px-4 py-6 lg:h-[calc(100vh-64px)]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel - Flexible layout with location table stretching to bottom */}
-        <main className="w-full lg:flex-1 px-4 py-6 flex flex-col overflow-hidden">
-          <div className="flex flex-col h-full space-y-6">
-            {/* Locations Table - Stretch to fill available space */}
-            <div className="flex-1 min-h-0">
+        {/* Right Panel - Full page scrollable content */}
+        <main className="w-full lg:flex-1 px-4 py-6">
+          <div className="space-y-10 w-full">
+            {/* Locations Table. */}
+            <div className="w-full">
               <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
             </div>
 
             {/* Pods Table */}
-            <div className="flex-shrink-0">
+            <div className="w-full">
               <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
             </div>
           </div>
