@@ -88,6 +88,7 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
         suppressAndOrCondition: true,
         suppressFilterButton: true,
       },
+      sortable: true,
     },
     { 
       headerName: 'USER NAME', 
@@ -165,6 +166,7 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
         suppressAndOrCondition: true,
         suppressFilterButton: true,
       },
+      sortable: true,
     },
     { 
       headerName: 'POD ID', 
@@ -284,7 +286,7 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
               columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
               defaultColDef={defaultColDef}
               pagination={true}
-              paginationPageSize={20}
+              paginationPageSize={25}
               domLayout="normal"
               loading={loading}
               suppressRowClickSelection={true}

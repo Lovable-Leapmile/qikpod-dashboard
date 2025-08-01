@@ -256,13 +256,13 @@ const PaymentsAgGrid = () => {
 
       {/* Enhanced AG Grid Table */}
       <div className="flex-1 w-full">
-        <div className="ag-theme-alpine h-[calc(100vh-320px)] w-full rounded-xl overflow-hidden shadow-lg">
-          <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
+         <div className="ag-theme-alpine h-[calc(100vh-320px)] w-full rounded-xl overflow-hidden border border-gray-200">
+           <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
           resizable: true,
           sortable: true,
           filter: true,
           cellClass: 'flex items-center'
-        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={56} suppressColumnVirtualisation={true} rowSelection="multiple" suppressRowClickSelection={false} />
+        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={55} headerHeight={60} suppressColumnVirtualisation={true} rowSelection="multiple" suppressRowClickSelection={false} suppressMenuHide={true} />
         </div>
       </div>
 
