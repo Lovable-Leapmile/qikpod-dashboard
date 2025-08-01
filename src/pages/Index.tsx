@@ -1,13 +1,10 @@
-// pages/index.tsx
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import Login from '@/components/Login';
+import Dashboard from '@/components/Dashboard';
 import { useAuth } from '@/contexts/AuthContext';
 
-const Login = dynamic(() => import('@/components/Login'), { ssr: false });
-const Dashboard = dynamic(() => import('@/components/Dashboard'), { ssr: false });
-
-const IndexPage = () => {
+const AppContent = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -24,4 +21,8 @@ const IndexPage = () => {
   return isAuthenticated ? <Dashboard /> : <Login />;
 };
 
-export default IndexPage;
+const Index = () => {
+  return <AppContent />;
+};
+
+export default Index;
