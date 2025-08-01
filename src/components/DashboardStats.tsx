@@ -54,13 +54,13 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
           key={index}
           className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200 flex flex-col"
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
+          <CardHeader className="flex items-center gap-2 pb-0 pt-3 px-4">
+            <stat.icon className="h-5 w-5 text-gray-800" />
             <CardTitle className="text-sm font-medium text-gray-600 uppercase tracking-wide">
               {stat.title}
             </CardTitle>
-            <stat.icon className="h-4 w-4 text-gray-800" />
           </CardHeader>
-          <CardContent className="px-4 pb-3 flex-1 flex items-end">
+          <CardContent className="px-4 pb-3 pt-1 flex-1 flex items-end">
             <div className="text-2xl font-bold text-gray-900">
               {statsLoading ? '...' : stat.value}
             </div>
