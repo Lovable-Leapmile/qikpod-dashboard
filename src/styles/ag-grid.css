@@ -1,22 +1,30 @@
 
-/* AG Grid Custom Styles with Enhanced Design */
+/* AG Grid Custom Styles with Enhanced Design - Consistent Theme */
 .ag-theme-alpine {
   --ag-header-background-color: hsl(var(--card));
   --ag-header-foreground-color: hsl(var(--foreground));
   --ag-border-color: hsl(var(--border));
-  --ag-row-hover-color: hsl(var(--muted) / 0.5);
+  --ag-row-hover-color: hsl(var(--muted) / 0.3);
   --ag-odd-row-background-color: hsl(var(--background));
-  --ag-even-row-background-color: hsl(var(--muted) / 0.3);
+  --ag-even-row-background-color: hsl(var(--muted) / 0.2);
   --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --ag-font-size: 14px;
   --ag-header-font-weight: 600;
   --ag-cell-horizontal-padding: 20px;
-  --ag-header-height: 56px;
-  --ag-row-height: 52px;
+  --ag-header-height: 60px;
+  --ag-row-height: 55px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Dashboard specific AG Grid styling - smaller dimensions but same design */
+.ag-theme-alpine.dashboard-table {
+  --ag-header-height: 28px;
+  --ag-row-height: 32px;
+  --ag-font-size: 12px;
+  --ag-cell-horizontal-padding: 16px;
 }
 
 .ag-theme-alpine .ag-root-wrapper {
@@ -203,4 +211,53 @@
   background-color: hsl(var(--muted));
   color: hsl(var(--foreground));
   transform: scale(1.1);
+}
+
+/* Responsive AG Grid adjustments */
+@media (max-width: 768px) {
+  .ag-theme-alpine {
+    --ag-header-height: 48px;
+    --ag-row-height: 44px;
+    --ag-font-size: 12px;
+    --ag-cell-horizontal-padding: 12px;
+  }
+
+  .ag-theme-alpine.dashboard-table {
+    --ag-header-height: 32px;
+    --ag-row-height: 28px;
+    --ag-font-size: 11px;
+    --ag-cell-horizontal-padding: 8px;
+  }
+}
+
+/* Ensure consistent vertical alignment */
+.ag-theme-alpine .ag-cell,
+.ag-theme-alpine .ag-header-cell {
+  display: flex;
+  align-items: center;
+}
+
+.vertical-center {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Improved pagination styling */
+.ag-theme-alpine .ag-paging-button {
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.ag-theme-alpine .ag-paging-button:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--primary));
+}
+
+.ag-theme-alpine .ag-paging-button.ag-paging-button-active {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
 }

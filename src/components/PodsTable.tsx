@@ -244,16 +244,8 @@ const PodsTable: React.FC<PodsTableProps> = ({
                 </div> : <div className="text-center py-6">
                   <p className="text-gray-500 text-sm">No pods found</p>
                 </div>}
-            </div> : <div className="ag-theme-alpine w-full rounded overflow-hidden" style={{
+            </div> : <div className="ag-theme-alpine dashboard-table w-full rounded overflow-hidden" style={{
           height: 320,
-          '--ag-header-background-color': '#FFFBEB',
-          '--ag-row-hover-color': '#FEF3C7',
-          '--ag-odd-row-background-color': '#FEFEFE',
-          '--ag-even-row-background-color': '#F9F9F9',
-          '--ag-header-cell-border': '1px solid #E5E7EB',
-          '--ag-row-border-color': '#E5E7EB',
-          '--ag-border-radius': '0.5rem',
-          '--ag-selected-row-background-color': 'transparent'
         } as React.CSSProperties}>
               <AgGridReact rowData={pods} columnDefs={columnDefs} defaultColDef={defaultColDef} loading={loading} onGridReady={onGridReady} animateRows={true} suppressCellFocus={true} suppressRowClickSelection={true} rowHeight={32} headerHeight={28} pagination={true} paginationPageSize={10} paginationPageSizeSelector={[8, 15, 25]} suppressPaginationPanel={false} suppressColumnVirtualisation={true} rowClass="cursor-default" />
             </div>}

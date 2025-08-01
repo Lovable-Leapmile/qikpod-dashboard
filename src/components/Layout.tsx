@@ -105,7 +105,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       />
 
       {/* Main Content with top padding for fixed header */}
-      <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
+      <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16 min-h-screen">
         {/* Page Header - Only show for non-dashboard pages */}
         {currentView !== 'dashboard' && (
           <div className="mb-4">
