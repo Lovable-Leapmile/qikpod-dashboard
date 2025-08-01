@@ -202,7 +202,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
     floatingFilter: false
   };
 
-  // Filter pods for mobile cards
+  // Filter pods for mobile card
   const filteredPods = pods.filter(pod => {
     if (!searchText) return true;
     const searchLower = searchText.toLowerCase();
