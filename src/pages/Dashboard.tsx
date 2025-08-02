@@ -5,9 +5,11 @@ import PodsTable from '@/components/PodsTable';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const { accessToken } = useAuth();
+  const navigate = useNavigate();
   const [dashboardStats, setDashboardStats] = useState({
     locations: 0,
     pods: 0,
@@ -38,6 +40,14 @@ const DashboardPage: React.FC = () => {
     fetchDashboardStats();
   }, [accessToken]);
 
+  const handleLocationClick = (locationId: number) => {
+    navigate(`/locations/${locationId}`);
+  };
+
+  const handlePodClick = (podId: number) => {
+    navigate(`/pods/${podId}`);
+  };
+
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -59,12 +69,12 @@ const DashboardPage: React.FC = () => {
           <div className="space-y-10 w-full">
             {/* Locations Table. */}
             <div className="w-full">
-              <LocationsTable onLocationClick={(id) => console.log('Location clicked:', id)} />
+              <LocationsTable onLocationClick={handleLocationClick} />
             </div>
 
             {/* Pods Table */}
             <div className="w-full">
-              <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+              <PodsTable onPodClick={handlePodClick} />
             </div>
           </div>
         </main>

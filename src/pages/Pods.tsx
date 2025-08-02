@@ -2,9 +2,15 @@ import React from 'react';
 import PodsTable from '@/components/PodsTable';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const PodsPage: React.FC = () => {
   const { accessToken } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePodClick = (podId: number) => {
+    navigate(`/pods/${podId}`);
+  };
   
   if (!accessToken) {
     return (
@@ -18,7 +24,7 @@ const PodsPage: React.FC = () => {
 
   return (
     <Layout title="Pods Management" breadcrumb="Operations / Pods Management">
-      <PodsTable onPodClick={(id) => console.log('Pod clicked:', id)} />
+      <PodsTable onPodClick={handlePodClick} />
     </Layout>
   );
 };
