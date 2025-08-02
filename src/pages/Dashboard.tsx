@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom';
 import DashboardStats from '@/components/DashboardStats';
 import LocationsTable from '@/components/LocationsTable';
 import PodsTable from '@/components/PodsTable';
@@ -9,7 +9,7 @@ import { dashboardApi } from '@/services/dashboardApi';
 
 const DashboardPage: React.FC = () => {
   const { accessToken } = useAuth();
-  const router = useRouter(); // ✅ Add this
+  const navigate = useNavigate(); // ✅ for Vite or React Router apps
 
   const [dashboardStats, setDashboardStats] = useState({
     locations: 0,
@@ -52,26 +52,18 @@ const DashboardPage: React.FC = () => {
   return (
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
-        {/* Left Panel */}
         <aside className="w-full lg:w-1/5 flex-shrink-0 px-4 py-6 lg:h-[calc(100vh-64px)]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        {/* Right Panel */}
         <main className="w-full lg:flex-1 px-4 py-6">
           <div className="space-y-10 w-full">
-            {/* Locations Table */}
             <div className="w-full">
-              <LocationsTable
-                onLocationClick={(id) => router.push(`/location/${id}`)} // ✅ Navigate
-              />
+              <LocationsTable onLocationClick={(id) => navigate(`/location/${id}`)} />
             </div>
 
-            {/* Pods Table */}
             <div className="w-full">
-              <PodsTable
-                onPodClick={(id) => router.push(`/pod/${id}`)} // ✅ Navigate
-              />
+              <PodsTable onPodClick={(id) => navigate(`/pod/${id}`)} />
             </div>
           </div>
         </main>
