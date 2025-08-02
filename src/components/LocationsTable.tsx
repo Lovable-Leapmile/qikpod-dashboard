@@ -252,7 +252,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
             {loading ? (
               <div className="text-center py-6">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FDDC4E] mx-auto"></div>
-                <p className="text-gray-500 mt-2 text-sm">Loading...</p>
+                <p className="text-gray-500 mt-2 text-xs">Loading...</p>
               </div>
             ) : filteredLocations.length > 0 ? (
               <div className="max-h-[50vh] overflow-y-auto">
@@ -266,7 +266,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-gray-500 text-xs">No locations found</p>
+                <p className="text-gray-500 text-sm">No locations found</p>
               </div>
             )}
           </div>
