@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useUsersData } from '@/hooks/useUsersData';
@@ -20,37 +19,47 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
 
   const handleUserClick = (userId: number) => {
     console.log('Navigate to user detail:', userId);
-    // TODO: Implement user detail navigation
+    // TODO: Implement user detail navigation (e.g., navigate(`/user/${userId}`))
   };
 
   const handleAddUserSuccess = () => {
     refetchUsers();
     setShowAddUserPopup(false);
     toast({
-      title: "Success",
-      description: "User added successfully",
+      title: 'Success',
+      description: 'User added successfully',
     });
   };
 
   return (
-    <div className="space-y-4">
-      <UsersTableHeader onAddUser={() => setShowAddUserPopup(true)} />
+    <div className="space-y-4 px-4 sm:px-6 lg:px-8 py-4 w-full max-w-screen-xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <UsersTableHeader onAddUser={() => setShowAddUserPopup(true)} />
+      </div>
 
-      <UsersTableControls
-        searchText={searchText}
-        onSearchChange={setSearchText}
-        pageSize={pageSize}
-        onPageSizeChange={setPageSize}
-      />
+      {/* Controls */}
+      <div className="w-full">
+        <UsersTableControls
+          searchText={searchText}
+          onSearchChange={setSearchText}
+          pageSize={pageSize}
+          onPageSizeChange={setPageSize}
+        />
+      </div>
 
-      <UsersGrid
-        users={users}
-        loading={loading}
-        searchText={searchText}
-        pageSize={pageSize}
-        onUserClick={handleUserClick}
-      />
+      {/* Grid */}
+      <div className="w-full overflow-x-auto">
+        <UsersGrid
+          users={users}
+          loading={loading}
+          searchText={searchText}
+          pageSize={pageSize}
+          onUserClick={handleUserClick}
+        />
+      </div>
 
+      {/* Popup */}
       <AddUserPopup
         open={showAddUserPopup}
         onOpenChange={setShowAddUserPopup}
