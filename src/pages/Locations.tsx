@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LocationsTable from '@/components/LocationsTable';
+import LocationDetail from '@/components/LocationDetail';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const LocationsPage: React.FC = () => {
   const { accessToken } = useAuth();
-  const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<'locations' | 'locationDetail'>('locations');
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
 
   const handleLocationClick = (locationId: number) => {
-    navigate(`/locations/${locationId}`);
+    setSelectedLocationId(locationId);
+    setCurrentView('locationDetail');
+  };
+
+  const handleBackToLocations = () => {
+    setCurrentView('locations');
+    setSelectedLocationId(null);
   };
   
   if (!accessToken) {
@@ -19,6 +26,14 @@ const LocationsPage: React.FC = () => {
           <p className="text-gray-600">Please log in to view locations.</p>
         </div>
       </div>
+    );
+  }
+
+  if (currentView === 'locationDetail' && selectedLocationId) {
+    return (
+      <Layout title="Location Details" breadcrumb="Operations / Locations Management / Location Details">
+        <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} />
+      </Layout>
     );
   }
 

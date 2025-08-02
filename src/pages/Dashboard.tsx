@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import DashboardStats from '@/components/DashboardStats';
 import LocationsTable from '@/components/LocationsTable';
 import PodsTable from '@/components/PodsTable';
+import LocationDetail from '@/components/LocationDetail';
+import PodDetail from '@/components/PodDetail';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
@@ -49,6 +51,42 @@ const DashboardPage: React.FC = () => {
     );
   }
 
+  const [currentView, setCurrentView] = useState<'dashboard' | 'locationDetail' | 'podDetail'>('dashboard');
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
+
+  const handleLocationClick = (locationId: number) => {
+    setSelectedLocationId(locationId);
+    setCurrentView('locationDetail');
+  };
+
+  const handlePodClick = (podId: number) => {
+    setSelectedPodId(podId);
+    setCurrentView('podDetail');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setSelectedLocationId(null);
+    setSelectedPodId(null);
+  };
+
+  if (currentView === 'locationDetail' && selectedLocationId) {
+    return (
+      <Layout title="Location Details" breadcrumb="Dashboard / Location Details">
+        <LocationDetail locationId={selectedLocationId} onBack={handleBackToDashboard} />
+      </Layout>
+    );
+  }
+
+  if (currentView === 'podDetail' && selectedPodId) {
+    return (
+      <Layout title="Pod Details" breadcrumb="Dashboard / Pod Details">
+        <PodDetail podId={selectedPodId} onBack={handleBackToDashboard} />
+      </Layout>
+    );
+  }
+
   return (
     <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
@@ -59,11 +97,11 @@ const DashboardPage: React.FC = () => {
         <main className="w-full lg:flex-1 px-4 py-6">
           <div className="space-y-10 w-full">
             <div className="w-full">
-              <LocationsTable onLocationClick={(id) => navigate(`/location/${id}`)} />
+              <LocationsTable onLocationClick={handleLocationClick} />
             </div>
 
             <div className="w-full">
-              <PodsTable onPodClick={(id) => navigate(`/pod/${id}`)} />
+              <PodsTable onPodClick={handlePodClick} />
             </div>
           </div>
         </main>

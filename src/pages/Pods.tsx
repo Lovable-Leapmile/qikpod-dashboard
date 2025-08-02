@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PodsTable from '@/components/PodsTable';
+import PodDetail from '@/components/PodDetail';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const PodsPage: React.FC = () => {
   const { accessToken } = useAuth();
-  const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<'pods' | 'podDetail'>('pods');
+  const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
 
   const handlePodClick = (podId: number) => {
-    navigate(`/pods/${podId}`);
+    setSelectedPodId(podId);
+    setCurrentView('podDetail');
+  };
+
+  const handleBackToPods = () => {
+    setCurrentView('pods');
+    setSelectedPodId(null);
   };
   
   if (!accessToken) {
@@ -19,6 +26,14 @@ const PodsPage: React.FC = () => {
           <p className="text-gray-600">Please log in to view pods.</p>
         </div>
       </div>
+    );
+  }
+
+  if (currentView === 'podDetail' && selectedPodId) {
+    return (
+      <Layout title="Pod Details" breadcrumb="Operations / Pods Management / Pod Details">
+        <PodDetail podId={selectedPodId} onBack={handleBackToPods} />
+      </Layout>
     );
   }
 
