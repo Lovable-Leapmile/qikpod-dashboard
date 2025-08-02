@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Reservations from '@/components/Reservations';
+import ReservationDetail from '@/components/ReservationDetail';
+import AdhocReservationDetail from '@/components/AdhocReservationDetail';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const ReservationsPage: React.FC = () => {
   const { accessToken } = useAuth();
-  const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<'reservations' | 'reservationDetail' | 'adhocReservationDetail'>('reservations');
+  const [selectedReservationId, setSelectedReservationId] = useState<number | null>(null);
 
   const handleStandardReservationClick = (reservationId: number) => {
-    navigate(`/reservations/standard/${reservationId}`);
+    setSelectedReservationId(reservationId);
+    setCurrentView('reservationDetail');
   };
 
   const handleAdhocReservationClick = (reservationId: number) => {
-    navigate(`/reservations/adhoc/${reservationId}`);
+    setSelectedReservationId(reservationId);
+    setCurrentView('adhocReservationDetail');
+  };
+
+  const handleBackToReservations = () => {
+    setCurrentView('reservations');
+    setSelectedReservationId(null);
   };
   
   if (!accessToken) {
@@ -23,6 +32,22 @@ const ReservationsPage: React.FC = () => {
           <p className="text-gray-600">Please log in to view reservations.</p>
         </div>
       </div>
+    );
+  }
+
+  if (currentView === 'reservationDetail' && selectedReservationId) {
+    return (
+      <Layout title="Reservation Details" breadcrumb="Operations / Reservations Management / Reservation Details">
+        <ReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} />
+      </Layout>
+    );
+  }
+
+  if (currentView === 'adhocReservationDetail' && selectedReservationId) {
+    return (
+      <Layout title="Adhoc Reservation Details" breadcrumb="Operations / Reservations Management / Adhoc Reservation Details">
+        <AdhocReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} />
+      </Layout>
     );
   }
 
