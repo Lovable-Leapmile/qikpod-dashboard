@@ -49,19 +49,20 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
     <div className="h-auto flex flex-col gap-3">
       {statsData.map((stat, index) => (
         <Card
-          key={index}
-          className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200 px-4 py-3 flex items-center justify-center text-center"
-        >
-          <div className="flex flex-col items-center justify-center gap-1">
-            <stat.icon className="h-5 w-5 text-gray-700 mb-1" />
-            <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-              {stat.title}
-            </span>
-            <div className="text-xl font-bold text-gray-900">
-              {statsLoading ? '...' : stat.value}
-            </div>
-          </div>
-        </Card>
+  key={index}
+  className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200 px-4 py-3 flex flex-col items-center justify-center text-center"
+>
+  <div className="flex items-center gap-2 mb-1 justify-center">
+    <stat.icon className="h-4 w-4 text-gray-800" />
+    <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+      {stat.title}
+    </span>
+  </div>
+  <div className="text-xl font-bold text-gray-900">
+    {statsLoading ? '...' : stat.value}
+  </div>
+</Card>
+
       ))}
     </div>
   );
