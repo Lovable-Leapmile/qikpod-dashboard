@@ -266,7 +266,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-gray-500 text-sm">No locations found</p>
+                <p className="text-gray-500 text-xs">No locations found</p>
               </div>
             )}
           </div>
