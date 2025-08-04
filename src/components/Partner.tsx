@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Play, Download, Upload, X, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PartnerReservationsAgGrid from './PartnerReservationsAgGrid';
+import { usePartnerStats } from '@/hooks/usePartnerStats';
 
 interface PartnerProps {
   onBack: () => void;
@@ -13,15 +14,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  // Mock dashboard data (without duplicate records)
-  const dashboardStats = [
-    { title: 'Pickup Pending', value: 20, color: 'text-orange-600' },
-    { title: 'Pickup Completed', value: 20, color: 'text-green-600' },
-    { title: 'RTO Pending', value: 20, color: 'text-orange-600' },
-    { title: 'RTO Completed', value: 50, color: 'text-green-600' },
-    { title: 'Drop Pending', value: 50, color: 'text-orange-600' }
-  ];
+  const { stats: dashboardStats, loading: statsLoading } = usePartnerStats();
 
   const downloadSampleCSV = () => {
     const jsonDataList = [
@@ -150,7 +143,11 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
               <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <span className="text-sm font-medium text-gray-700">{stat.title}</span>
                 <span className={`text-lg font-bold ${stat.color} bg-white px-3 py-1 rounded-full border`}>
-                  {stat.value}
+                  {statsLoading ? (
+                    <div className="w-6 h-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
+                  ) : (
+                    stat.value
+                  )}
                 </span>
               </div>
             ))}
