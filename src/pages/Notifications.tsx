@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 
@@ -30,33 +31,38 @@ interface EmailRecord {
   email_num_retries: number;
 }
 
-const ActionButtonRenderer = ({ data, refresh }: { data: any; refresh: () => void }) => (
-  <div className="flex gap-2">
-    <Button 
-      size="sm" 
-      variant="outline" 
-      onClick={() => {
-        // Retry action
-        toast.info(`Retrying ${data.id}`);
-        refresh();
-      }}
-      className="text-xs"
-    >
-      Retry
-    </Button>
-    <Button 
-      size="sm" 
-      variant="ghost" 
-      onClick={() => {
-        // Details action
-        toast.info(`Viewing details for ${data.id}`);
-      }}
-      className="text-xs"
-    >
-      Details
-    </Button>
-  </div>
-);
+const ActionButtonRenderer = ({ data, refresh }: { data: any; refresh: () => void }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="flex gap-2">
+      <Button 
+        size="sm" 
+        variant="outline" 
+        onClick={() => {
+          // Retry action
+          toast.info(`Retrying ${data.id}`);
+          refresh();
+        }}
+        className="text-xs"
+      >
+        Retry
+      </Button>
+      <Button 
+        size="sm" 
+        variant="ghost" 
+        onClick={() => {
+          // Determine if this is SMS or Email based on data structure
+          const type = data.sms_to_phone_number ? 'sms' : 'email';
+          navigate(`/notification/${type}/${data.id}`);
+        }}
+        className="text-xs"
+      >
+        Details
+      </Button>
+    </div>
+  );
+};
 
 const NotificationsPage: React.FC = () => {
   const { accessToken } = useAuth();

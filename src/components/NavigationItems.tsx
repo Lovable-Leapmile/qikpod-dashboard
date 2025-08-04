@@ -2,7 +2,7 @@
 
 import { Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, HelpCircle, CreditCard, FileText } from 'lucide-react';
 
-export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notification' | 'payments' | 'logs';
+export type ViewType = 'dashboard' | 'locations' | 'pods' | 'reservations' | 'locationDetail' | 'podDetail' | 'reservationDetail' | 'adhocReservationDetail' | 'usersNetwork' | 'partner' | 'notification' | 'payments' | 'logs' | 'smsDetails' | 'emailDetails';
 
 export interface NavigationItem {
   name: string;
@@ -54,7 +54,7 @@ export const createNavigationItems = (
   {
     name: 'Users & Network',
     icon: Users,
-    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notification' || currentView === 'payments' || currentView === 'logs',
+    active: currentView === 'usersNetwork' || currentView === 'partner' || currentView === 'notification' || currentView === 'payments' || currentView === 'logs' || currentView === 'smsDetails' || currentView === 'emailDetails',
     isDropdown: true,
     items: [
       {

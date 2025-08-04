@@ -11,6 +11,8 @@ import ReservationsPage from "./pages/Reservations";
 import UsersPage from "./pages/Users";
 import PartnerPage from "./pages/Partner";
 import NotificationsPage from "./pages/Notifications";
+import SMSDetailsPage from "./pages/SMSDetails";
+import EmailDetailsPage from "./pages/EmailDetails";
 import PaymentsPage from "./pages/Payments";
 import LogsPage from "./pages/Logs";
 import NotFound from "./pages/NotFound";
@@ -34,6 +36,8 @@ const App = () => (
             <Route path="/users" element={<UsersPage />} />
             <Route path="/partner" element={<PartnerPage />} />
             <Route path="/notification" element={<NotificationsPage />} />
+            <Route path="/notification/sms/:recordId" element={<SMSDetailsPage />} />
+            <Route path="/notification/email/:recordId" element={<EmailDetailsPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
             <Route path="/logs" element={<LogsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
