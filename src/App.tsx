@@ -14,6 +14,7 @@ import NotificationsPage from "./pages/Notifications";
 import SMSDetailsPage from "./pages/SMSDetails";
 import EmailDetailsPage from "./pages/EmailDetails";
 import PaymentsPage from "./pages/Payments";
+import PaymentDetailPage from "./pages/PaymentDetail";
 import LogsPage from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/notification/sms/:recordId" element={<SMSDetailsPage />} />
             <Route path="/notification/email/:recordId" element={<EmailDetailsPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/payments/:paymentId" element={<PaymentDetailPage />} />
             <Route path="/logs" element={<LogsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

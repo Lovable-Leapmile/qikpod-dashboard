@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
+import { useNavigate } from 'react-router-dom';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '@/styles/ag-grid.css';
@@ -23,9 +24,8 @@ interface PaymentData {
   payment_client_awbno: string;
 }
 const PaymentsAgGrid = () => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
+  const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<PaymentData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -88,8 +88,20 @@ const PaymentsAgGrid = () => {
       </span>;
   };
   const ActionRenderer = (params: any) => {
+    const handleViewDetails = () => {
+      // Navigate to payment detail page using the payment ID
+      const paymentId = params.data.id || params.data.payment_reference_id;
+      navigate(`/payments/${paymentId}`);
+    };
+
     return <div className="flex items-center justify-center h-full">
-        <Button variant="ghost" size="sm" onClick={() => console.log('Action clicked', params.data)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={handleViewDetails} 
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          title="View Payment Details"
+        >
           <Eye className="h-4 w-4" />
         </Button>
       </div>;
