@@ -41,7 +41,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     try {
       // API call to fetch payment details for the specific payment ID
       const response = await fetch(
-        `https://stagingv3.leapmile.com/payments/payment-details/${paymentId}/`, 
+        `https://stagingv3.leapmile.com/payments/payments/?record_id=${paymentId}&order_by_field=updated_at&order_by_type=DESC`, 
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
