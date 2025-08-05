@@ -209,8 +209,8 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             </div>}
         </div> : <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
           {/* Table Title and Controls */}
-          <div className="p-6 border-b border-gray-200 bg-gray-100">
-            <div className="flex items-center justify-between mb-4">
+          <div className="p-4 border-b border-gray-200 bg-gray-100">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
                 <Users className="w-5 h-5 text-gray-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Users</h2>
@@ -247,7 +247,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
           height: '600px'
         }}>
-              <AgGridReact ref={gridRef} rowData={users} columnDefs={columnDefs} defaultColDef={defaultColDef} pagination={true} paginationPageSize={pageSize} paginationPageSizeSelector={[10, 25, 50, 100]} onGridReady={onGridReady} suppressMovableColumns={false} animateRows={true} suppressRowClickSelection={true} headerHeight={50} rowHeight={60} suppressHorizontalScroll={false} domLayout="normal" suppressMenuHide={true} suppressColumnVirtualisation={true} />
+              <AgGridReact ref={gridRef} rowData={users} columnDefs={columnDefs} defaultColDef={defaultColDef} pagination={true} paginationPageSize={pageSize} paginationPageSizeSelector={[10, 25, 50, 100]} onGridReady={onGridReady} suppressMovableColumns={false} animateRows={true} suppressRowClickSelection={true} headerHeight={45} rowHeight={55} suppressHorizontalScroll={false} domLayout="normal" suppressMenuHide={true} suppressColumnVirtualisation={true} rowSelection="single" />
             </div>
           </div>
         </div>}

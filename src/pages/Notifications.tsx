@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Settings } from 'lucide-react';
+import { RefreshCw, Settings, Search, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -35,7 +35,7 @@ const ActionButtonRenderer = ({ data, refresh }: { data: any; refresh: () => voi
   const navigate = useNavigate();
   
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center justify-center h-full gap-2">
       <Button 
         size="sm" 
         variant="outline" 
@@ -49,16 +49,16 @@ const ActionButtonRenderer = ({ data, refresh }: { data: any; refresh: () => voi
         Retry
       </Button>
       <Button 
-        size="sm" 
         variant="ghost" 
+        size="sm" 
         onClick={() => {
           // Determine if this is SMS or Email based on data structure
           const type = data.sms_to_phone_number ? 'sms' : 'email';
           navigate(`/notification/${type}/${data.id}`);
         }}
-        className="text-xs"
+        className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800"
       >
-        Details
+        <Eye className="h-4 w-4" />
       </Button>
     </div>
   );
@@ -307,57 +307,88 @@ const NotificationsPage: React.FC = () => {
   return (
     <Layout title="Notification Centre" breadcrumb="Notifications">
       <div className="space-y-6">
-        {/* Header Controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="auto-refresh" 
-                checked={autoRefresh}
-                onCheckedChange={(checked) => setAutoRefresh(checked as boolean)}
-              />
-              <Label htmlFor="auto-refresh" className="text-sm font-medium">
-                Auto Refresh (2 min)
-              </Label>
+        {/* Compact Header Controls */}
+        <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-gray-200 bg-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <h2 className="text-lg font-semibold text-gray-900">Notification Centre</h2>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox 
+                    id="auto-refresh" 
+                    checked={autoRefresh}
+                    onCheckedChange={(checked) => setAutoRefresh(checked as boolean)}
+                  />
+                  <Label htmlFor="auto-refresh" className="text-sm text-muted-foreground font-medium">
+                    Auto Refresh (2m)
+                  </Label>
+                </div>
+
+                <Button 
+                  onClick={refreshData} 
+                  disabled={loading}
+                  variant="outline"
+                  size="sm"
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                </Button>
+                <Button 
+                  onClick={() => setShowSettings(true)}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Settings className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search all tables..."
-              value={searchText}
-              onChange={onSearchChange}
-              className="w-64"
-            />
-            <Button 
-              onClick={refreshData} 
-              disabled={loading}
-              variant="outline"
-              size="sm"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
-            <Button 
-              onClick={() => setShowSettings(true)}
-              variant="outline"
-              size="sm"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
+
+            {/* Search Controls */}
+            <div className="flex items-center space-x-4">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search notifications..."
+                  value={searchText}
+                  onChange={onSearchChange}
+                  className="pl-10"
+                />
+              </div>
+              
+              {/* Page Size Selector */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Show:</span>
+                <Select value="25" onValueChange={() => {}}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-gray-600">per page</span>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* SMS Details Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">SMS Details</h2>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+          <div className="p-3 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-base font-semibold text-gray-900">SMS Details</h2>
           </div>
           <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
             <AgGridReact
               rowData={smsData}
               columnDefs={smsColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={gridOptions}
+              gridOptions={{...gridOptions, headerHeight: 45, rowHeight: 48, suppressRowClickSelection: true, rowSelection: 'single'}}
               onGridReady={(params) => setSmsGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}
@@ -366,16 +397,16 @@ const NotificationsPage: React.FC = () => {
         </div>
 
         {/* Email Details Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Email Details</h2>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+          <div className="p-3 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-base font-semibold text-gray-900">Email Details</h2>
           </div>
           <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
             <AgGridReact
               rowData={emailData}
               columnDefs={emailColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={gridOptions}
+              gridOptions={{...gridOptions, headerHeight: 45, rowHeight: 48, suppressRowClickSelection: true, rowSelection: 'single'}}
               onGridReady={(params) => setEmailGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}

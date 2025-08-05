@@ -198,12 +198,26 @@ const PartnerReservationsAgGrid: React.FC = () => {
   return (
     <div className="mx-6 my-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="pb-6 pt-6 rounded-t-xl bg-gray-100 px-[14px]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-            <h2 className="text-xl font-bold text-gray-900">Partner Reservations</h2>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-lg font-semibold text-gray-900">Partner Reservations</h2>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Button onClick={handleDownloadCSV} variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+            </div>
+          </div>
+
+          {/* Search and Filter Controls */}
+          <div className="flex items-center space-x-4">
+            {/* Status Filter */}
+            <div className="flex items-center space-x-2">
               <Select value={selectedFilter} onValueChange={handleFilterChange}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -215,10 +229,23 @@ const PartnerReservationsAgGrid: React.FC = () => {
                   <SelectItem value="rtocompleted">RTO Completed</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleDownloadCSV} className="flex items-center gap-2 w-full sm:w-auto" variant="outline">
-                <Download className="w-4 h-4" />
-                Download CSV
-              </Button>
+            </div>
+            
+            {/* Page Size Selector */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">Show:</span>
+              <Select value="25" onValueChange={() => {}}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-600">per page</span>
             </div>
           </div>
         </div>
@@ -232,11 +259,9 @@ const PartnerReservationsAgGrid: React.FC = () => {
             <AgGridReact 
               rowData={filteredData} 
               columnDefs={columnDefs} 
-              gridOptions={gridOptions} 
+              gridOptions={{...gridOptions, headerHeight: 45, rowHeight: 48, suppressRowClickSelection: true, rowSelection: 'single'}}
               loading={loading} 
               animateRows={true} 
-              headerHeight={50} 
-              rowHeight={50} 
             />
           </div>
         </div>

@@ -7,7 +7,7 @@ import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Plus, Search, MoreVertical, Filter, Download } from 'lucide-react';
+import { RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import CreatePaymentPopup from '@/components/CreatePaymentPopup';
@@ -88,9 +88,11 @@ const PaymentsAgGrid = () => {
       </span>;
   };
   const ActionRenderer = (params: any) => {
-    return <button className="action-button" onClick={() => console.log('Action clicked', params.data)}>
-        <MoreVertical size={16} />
-      </button>;
+    return <div className="flex items-center justify-center h-full">
+        <Button variant="ghost" size="sm" onClick={() => console.log('Action clicked', params.data)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800">
+          <Eye className="h-4 w-4" />
+        </Button>
+      </div>;
   };
   const AmountRenderer = (params: any) => {
     return <span className="font-semibold text-foreground">
@@ -182,11 +184,14 @@ const PaymentsAgGrid = () => {
     }
   };
   return <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Enhanced Header Section */}
-      <div className="flex flex-col space-y-6 mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            
+      {/* Compact Header Section */}
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        {/* Table Title and Controls */}
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
+            </div>
             
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
@@ -196,37 +201,35 @@ const PaymentsAgGrid = () => {
                 </label>
               </div>
 
-              <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading} className="hover:scale-105 transition-transform">
+              <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
                 <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={exportData}>
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+              
+              <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Payment
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={exportData} className="hover:scale-105 transition-transform">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+          {/* Search and Filter Controls */}
+          <div className="flex items-center space-x-4">
+            {/* Search */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10" />
+            </div>
             
-            <Button onClick={() => setShowCreatePayment(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground hover:scale-105 transition-transform">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Payment
-            </Button>
-          </div>
-        </div>
-
-        {/* Enhanced Filters Section */}
-        <div className="flex flex-col lg:flex-row gap-4 p-6 bg-card rounded-xl border shadow-sm">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search across all columns..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10 bg-background border-border focus:border-primary transition-colors" />
-          </div>
-
-          <div className="flex items-center gap-4">
+            {/* Status Filter */}
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px] bg-background border-border focus:border-primary">
+                <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -239,30 +242,34 @@ const PaymentsAgGrid = () => {
               </Select>
             </div>
 
-            <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-              <SelectTrigger className="w-[120px] bg-background border-border focus:border-primary">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10 rows</SelectItem>
-                <SelectItem value="25">25 rows</SelectItem>
-                <SelectItem value="50">50 rows</SelectItem>
-                <SelectItem value="100">100 rows</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Page Size Selector */}
+            <div className="flex items-center space-x-2">
+              <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-600">records</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced AG Grid Table */}
+      {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        <div className="ag-theme-alpine h-[calc(100vh-320px)] w-full rounded-xl overflow-hidden shadow-lg">
+        <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
           <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
           resizable: true,
           sortable: true,
           filter: true,
           cellClass: 'flex items-center'
-        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={56} suppressColumnVirtualisation={true} rowSelection="multiple" suppressRowClickSelection={false} />
+        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={50} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
         </div>
       </div>
 
