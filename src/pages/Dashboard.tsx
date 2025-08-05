@@ -13,6 +13,7 @@ const DashboardPage: React.FC = () => {
   const { accessToken } = useAuth();
   const navigate = useNavigate(); // ✅ for Vite or React Router apps
 
+  // All useState hooks must be declared before any conditional logic
   const [dashboardStats, setDashboardStats] = useState({
     locations: 0,
     pods: 0,
@@ -20,6 +21,9 @@ const DashboardPage: React.FC = () => {
     reservations: 0,
   });
   const [statsLoading, setStatsLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'locationDetail' | 'podDetail'>('dashboard');
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
 
   const fetchDashboardStats = async () => {
     if (!accessToken) return;
@@ -50,10 +54,6 @@ const DashboardPage: React.FC = () => {
       </div>
     );
   }
-
-  const [currentView, setCurrentView] = useState<'dashboard' | 'locationDetail' | 'podDetail'>('dashboard');
-  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
-  const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
 
   const handleLocationClick = (locationId: number) => {
     setSelectedLocationId(locationId);
