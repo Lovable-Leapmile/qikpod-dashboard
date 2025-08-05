@@ -195,53 +195,61 @@ const PaymentsAgGrid = () => {
       });
     }
   };
-  return <div className="w-full h-full flex flex-col animate-fade-in">
+  return <div className="w-full h-full flex flex-col animate-fade-in px-2 sm:px-4 lg:px-6">
       {/* Compact Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
         {/* Table Title and Controls */}
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center justify-between mb-3">
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-3">
             <div className="flex items-center space-x-3">
-              <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Payments</h2>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <div className="flex items-center gap-2">
                 <Checkbox id="auto-refresh" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked === true)} />
-                <label htmlFor="auto-refresh" className="text-sm text-muted-foreground font-medium">
-                  Auto Refresh (2m)
+                <label htmlFor="auto-refresh" className="text-xs sm:text-sm text-muted-foreground font-medium">
+                  <span className="hidden sm:inline">Auto Refresh (2m)</span>
+                  <span className="sm:hidden">Auto (2m)</span>
                 </label>
               </div>
 
               <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
-                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                <RefreshCw className={cn('h-3 w-3 sm:h-4 sm:w-4', loading && 'animate-spin')} />
+                <span className="hidden md:inline ml-1">Refresh</span>
               </Button>
 
               <Button variant="outline" size="sm" onClick={exportData}>
-                <Download className="h-4 w-4 mr-2" />
-                Export
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Export</span>
               </Button>
               
-              <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Payment
+              <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black text-xs sm:text-sm">
+                <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Create Payment</span>
+                <span className="xs:hidden">Create</span>
               </Button>
             </div>
           </div>
 
           {/* Search and Filter Controls */}
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
             {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10" />
+            <div className="relative flex-1 max-w-full sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+              <Input 
+                placeholder="Search payments..." 
+                value={globalFilter} 
+                onChange={e => handleGlobalFilter(e.target.value)} 
+                className="pl-8 sm:pl-10 text-sm" 
+              />
             </div>
             
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Filter className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px] text-sm">
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -257,7 +265,7 @@ const PaymentsAgGrid = () => {
             {/* Page Size Selector */}
             <div className="flex items-center space-x-2">
               <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-16 sm:w-20 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -267,7 +275,7 @@ const PaymentsAgGrid = () => {
                   <SelectItem value="100">100</SelectItem>
                 </SelectContent>
               </Select>
-              <span className="text-sm text-gray-600">records</span>
+              <span className="text-xs sm:text-sm text-gray-600">records</span>
             </div>
           </div>
         </div>
@@ -275,13 +283,32 @@ const PaymentsAgGrid = () => {
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-          <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
-          resizable: true,
-          sortable: true,
-          filter: true,
-          cellClass: 'flex items-center'
-        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={50} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+        <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+          <AgGridReact 
+            ref={gridRef} 
+            rowData={getFilteredData()} 
+            columnDefs={columnDefs} 
+            defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+              cellClass: 'flex items-center'
+            }} 
+            pagination={true} 
+            paginationPageSize={pageSize} 
+            loading={loading} 
+            suppressRowHoverHighlight={false} 
+            suppressCellFocus={true} 
+            animateRows={true} 
+            rowBuffer={10} 
+            enableCellTextSelection={true} 
+            onGridReady={onGridReady} 
+            rowHeight={52} 
+            headerHeight={50} 
+            suppressColumnVirtualisation={true} 
+            rowSelection="single" 
+            suppressRowClickSelection={true} 
+          />
         </div>
       </div>
 
