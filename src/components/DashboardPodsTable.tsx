@@ -225,8 +225,7 @@ const DashboardPodsTable: React.FC<DashboardPodsTableProps> = ({ onPodClick }) =
           />
         </div>
       </div>
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%',border: none !important;
-  box-shadow: none !important }}>
+      <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
         <AgGridReact
           rowData={pods}
           columnDefs={columnDefs}
