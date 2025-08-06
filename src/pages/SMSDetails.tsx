@@ -11,23 +11,20 @@ import Layout from '@/components/Layout';
 
 interface SMSDetailRecord {
   id: number;
-  vendor_name: string;
-  mobile_no: string;
-  notification_id: string;
-  app_id: string;
-  last_updated: string;
+  sms_vendor: string;
+  sms_to_phone_number: string;
+  updated_at: string;
   status: string;
-  no_of_tries: number;
-  balance_left: number;
+  sms_num_retries: number;
+  sms_balance: number;
 }
 
 interface SMSAttemptRecord {
   id: number;
-  status_message: string;
-  no_of_tries: number;
+  attempt_timestamp: string;
   status: string;
-  max_tries: number;
-  updated_time: string;
+  error_message?: string;
+  vendor_response?: string;
 }
 
 const SMSDetailsPage: React.FC = () => {
@@ -45,8 +42,9 @@ const SMSDetailsPage: React.FC = () => {
     if (!accessToken || !recordId) return;
     
     try {
-      const response = await fetch(
-        `https://stagingv3.leapmile.com/notifications/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
+      // Fetch SMS Info details
+      const smsResponse = await fetch(
+        `https://stagingv3.leapmile.com/notifications/notifications/sms/${recordId}/`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -55,13 +53,29 @@ const SMSDetailsPage: React.FC = () => {
         }
       );
       
-      if (response.ok) {
-        const data = await response.json();
-        setSmsDetailData(data.records || []);
-        // Mock attempt data - adjust based on actual API response structure
-        setSmsAttemptData(data.attempts || []);
+      if (smsResponse.ok) {
+        const smsData = await smsResponse.json();
+        setSmsDetailData([smsData]); // Single record for SMS Info
       } else {
         toast.error('Failed to fetch SMS details');
+      }
+
+      // Fetch SMS Attempts
+      const attemptsResponse = await fetch(
+        `https://stagingv3.leapmile.com/notifications/notifications/sms/${recordId}/attempts/`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json',
+          },
+        }
+      );
+      
+      if (attemptsResponse.ok) {
+        const attemptsData = await attemptsResponse.json();
+        setSmsAttemptData(attemptsData.records || []);
+      } else {
+        toast.error('Failed to fetch SMS attempts');
       }
     } catch (error) {
       console.error('SMS details fetch error:', error);
@@ -97,35 +111,21 @@ const SMSDetailsPage: React.FC = () => {
   const smsDetailColumnDefs: ColDef[] = [
     {
       headerName: 'Vendor Name',
-      field: 'vendor_name',
+      field: 'sms_vendor',
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Mobile No',
-      field: 'mobile_no',
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: 'Notification ID',
-      field: 'notification_id',
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: 'App ID',
-      field: 'app_id',
+      field: 'sms_to_phone_number',
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Last Updated',
-      field: 'last_updated',
+      field: 'updated_at',
       flex: 1,
       sortable: true,
       filter: true,
@@ -153,15 +153,15 @@ const SMSDetailsPage: React.FC = () => {
       ),
     },
     {
-      headerName: 'No of Tries',
-      field: 'no_of_tries',
+      headerName: 'No. of Tries',
+      field: 'sms_num_retries',
       width: 120,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Balance Left',
-      field: 'balance_left',
+      field: 'sms_balance',
       width: 120,
       sortable: true,
       filter: true,
@@ -177,18 +177,17 @@ const SMSDetailsPage: React.FC = () => {
       filter: true,
     },
     {
-      headerName: 'Status Message',
-      field: 'status_message',
+      headerName: 'Attempt Timestamp',
+      field: 'attempt_timestamp',
       flex: 2,
       sortable: true,
       filter: true,
-    },
-    {
-      headerName: 'No of Tries',
-      field: 'no_of_tries',
-      width: 120,
-      sortable: true,
-      filter: true,
+      cellRenderer: (params: any) => {
+        if (params.value) {
+          return new Date(params.value).toLocaleString();
+        }
+        return '';
+      },
     },
     {
       headerName: 'Status',
@@ -207,23 +206,13 @@ const SMSDetailsPage: React.FC = () => {
       ),
     },
     {
-      headerName: 'Max Tries',
-      field: 'max_tries',
-      width: 120,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: 'Updated Time',
-      field: 'updated_time',
-      flex: 1,
+      headerName: 'Error',
+      field: 'error_message',
+      flex: 2,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => {
-        if (params.value) {
-          return new Date(params.value).toLocaleString();
-        }
-        return '';
+        return params.value || 'No error';
       },
     },
   ];
@@ -268,35 +257,42 @@ const SMSDetailsPage: React.FC = () => {
             <h1 className="text-xl font-semibold text-gray-900">SMS Info</h1>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <Input
               placeholder="Search all columns..."
               value={searchText}
               onChange={onSearchChange}
-              className="w-64"
+              className="w-full sm:w-64"
             />
             <Button 
               onClick={refreshData} 
               disabled={loading}
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
           </div>
         </div>
 
-        {/* SMS Details Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">SMS Info Table</h2>
+        {/* SMS Info Table - Reduced Height */}
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+          <div className="p-3 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-base font-semibold text-gray-900">SMS Info Table</h2>
           </div>
-          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
+          <div className="ag-theme-alpine h-64" style={{ width: '100%' }}>
             <AgGridReact
               rowData={smsDetailData}
               columnDefs={smsDetailColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={gridOptions}
+              gridOptions={{
+                ...gridOptions,
+                headerHeight: 45,
+                rowHeight: 48,
+                paginationPageSize: 10,
+                domLayout: 'normal' as const,
+              }}
               onGridReady={(params) => setDetailGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}
@@ -304,17 +300,23 @@ const SMSDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SMS Attempts Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">SMS Attempts</h2>
+        {/* SMS Attempts Table - Reduced Height */}
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+          <div className="p-3 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-base font-semibold text-gray-900">SMS Attempts Table</h2>
           </div>
-          <div className="ag-theme-alpine h-96" style={{ width: '100%' }}>
+          <div className="ag-theme-alpine h-80" style={{ width: '100%' }}>
             <AgGridReact
               rowData={smsAttemptData}
               columnDefs={smsAttemptColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={gridOptions}
+              gridOptions={{
+                ...gridOptions,
+                headerHeight: 45,
+                rowHeight: 48,
+                paginationPageSize: 15,
+                domLayout: 'normal' as const,
+              }}
               onGridReady={(params) => setAttemptGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}
