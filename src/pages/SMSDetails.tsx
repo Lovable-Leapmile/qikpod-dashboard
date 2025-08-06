@@ -42,9 +42,9 @@ const SMSDetailsPage: React.FC = () => {
     if (!accessToken || !recordId) return;
     
     try {
-      // Fetch SMS Info details
+      // Fetch SMS Info details using the provided API URL
       const smsResponse = await fetch(
-        `https://stagingv3.leapmile.com/notifications/notifications/sms/${recordId}/`,
+        `https://stagingv3.leapmile.com/notifications/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -55,7 +55,7 @@ const SMSDetailsPage: React.FC = () => {
       
       if (smsResponse.ok) {
         const smsData = await smsResponse.json();
-        setSmsDetailData([smsData]); // Single record for SMS Info
+        setSmsDetailData(smsData.records || []); // Use records array from API response
       } else {
         toast.error('Failed to fetch SMS details');
       }
