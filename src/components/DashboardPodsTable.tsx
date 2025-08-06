@@ -207,7 +207,7 @@ const DashboardPodsTable: React.FC<DashboardPodsTableProps> = ({ onPodClick }) =
       </div>
     );
   }
-}
+
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       <div className="p-4 border-b border-gray-200">
@@ -225,21 +225,17 @@ const DashboardPodsTable: React.FC<DashboardPodsTableProps> = ({ onPodClick }) =
           />
         </div>
       </div>
-      <div className="overflow-x-auto">
-  <div className="ag-theme-alpine min-w-[600px] w-full">
-    <AgGridReact
-      rowData={pods}
-      columnDefs={columnDefs}
-      defaultColDef={defaultColDef}
-      onGridReady={onGridReady}
-      pagination={true}
-      paginationPageSize={10}
-      domLayout="autoHeight"
-      getRowHeight={() => 48}
-    />
-  </div>
-</div>
-
+      <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
+        <AgGridReact
+          rowData={pods}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          onGridReady={onGridReady}
+          pagination={true}
+          paginationPageSize={10}
+          domLayout="autoHeight"
+          getRowHeight={() => 28}
+        />
       </div>
     </div>
   );
