@@ -208,17 +208,18 @@ const DashboardLocationsTable: React.FC<DashboardLocationsTableProps> = ({ onLoc
           />
         </div>
       </div>
-      <div className="ag-theme-alpine" style={{ height: 400, width: '100%' }}>
-        <AgGridReact
-          rowData={locations}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          pagination={true}
-          paginationPageSize={10}
-          domLayout="normal"
-        />
-      </div>
+      <div className="ag-theme-alpine" style={{ width: '100%' }}>
+  <AgGridReact
+    rowData={locations}
+    columnDefs={columnDefs}
+    defaultColDef={defaultColDef}
+    onGridReady={onGridReady}
+    pagination={true}
+    paginationPageSize={10}
+    domLayout="autoHeight"
+    getRowHeight={() => 48} // Increased row height for better spacing
+  />
+</div>
     </div>
   );
 };
