@@ -149,14 +149,14 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
             <div className="space-y-2">
               <Label htmlFor="pod_flag_maintenance">Flag Maintenance</Label>
               <Select
-                value={formData.pod_flag_maintenance || ''}
-                onValueChange={(value) => updateFormField('pod_flag_maintenance', value === '' ? null : value)}
+                value={formData.pod_flag_maintenance || 'null'}
+                onValueChange={(value) => updateFormField('pod_flag_maintenance', value === 'null' ? null : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select flag maintenance" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">N/A</SelectItem>
+                  <SelectItem value="null">N/A</SelectItem>
                   <SelectItem value="true">True</SelectItem>
                   <SelectItem value="false">False</SelectItem>
                 </SelectContent>
