@@ -7,21 +7,25 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardNavigation from './DashboardNavigation';
 import SupportPopup from './SupportPopup';
 import { ViewType, createNavigationItems } from './NavigationItems';
-
 interface LayoutProps {
   children: React.ReactNode;
   title: string;
   breadcrumb: string;
 }
-
-const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
-  const { user, logout } = useAuth();
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  title,
+  breadcrumb
+}) => {
+  const {
+    user,
+    logout
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const getCurrentView = (): ViewType | 'dashboard' => {
     const path = location.pathname;
     switch (path) {
@@ -47,16 +51,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         return 'dashboard';
     }
   };
-
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
     navigate('/');
   };
-
   const handleNavigationClick = (view: ViewType, onClick?: () => void) => {
     if (onClick) onClick();
-    
+
     // Navigate to appropriate route
     switch (view) {
       case 'dashboard':
@@ -87,37 +89,23 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         navigate('/logs');
         break;
     }
-    
     setIsMobileMenuOpen(false);
   };
-
   const currentView = getCurrentView();
   const navigationItems = createNavigationItems(currentView, handleNavigationClick, setShowSupportPopup);
-
-  return (
-    <div className="min-h-screen bg-gray-50 w-full">
+  return <div className="min-h-screen bg-gray-50 w-full">
       {/* Fixed Top Navigation */}
-      <DashboardNavigation
-        navigationItems={navigationItems}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-        setShowLogoutDialog={setShowLogoutDialog}
-      />
+      <DashboardNavigation navigationItems={navigationItems} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} setShowLogoutDialog={setShowLogoutDialog} />
 
       {/* Main Content with top padding for fixed header */}
       <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
         {/* Page Header - Only show for non-dashboard pages */}
-        {currentView !== 'dashboard' && (
-          <div className="mb-4">
-            <div className="flex items-center text-xs text-gray-500 mb-1">
-              <Activity className="w-3 h-3 mr-1" />
-              {breadcrumb}
-            </div>
+        {currentView !== 'dashboard' && <div className="mb-4">
+            
             <h1 className="text-xl font-semibold text-gray-900">
               {title}
             </h1>
-          </div>
-        )}
+          </div>}
 
         {/* Dynamic Content */}
         {children}
@@ -145,8 +133,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
       {/* Support Popup */}
       <SupportPopup isOpen={showSupportPopup} onClose={() => setShowSupportPopup(false)} />
-    </div>
-  );
+    </div>;
 };
-
 export default Layout;
