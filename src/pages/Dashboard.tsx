@@ -8,9 +8,10 @@ import PodDetail from '@/components/PodDetail';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi } from '@/services/dashboardApi';
-
 const DashboardPage: React.FC = () => {
-  const { accessToken } = useAuth();
+  const {
+    accessToken
+  } = useAuth();
   const navigate = useNavigate(); // ✅ for Vite or React Router apps
 
   // All useState hooks must be declared before any conditional logic
@@ -18,79 +19,63 @@ const DashboardPage: React.FC = () => {
     locations: 0,
     pods: 0,
     users: 0,
-    reservations: 0,
+    reservations: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'locationDetail' | 'podDetail'>('dashboard');
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
   const [selectedPodId, setSelectedPodId] = useState<number | null>(null);
-
   const fetchDashboardStats = async () => {
     if (!accessToken) return;
     setStatsLoading(true);
     try {
-      const [locations, pods, users, reservations] = await Promise.all([
-        dashboardApi.getLocationsCount(accessToken),
-        dashboardApi.getPodsCount(accessToken),
-        dashboardApi.getUsersCount(accessToken),
-        dashboardApi.getReservationsCount(accessToken),
-      ]);
-      setDashboardStats({ locations, pods, users, reservations });
+      const [locations, pods, users, reservations] = await Promise.all([dashboardApi.getLocationsCount(accessToken), dashboardApi.getPodsCount(accessToken), dashboardApi.getUsersCount(accessToken), dashboardApi.getReservationsCount(accessToken)]);
+      setDashboardStats({
+        locations,
+        pods,
+        users,
+        reservations
+      });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
       setStatsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchDashboardStats();
   }, [accessToken]);
-
   if (!accessToken) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-600">Please log in to view dashboard.</p>
-      </div>
-    );
+      </div>;
   }
-
   const handleLocationClick = (locationId: number) => {
     setSelectedLocationId(locationId);
     setCurrentView('locationDetail');
   };
-
   const handlePodClick = (podId: number) => {
     setSelectedPodId(podId);
     setCurrentView('podDetail');
   };
-
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
     setSelectedLocationId(null);
     setSelectedPodId(null);
   };
-
   if (currentView === 'locationDetail' && selectedLocationId) {
-    return (
-      <Layout title="Location Details" breadcrumb="Dashboard / Location Details">
+    return <Layout title="Location Details" breadcrumb="Dashboard / Location Details">
         <LocationDetail locationId={selectedLocationId} onBack={handleBackToDashboard} />
-      </Layout>
-    );
+      </Layout>;
   }
-
   if (currentView === 'podDetail' && selectedPodId) {
-    return (
-      <Layout title="Pod Details" breadcrumb="Dashboard / Pod Details">
+    return <Layout title="Pod Details" breadcrumb="Dashboard / Pod Details">
         <PodDetail podId={selectedPodId} onBack={handleBackToDashboard} />
-      </Layout>
-    );
+      </Layout>;
   }
-
-  return (
-    <Layout title="Dashboard" breadcrumb="">
+  return <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
-        <aside className="w-full lg:w-1/5 flex-shrink-0 px-4 py-6 lg:h-[calc(100vh-64px)]">
+        <aside className="w-full lg:w-1/5 flex-shrink-0 py-6 lg:h-[calc(100vh-64px)] px-[8px]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
@@ -106,8 +91,6 @@ const DashboardPage: React.FC = () => {
           </div>
         </main>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default DashboardPage;
