@@ -207,7 +207,7 @@ const DashboardPodsTable: React.FC<DashboardPodsTableProps> = ({ onPodClick }) =
       </div>
     );
   }
-
+}
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       <div className="p-4 border-b border-gray-200">
