@@ -72,6 +72,8 @@ interface PodDetail {
   pod_root_version: string;
   fe_tag: string;
   fe_details: string;
+  pod_flag_maintenance?: string | null;
+  pod_connection_method?: string;
 }
 
 interface LogEntry {
@@ -474,6 +476,20 @@ export const dashboardApi = {
     });
     if (!response.ok) {
       throw new Error('Failed to update pod FE');
+    }
+  },
+
+  updatePod: async (token: string, podId: number, podData: any): Promise<void> => {
+    const response = await fetch(`${BASE_URL}/pods/?record_id=${podId}&order_by_field=updated_at&order_by_type=DESC`, {
+      method: 'PATCH',
+      headers: {
+        ...getAuthHeaders(token),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(podData),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update pod');
     }
   },
 

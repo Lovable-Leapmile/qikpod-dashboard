@@ -10,6 +10,7 @@ import NoDataIllustration from '@/components/ui/no-data-illustration';
 import EditModePopup from './EditModePopup';
 import UpdatePodVersionPopup from './UpdatePodVersionPopup';
 import FEUpdatePopup from './FEUpdatePopup';
+import EditPodPopup from './EditPodPopup';
 interface PodDetailProps {
   podId: number;
   onBack: () => void;
@@ -29,6 +30,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
   const [showEditModePopup, setShowEditModePopup] = useState(false);
   const [showUpdateVersionPopup, setShowUpdateVersionPopup] = useState(false);
   const [showFEUpdatePopup, setShowFEUpdatePopup] = useState(false);
+  const [showEditPodPopup, setShowEditPodPopup] = useState(false);
   const fetchPodDetail = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -160,7 +162,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
               <Button variant="outline" className="rounded-lg" onClick={() => setShowEditModePopup(true)}>
                 Edit Mode
               </Button>
-              <Button variant="outline" className="rounded-lg">
+              <Button variant="outline" className="rounded-lg" onClick={() => setShowEditPodPopup(true)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
@@ -289,6 +291,13 @@ const PodDetail: React.FC<PodDetailProps> = ({
       fe_tag: podDetail.fe_tag,
       fe_details: podDetail.fe_details
     }} onSuccess={handlePopupSuccess} />
+
+      <EditPodPopup 
+        open={showEditPodPopup} 
+        onOpenChange={setShowEditPodPopup} 
+        podData={podDetail} 
+        onSuccess={handlePopupSuccess} 
+      />
     </div>;
 };
 export default PodDetail;
