@@ -235,7 +235,7 @@ const DashboardPodsTable: React.FC<DashboardPodsTableProps> = ({ onPodClick }) =
       pagination={true}
       paginationPageSize={10}
       domLayout="autoHeight"
-      getRowHeight={() => 28} // More spacious rows
+      getRowHeight={() => 48} // More spacious rows
     />
   </div>
 </div>
