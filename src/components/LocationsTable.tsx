@@ -1,305 +1,268 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridReadyEvent, GridApi, ModuleRegistry, PaginationChangedEvent } from 'ag-grid-community';
-import { AllCommunityModule } from 'ag-grid-community';
+import React, { useState, useMemo } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye } from 'lucide-react';
-import { dashboardApi, Location } from '@/services/dashboardApi';
+import { Eye, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-
-// Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule]);
+import { dashboardApi, Location } from '@/services/dashboardApi';
+import { useToast } from '@/hooks/use-toast';
 
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
 }
 
-const LocationCard: React.FC<{
-  location: Location;
-  onLocationClick: (id: number) => void;
-}> = ({ location, onLocationClick }) => (
-  <Card className="mb-2 bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg">
-    <CardContent className="p-3">
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex-1 pr-2">
-          <h3 className="font-semibold text-sm text-gray-900 mb-1">{location.primary_name}</h3>
-          <p className="text-xs text-gray-600">{location.location_name}</p>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onLocationClick(location.id)}
-          className="text-[#FDDC4E] hover:text-yellow-600 hover:bg-yellow-50 shrink-0 h-6 w-6 p-0"
-        >
-          <Eye className="w-3 h-3" />
-        </Button>
-      </div>
-      <div className="space-y-1 text-xs">
-        <div className="flex flex-wrap gap-x-3 gap-y-1">
-          <div>
-            <span className="font-medium text-gray-700">ID: </span>
-            <span className="text-gray-600">{location.id}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Pincode: </span>
-            <span className="text-gray-600">{location.location_pincode}</span>
-          </div>
-        </div>
-        <div>
-          <span className="font-medium text-gray-700">Address: </span>
-          <span className="text-gray-600">{location.location_address}</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
-
 const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const { accessToken } = useAuth();
+  const { toast } = useToast();
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
-  const [recordCount, setRecordCount] = useState(25);
   const [searchText, setSearchText] = useState('');
-  const [gridApi, setGridApi] = useState<GridApi | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(10);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Location;
+    direction: 'asc' | 'desc';
+  } | null>(null);
 
-  // Check if device is mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Filter locations based on search text
+  const filteredLocations = useMemo(() => {
+    if (!searchText) return locations;
+    
+    return locations.filter((location) =>
+      Object.values(location).some((value) =>
+        value?.toString().toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [locations, searchText]);
 
-  const ActionCellRenderer = ({ data }: { data: Location }) => (
-    <div className="flex justify-center items-center h-full">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onLocationClick(data.id)}
-        className="text-gray-800 bg-gray-100"
-      >
-        <Eye className="w-4 h-4" />
-      </Button>
-    </div>
-  );
+  // Sort locations based on current sort configuration
+  const sortedLocations = useMemo(() => {
+    if (!sortConfig) return filteredLocations;
 
-  const columnDefs: ColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      width: 100,
-      sortable: true,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      field: 'primary_name',
-      headerName: 'NAME',
-      width: 200,
-      sortable: true,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      field: 'location_name',
-      headerName: 'LOCATION NAME',
-      width: 250,
-      sortable: true,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      field: 'location_address',
-      headerName: 'ADDRESS',
-      flex: 1,
-      minWidth: 300,
-      sortable: true,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      field: 'location_pincode',
-      headerName: 'PINCODE',
-      width: 150,
-      sortable: true,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      field: 'action',
-      headerName: 'ACTION',
-      width: 120,
-      cellRenderer: ActionCellRenderer,
-      sortable: false,
-      filter: false,
-      cellClass: 'vertical-center'
-    }
-  ];
+    return [...filteredLocations].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
 
-  const fetchData = useCallback(async () => {
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [filteredLocations, sortConfig]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(sortedLocations.length / pageSize);
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentLocations = sortedLocations.slice(startIndex, endIndex);
+
+  const handleSort = (key: keyof Location) => {
+    setSortConfig((prevConfig) => {
+      if (prevConfig?.key === key) {
+        return {
+          key,
+          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
+        };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  const fetchLocations = async () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      console.log('Fetching locations with token:', accessToken);
-      console.log('Record count:', recordCount);
-      const data = await dashboardApi.getLocations(accessToken, recordCount);
-      console.log('Received locations data:', data);
+      const data = await dashboardApi.getLocations(accessToken, 1000);
       setLocations(data);
     } catch (error) {
       console.error('Error fetching locations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch locations",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
-  }, [accessToken, recordCount]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const onGridReady = (params: GridReadyEvent) => {
-    setGridApi(params.api);
   };
 
-  useEffect(() => {
-    if (gridApi) {
-      gridApi.setGridOption('quickFilterText', searchText);
-    }
-  }, [searchText, gridApi]);
+  React.useEffect(() => {
+    fetchLocations();
+  }, [accessToken]);
 
-  const defaultColDef = {
-    resizable: true,
-    sortable: true,
-    filter: true,
-    floatingFilter: false
-  };
-
-  // Filter locations for mobile cards
-  const filteredLocations = locations.filter(location => {
-    if (!searchText) return true;
-    const searchLower = searchText.toLowerCase();
+  if (loading) {
     return (
-      location.primary_name?.toLowerCase().includes(searchLower) ||
-      location.location_name?.toLowerCase().includes(searchLower) ||
-      location.location_address?.toLowerCase().includes(searchLower) ||
-      location.location_pincode?.toLowerCase().includes(searchLower) ||
-      location.id.toString().includes(searchLower)
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-lg text-gray-500">Loading locations...</div>
+      </div>
     );
-  });
+  }
 
   return (
-    <Card className="bg-white shadow-sm rounded-lg">
-      <CardHeader className="pb-2 pt-3 px-3 rounded-t-lg bg-gray-50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-            <MapPin className="w-4 h-5 mr-1 text-[#1f2937]" />
-            Locations
-          </CardTitle>
-          <div className="flex flex-col md:flex-row md:items-center gap-2">
-            <Input
-              placeholder="Search..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="w-full md:w-40 rounded text-xs h-7"
-            />
-            <Select value={recordCount.toString()} onValueChange={(value) => setRecordCount(Number(value))}>
-              <SelectTrigger className="w-full md:w-20 rounded text-xs h-7">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-                <SelectItem value="500">500</SelectItem>
-                <SelectItem value="1000">1000</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Locations Management</h3>
+          <p className="text-sm text-gray-500">Manage all locations in your network</p>
         </div>
-      </CardHeader>
-      <CardContent className="p-3">
-        {isMobile ? (
-          <div className="space-y-2">
-            {loading ? (
-              <div className="text-center py-6">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FDDC4E] mx-auto"></div>
-                <p className="text-gray-500 mt-2 text-xs">Loading...</p>
-              </div>
-            ) : filteredLocations.length > 0 ? (
-              <div className="max-h-[50vh] overflow-y-auto">
-                {filteredLocations.map(location => (
-                  <LocationCard
-                    key={location.id}
-                    location={location}
-                    onLocationClick={onLocationClick}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-6">
-                <p className="text-gray-500 text-sm">No locations found</p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div 
-            className="ag-theme-alpine w-full rounded overflow-hidden" 
-            style={{
-              height: 320,
-            }}
-          >
-            <AgGridReact
-              rowData={locations}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              loading={loading}
-              onGridReady={onGridReady}
-              animateRows={true}
-              suppressCellFocus={true}
-              suppressRowClickSelection={true}
-              rowHeight={32}
-              headerHeight={28}
-              pagination={true}
-              paginationPageSize={10}
-              paginationPageSizeSelector={[8, 15, 25]}
-              suppressPaginationPanel={false}
-              suppressColumnVirtualisation={true}
-              rowClass="cursor-default"
-              suppressMenuHide={true}
-            />
+      </div>
+
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Search locations..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Table */}
+      <div className="mx-6 my-6 space-y-4">
+        <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50 hover:bg-gray-50">
+                <TableHead 
+                  className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                  onClick={() => handleSort('id')}
+                >
+                  ID
+                  {sortConfig?.key === 'id' && (
+                    <span className="ml-1">
+                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                  onClick={() => handleSort('primary_name')}
+                >
+                  NAME
+                  {sortConfig?.key === 'primary_name' && (
+                    <span className="ml-1">
+                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                  onClick={() => handleSort('location_name')}
+                >
+                  LOCATION NAME
+                  {sortConfig?.key === 'location_name' && (
+                    <span className="ml-1">
+                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                  onClick={() => handleSort('location_address')}
+                >
+                  ADDRESS
+                  {sortConfig?.key === 'location_address' && (
+                    <span className="ml-1">
+                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                  onClick={() => handleSort('location_pincode')}
+                >
+                  PINCODE
+                  {sortConfig?.key === 'location_pincode' && (
+                    <span className="ml-1">
+                      {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    </span>
+                  )}
+                </TableHead>
+                <TableHead className="px-6 py-5 text-left text-sm font-semibold text-gray-600">
+                  ACTION
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentLocations.map((location, index) => (
+                <TableRow
+                  key={location.id}
+                  className={`
+                    ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} 
+                    hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-b-0
+                  `}
+                >
+                  <TableCell className="px-6 py-5 text-sm text-gray-900 font-medium">
+                    {location.id}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-sm text-gray-700">
+                    {location.primary_name}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-sm text-gray-700">
+                    {location.location_name}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-sm text-gray-700">
+                    {location.location_address}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-sm text-gray-700">
+                    {location.location_pincode}
+                  </TableCell>
+                  <TableCell className="px-6 py-5">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onLocationClick(location.id)}
+                      className="h-8 w-8 p-0 hover:bg-[#FDDC4E]/20 hover:text-gray-900 transition-colors"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-700">
+                Showing {startIndex + 1} to {Math.min(endIndex, sortedLocations.length)} of {sortedLocations.length} results
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
+                className="text-xs"
+              >
+                Previous
+              </Button>
+              <span className="text-sm text-gray-700">
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+                disabled={currentPage === totalPages - 1}
+                className="text-xs"
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
