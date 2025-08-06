@@ -24,9 +24,7 @@ interface PaymentData {
   payment_client_awbno: string;
 }
 const PaymentsAgGrid = () => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
   const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<PaymentData[]>([]);
@@ -95,8 +93,15 @@ const PaymentsAgGrid = () => {
       const paymentId = params.data.id || params.data.payment_reference_id;
       navigate(`/payments/${paymentId}`);
     };
+
     return <div className="flex items-center justify-center h-full">
-        <Button variant="ghost" size="sm" onClick={handleViewDetails} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black" title="View Payment Details">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={handleViewDetails} 
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          title="View Payment Details"
+        >
           <Eye className="h-4 w-4" />
         </Button>
       </div>;
@@ -190,7 +195,7 @@ const PaymentsAgGrid = () => {
       });
     }
   };
-  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+  return <div className="w-full h-full flex flex-col animate-fade-in px-2 sm:px-4 lg:px-6">
       {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
         {/* Table Title and Controls */}
@@ -232,7 +237,12 @@ const PaymentsAgGrid = () => {
             {/* Search */}
             <div className="relative flex-1 max-w-full sm:max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
-              <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-8 sm:pl-10 text-sm" />
+              <Input 
+                placeholder="Search payments..." 
+                value={globalFilter} 
+                onChange={e => handleGlobalFilter(e.target.value)} 
+                className="pl-8 sm:pl-10 text-sm" 
+              />
             </div>
             
             {/* Status Filter */}
@@ -274,12 +284,31 @@ const PaymentsAgGrid = () => {
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
         <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-          <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
-          resizable: true,
-          sortable: true,
-          filter: true,
-          cellClass: 'flex items-center'
-        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={50} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+          <AgGridReact 
+            ref={gridRef} 
+            rowData={getFilteredData()} 
+            columnDefs={columnDefs} 
+            defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+              cellClass: 'flex items-center'
+            }} 
+            pagination={true} 
+            paginationPageSize={pageSize} 
+            loading={loading} 
+            suppressRowHoverHighlight={false} 
+            suppressCellFocus={true} 
+            animateRows={true} 
+            rowBuffer={10} 
+            enableCellTextSelection={true} 
+            onGridReady={onGridReady} 
+            rowHeight={52} 
+            headerHeight={50} 
+            suppressColumnVirtualisation={true} 
+            rowSelection="single" 
+            suppressRowClickSelection={true} 
+          />
         </div>
       </div>
 

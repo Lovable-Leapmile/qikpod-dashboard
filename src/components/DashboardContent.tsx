@@ -1,7 +1,7 @@
 
 import React from 'react';
-import DashboardLocationsTable from './DashboardLocationsTable';
-import DashboardPodsTable from './DashboardPodsTable';
+import LocationsTable from './LocationsTable';
+import PodsTable from './PodsTable';
 import LocationDetail from './LocationDetail';
 import PodDetail from './PodDetail';
 import Reservations from './Reservations';
@@ -52,9 +52,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   switch (currentView) {
     case 'locations':
-      return <DashboardLocationsTable onLocationClick={onLocationClick} />;
+      return <LocationsTable onLocationClick={onLocationClick} />;
     case 'pods':
-      return <DashboardPodsTable onPodClick={onPodClick} />;
+      return <PodsTable onPodClick={onPodClick} />;
     case 'reservations':
       return (
         <Reservations
@@ -91,8 +91,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
           {/* Tables on Dashboard */}
           <div className="space-y-6">
-            <DashboardLocationsTable onLocationClick={onLocationClick} />
-            <DashboardPodsTable onPodClick={onPodClick} />
+            <LocationsTable onLocationClick={onLocationClick} />
+            <PodsTable onPodClick={onPodClick} />
           </div>
         </div>
       );
