@@ -217,7 +217,7 @@ const DashboardLocationsTable: React.FC<DashboardLocationsTableProps> = ({ onLoc
     pagination={true}
     paginationPageSize={10}
     domLayout="autoHeight"
-    getRowHeight={() => 48} // Increased row height for better spacing
+    getRowHeight={() => 32} // Increased row height for better spacing
   />
 </div>
     </div>
