@@ -93,12 +93,12 @@ const Layout: React.FC<LayoutProps> = ({
   };
   const currentView = getCurrentView();
   const navigationItems = createNavigationItems(currentView, handleNavigationClick, setShowSupportPopup);
-  return <div className="min-h-screen bg-gray-50 w-full">
+  return <div className="min-h-screen bg-gray-50 w-full px-[8px]">
       {/* Fixed Top Navigation */}
       <DashboardNavigation navigationItems={navigationItems} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} setShowLogoutDialog={setShowLogoutDialog} />
 
       {/* Main Content with top padding for fixed header */}
-      <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
+      <main className="w-full py-3 px-3 lg:px-6 pt-16 sm:px-0">
         {/* Page Header - Only show for non-dashboard pages */}
         {currentView !== 'dashboard'}
 
