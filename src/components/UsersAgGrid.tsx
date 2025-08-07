@@ -1,15 +1,17 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Search, Plus, Eye, Users, MapPin } from 'lucide-react';
+import { ArrowLeft, Search, Plus, Eye, Users, RefreshCw } from 'lucide-react';
 import { User } from '@/services/dashboardApi';
 import AddUserPopup from './AddUserPopup';
 import UserCard from './UserCard';
+import NoDataIllustration from '@/components/ui/no-data-illustration';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import '@/styles/ag-grid.css';
 interface UsersAgGridProps {
   users: User[];
   loading: boolean;
@@ -24,7 +26,16 @@ const ActionCellRenderer: React.FC<{
   data,
   onUserClick
 }) => <div className="flex items-center justify-center h-full">
-    <Button variant="ghost" size="sm" onClick={() => onUserClick(data.id)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-[#fbdc4e]">
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      onClick={(e) => {
+        e.stopPropagation();
+        onUserClick(data.id);
+      }} 
+      className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black" 
+      title="View User Details"
+    >
       <Eye className="h-4 w-4" />
     </Button>
   </div>;
@@ -47,213 +58,210 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   onRefreshUsers
 }) => {
   const gridRef = useRef<AgGridReact>(null);
-  const [searchText, setSearchText] = useState('');
+  const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(25);
   const [showAddUserPopup, setShowAddUserPopup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Check if device is mobile
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  const columnDefs: ColDef[] = useMemo(() => [{
-    headerName: 'NAME',
+  const columnDefs: ColDef[] = [{
+    field: 'id',
+    headerName: 'ID',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 100,
+    cellClass: 'font-medium text-center'
+  }, {
     field: 'user_name',
+    headerName: 'Name',
     sortable: true,
-    filter: 'agTextColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
-    flex: 1,
-    minWidth: 150,
-    cellStyle: {
-      fontWeight: '500'
-    }
+    filter: true,
+    flex: 2,
+    minWidth: 180,
+    cellClass: 'font-medium'
   }, {
-    headerName: 'TYPE',
     field: 'user_type',
+    headerName: 'Type',
     sortable: true,
-    filter: 'agTextColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
+    filter: true,
     flex: 1,
-    minWidth: 120
+    minWidth: 120,
+    cellClass: 'text-muted-foreground'
   }, {
-    headerName: 'PHONE',
     field: 'user_phone',
+    headerName: 'Phone',
     sortable: true,
-    filter: 'agTextColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
-    flex: 1,
-    minWidth: 130
-  }, {
-    headerName: 'EMAIL',
-    field: 'user_email',
-    sortable: true,
-    filter: 'agTextColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
+    filter: true,
     flex: 1.5,
-    minWidth: 200
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
   }, {
-    headerName: 'FLAT NO',
+    field: 'user_email',
+    headerName: 'Email',
+    sortable: true,
+    filter: true,
+    flex: 2,
+    minWidth: 200,
+    cellClass: 'text-muted-foreground',
+    tooltipField: 'user_email'
+  }, {
     field: 'user_flatno',
+    headerName: 'Flat No',
     sortable: true,
-    filter: 'agTextColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
-    flex: 0.8,
-    minWidth: 100
-  }, {
-    headerName: 'CREATED BY',
-    field: 'created_at',
-    sortable: true,
-    filter: 'agDateColumnFilter',
-    filterParams: {
-      suppressAndOrCondition: true,
-      suppressFilterButton: true
-    },
+    filter: true,
     flex: 1,
-    minWidth: 130,
-    cellRenderer: DateCellRenderer
+    minWidth: 100,
+    cellClass: 'text-muted-foreground text-center'
   }, {
-    headerName: 'ACTION',
+    headerName: 'Action',
     field: 'action',
+    width: 80,
+    cellRenderer: (params: any) => <ActionCellRenderer data={params.data} onUserClick={onUserClick} />,
     sortable: false,
     filter: false,
-    width: 80,
-    pinned: 'right',
-    cellRenderer: (params: any) => <ActionCellRenderer data={params.data} onUserClick={onUserClick} />
-  }], [onUserClick]);
-  const defaultColDef = useMemo(() => ({
-    resizable: true,
-    sortable: true,
-    filter: true
-  }), []);
+    resizable: false,
+    cellClass: ['flex', 'items-center', 'justify-center']
+  }];
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
-  const onQuickFilterChanged = () => {
+
+  const handleGlobalFilter = useCallback((value: string) => {
+    setGlobalFilter(value);
     if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', searchText);
+      gridRef.current.api.setGridOption('quickFilterText', value);
     }
-  };
-  React.useEffect(() => {
-    onQuickFilterChanged();
-  }, [searchText]);
+  }, []);
+
+  const refreshData = useCallback(() => {
+    onRefreshUsers();
+  }, [onRefreshUsers]);
+
   const handleAddUserSuccess = () => {
     onRefreshUsers();
     setShowAddUserPopup(false);
   };
 
-  // Filter users for mobile cards
-  const filteredUsers = users.filter(user => {
-    if (!searchText) return true;
-    const searchLower = searchText.toLowerCase();
-    return user.user_name?.toLowerCase().includes(searchLower) || user.user_email?.toLowerCase().includes(searchLower) || user.user_phone?.toLowerCase().includes(searchLower) || user.user_type?.toLowerCase().includes(searchLower) || user.user_flatno?.toLowerCase().includes(searchLower);
-  });
-  if (loading) {
-    return <div className="mx-6 my-6 space-y-6">
-        <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
+  const hasData = users.length > 0;
+
+  return (
+    <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+      {/* Top Navigation Row */}
+      <div className="flex flex-row items-center justify-between gap-4 w-full mb-4 sm:mb-6">
+        <Button 
+          onClick={onBack} 
+          variant="outline" 
+          className="flex items-center space-x-2"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Dashboard</span>
         </Button>
-        
-        <div className="flex items-center justify-center min-h-96">
-          <div className="text-lg text-gray-500">Loading users...</div>
-        </div>
-      </div>;
-  }
-  return <div className="mx-6 my-6 space-y-6">
-      {/* Back Button */}
-      <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Dashboard</span>
-      </Button>
 
-      {/* Add User Button */}
-      <div className="flex justify-end">
-        <Button onClick={() => setShowAddUserPopup(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2">
+        <Button 
+          onClick={() => setShowAddUserPopup(true)} 
+          className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2"
+        >
           <Plus className="w-4 h-4" />
           <span>Add User</span>
         </Button>
       </div>
 
-      {/* Mobile Cards or Desktop Table Container */}
-      {isMobile ? <div className="space-y-3">
-          {/* Mobile Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input placeholder="Search users..." value={searchText} onChange={e => setSearchText(e.target.value)} className="pl-10" />
-          </div>
-          
-          {filteredUsers.length > 0 ? <div className="max-h-[70vh] overflow-y-auto px-1">
-              {filteredUsers.map(user => <UserCard key={user.id} user={user} onUserClick={onUserClick} />)}
-            </div> : <div className="text-center py-8">
-              <p className="text-gray-500">No users found</p>
-            </div>}
-        </div> : <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
-          {/* Table Title and Controls */}
-          <div className="p-4 border-b border-gray-200 bg-gray-100">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-3">
-                <Users className="w-5 h-5 text-gray-600" />
-                <h2 className="text-lg font-semibold text-gray-900">Users</h2>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input placeholder="Search users..." value={searchText} onChange={e => setSearchText(e.target.value)} className="pl-10 w-64" />
-                </div>
-                
-                {/* Page Size Selector */}
-                <div className="flex items-center space-x-2">
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <span className="text-sm text-gray-600">records</span>
-                </div>
-              </div>
+      {/* Users Card Section - Compact */}
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
+        <div className="p-3 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-row items-center justify-between gap-4 w-full">
+            <div className="flex items-center space-x-2">
+              <Users className="h-3.5 w-3.5 text-gray-900" />
+              <h2 className="text-sm font-semibold text-gray-900">Users</h2>
             </div>
-          </div>
 
-          {/* AG Grid Table */}
-          <div className="p-6">
-            <div className="ag-theme-alpine w-full rounded-lg overflow-hidden" style={{
-          height: '600px'
-        }}>
-              <AgGridReact ref={gridRef} rowData={users} columnDefs={columnDefs} defaultColDef={defaultColDef} pagination={true} paginationPageSize={pageSize} paginationPageSizeSelector={[10, 25, 50, 100]} onGridReady={onGridReady} suppressMovableColumns={false} animateRows={true} suppressRowClickSelection={true} headerHeight={45} rowHeight={55} suppressHorizontalScroll={false} domLayout="normal" suppressMenuHide={true} suppressColumnVirtualisation={true} rowSelection="single" />
+            <div className="flex items-center space-x-3 flex-1 max-w-2xl">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[120px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
+                <Input 
+                  placeholder="Search..." 
+                  value={globalFilter} 
+                  onChange={(e) => handleGlobalFilter(e.target.value)} 
+                  className="pl-8 text-xs h-8" 
+                />
+              </div>
+
+              {/* Page Size Selector */}
+              <div className="flex items-center space-x-1">
+                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                  <SelectTrigger className="w-16 text-xs h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-gray-600">/page</span>
+              </div>
+
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={refreshData} 
+                className="h-8 px-2 text-xs"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Refresh
+              </Button>
             </div>
           </div>
-        </div>}
+        </div>
+      </div>
+
+      {/* AG Grid Table */}
+      <div className="flex-1 w-full">
+        {loading ? (
+          <div className="flex items-center justify-center h-[200px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        ) : hasData ? (
+          <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+            <AgGridReact 
+              ref={gridRef} 
+              rowData={users} 
+              columnDefs={columnDefs} 
+              defaultColDef={{
+                resizable: true,
+                sortable: true,
+                filter: true,
+                cellClass: 'flex items-center'
+              }}
+              pagination={true} 
+              paginationPageSize={pageSize} 
+              loading={loading}
+              suppressRowHoverHighlight={false}
+              suppressCellFocus={true}
+              animateRows={true}
+              rowBuffer={10}
+              enableCellTextSelection={true}
+              onGridReady={onGridReady} 
+              rowHeight={36}
+              headerHeight={38}
+              suppressColumnVirtualisation={true}
+              rowSelection="single"
+              suppressRowClickSelection={true}
+              quickFilterText={globalFilter}
+            />
+          </div>
+        ) : (
+          <NoDataIllustration 
+            title="No users found" 
+            description={users.length === 0 ? "No users data available." : "No matching users found."} 
+            icon="inbox" 
+          />
+        )}
+      </div>
 
       {/* Add User Popup */}
       <AddUserPopup open={showAddUserPopup} onOpenChange={setShowAddUserPopup} onSuccess={handleAddUserSuccess} />
-    </div>;
+    </div>
+  );
 };
 export default UsersAgGrid;
