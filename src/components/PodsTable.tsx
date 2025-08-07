@@ -145,46 +145,46 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'POD ID',
     width: 120,
     sortable: true,
-    cellClass: 'font-medium text-center'
+    cellClass: 'ag-cell-pod-id'
   }, {
     field: 'pod_name',
     headerName: 'POD NAME',
     width: 200,
     sortable: true,
-    cellClass: 'font-medium'
+    cellClass: 'ag-cell-pod-name'
   }, {
     field: 'pod_power_status',
     headerName: 'POWER STATUS',
     width: 150,
     sortable: true,
     cellRenderer: PowerStatusCellRenderer,
-    cellClass: 'flex items-center'
+    cellClass: 'ag-cell-status'
   }, {
     field: 'status',
     headerName: 'STATUS',
     width: 130,
     sortable: true,
     cellRenderer: StatusCellRenderer,
-    cellClass: 'flex items-center'
+    cellClass: 'ag-cell-status'
   }, {
     field: 'pod_health',
     headerName: 'HEALTH',
     width: 150,
     sortable: true,
-    cellClass: 'text-muted-foreground'
+    cellClass: 'ag-cell-health'
   }, {
     field: 'pod_numtotaldoors',
     headerName: 'TOTAL DOORS',
     width: 140,
     sortable: true,
-    cellClass: 'text-muted-foreground'
+    cellClass: 'ag-cell-doors'
   }, {
     field: 'location_name',
     headerName: 'LOCATION',
     flex: 1,
     minWidth: 200,
     sortable: true,
-    cellClass: 'text-muted-foreground'
+    cellClass: 'ag-cell-location'
   }, {
     field: 'action',
     headerName: 'ACTION',
@@ -192,7 +192,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
     cellRenderer: ActionCellRenderer,
     sortable: false,
     filter: false,
-    cellClass: 'flex items-center justify-center'
+    cellClass: 'ag-cell-action'
   }];
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -260,21 +260,21 @@ const PodsTable: React.FC<PodsTableProps> = ({
                   defaultColDef={{
                     resizable: true,
                     sortable: true,
-                    filter: true,
-                    cellClass: 'flex items-center'
+                    filter: true
                   }}
                   pagination={true}
                   paginationPageSize={25}
+                  paginationPageSizeSelector={[10, 25, 50, 100]}
                   loading={loading}
-                  suppressRowHoverHighlight={true}
+                  suppressRowHoverHighlight={false}
                   suppressCellFocus={true}
                   animateRows={false}
                   rowBuffer={10}
                   enableCellTextSelection={true}
                   onGridReady={onGridReady}
-                  rowHeight={40}
-                  headerHeight={40}
-                  suppressColumnVirtualisation={true}
+                  rowHeight={50}
+                  headerHeight={45}
+                  suppressColumnVirtualisation={false}
                   rowSelection="single"
                   suppressRowClickSelection={true}
                   onRowClicked={(event) => onPodClick(event.data.id)}

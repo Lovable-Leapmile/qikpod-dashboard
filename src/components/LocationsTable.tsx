@@ -183,8 +183,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
-      cellClass: ['flex', 'items-center', 'justify-center', 'ag-cell-action'],
-      suppressMenu: true,
+      cellClass: 'ag-cell-action',
       suppressMovable: true,
       suppressSizeToFit: true
     }
@@ -279,36 +278,35 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-220px)] w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact
-                  ref={gridRef}
-                  rowData={locations}
-                  columnDefs={columnDefs}
-                  defaultColDef={{
-                    resizable: true,
-                    sortable: true,
-                    filter: true,
-                    cellClass: 'flex items-center',
-                    suppressMovable: true
-                  }}
-                  pagination={true}
-                  paginationPageSize={25}
-                  loading={loading}
-                  suppressRowHoverHighlight={true}
-                  suppressCellFocus={true}
-                  animateRows={false}
-                  rowBuffer={10}
-                  enableCellTextSelection={true}
-                  onGridReady={onGridReady}
-                  rowHeight={40}
-                  headerHeight={40}
-                  suppressColumnVirtualisation={true}
-                  rowSelection="single"
-                  suppressRowClickSelection={true}
-                  suppressMenuHide={true}
-                  getRowId={(params) => params.data.id.toString()}
-                  tooltipShowDelay={0}
-                  tooltipHideDelay={3000}
-                />
+                  <AgGridReact
+                    ref={gridRef}
+                    rowData={locations}
+                    columnDefs={columnDefs}
+                    defaultColDef={{
+                      resizable: true,
+                      sortable: true,
+                      filter: true,
+                      suppressMovable: true
+                    }}
+                    pagination={true}
+                    paginationPageSize={25}
+                    paginationPageSizeSelector={[10, 25, 50, 100]}
+                    loading={loading}
+                    suppressRowHoverHighlight={false}
+                    suppressCellFocus={true}
+                    animateRows={false}
+                    rowBuffer={10}
+                    enableCellTextSelection={true}
+                    onGridReady={onGridReady}
+                    rowHeight={50}
+                    headerHeight={45}
+                    suppressColumnVirtualisation={false}
+                    rowSelection="single"
+                    suppressRowClickSelection={true}
+                    getRowId={(params) => params.data.id.toString()}
+                    tooltipShowDelay={500}
+                    tooltipHideDelay={2000}
+                  />
               </div>
             </div>
 
