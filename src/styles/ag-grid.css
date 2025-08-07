@@ -277,3 +277,29 @@
 .ag-theme-alpine .ag-cell:last-child {
   border-right: none;
 }
+
+/* Add this to your ag-grid.css file if you want exact matching */
+
+/* Make header text slightly larger to match payments table */
+.ag-theme-alpine .ag-header-cell {
+  font-size: 13px; /* Changed from 12px */
+}
+
+/* Add subtle transition to row hover */
+.ag-theme-alpine .ag-row {
+  transition: background-color 0.2s ease;
+}
+
+/* Ensure action buttons match payments table exactly */
+.ag-theme-alpine .ag-cell-action .action-button {
+  height: 32px;
+  width: 32px;
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.ag-theme-alpine .ag-cell-action .action-button:hover {
+  background-color: #FDDC4E;
+  color: #000;
+  transform: none;
+}
