@@ -257,7 +257,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
               sortable: true,
               filter: true,
               cellClass: 'flex items-center'
-            }} pagination={true} paginationPageSize={25} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={52} headerHeight={50} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+            }} pagination={true} paginationPageSize={25} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={30} headerHeight={30} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
               </div>
             </div>
 
