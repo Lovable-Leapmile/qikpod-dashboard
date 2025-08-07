@@ -176,7 +176,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       sortable: false,
       filter: false,
       cellClass: 'flex items-center justify-center',
-      suppressMenu: true,
       suppressMovable: true
     }
   ];
