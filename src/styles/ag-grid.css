@@ -1,18 +1,18 @@
-/* AG Grid Custom Styles with Enhanced Design */
+/* AG Grid Custom Styles - Merged Enhanced Design */
 .ag-theme-alpine {
   --ag-header-background-color: hsl(var(--card));
   --ag-header-foreground-color: hsl(var(--foreground));
   --ag-border-color: hsl(220 13% 91%);
-  --ag-row-hover-color: hsl(var(--muted) / 0.5);
+  --ag-row-hover-color: transparent !important;
   --ag-odd-row-background-color: hsl(var(--background));
-  --ag-even-row-background-color: hsl(var(--muted) / 0.3);
+  --ag-even-row-background-color: hsl(var(--muted) / 0.1);
   --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --ag-font-size: 12px;
   --ag-header-font-weight: 600;
-  --ag-cell-horizontal-padding: 20px;
-  --ag-header-height: 56px;
-  --ag-row-height: 52px;
+  --ag-cell-horizontal-padding: 12px;
+  --ag-header-height: 40px;
+  --ag-row-height: 40px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -24,7 +24,7 @@
   overflow: hidden;
 }
 
-/* Header alignment fixes */
+/* Header styling */
 .ag-theme-alpine .ag-header {
   background: hsl(var(--card));
   border-bottom: 1px solid hsl(var(--border));
@@ -41,8 +41,7 @@
   background-color: hsl(var(--card)) !important;
   display: flex;
   align-items: center;
-  transition: all 0.2s ease;
-  padding-left: 20px; /* Added for alignment */
+  padding-left: 12px;
 }
 
 .ag-theme-alpine .ag-header-cell-label {
@@ -52,10 +51,10 @@
 }
 
 .ag-theme-alpine .ag-header-cell-text {
-  padding-left: 0; /* Reset default padding */
+  padding-left: 0;
 }
 
-/* Cell alignment fixes */
+/* Cell styling - Fixed visibility issues */
 .ag-theme-alpine .ag-cell {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -64,81 +63,42 @@
   border-bottom: none;
   display: flex;
   align-items: center;
-  padding: 16px 20px; /* Consistent with header */
-  transition: all 0.2s ease;
+  padding: 0 12px;
+  color: hsl(var(--foreground)) !important;
+  background-color: inherit !important;
 }
 
-/* Location column specific treatment */
-.ag-theme-alpine .ag-cell[col-id="location_name"] {
-  min-width: 200px;
-  max-width: 300px;
-  position: relative;
-}
-
-/* Tooltip for location cells */
-.ag-theme-alpine .ag-cell[col-id="location_name"]::after {
-  content: attr(data-value);
-  position: absolute;
-  visibility: hidden;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  padding: 8px 12px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  z-index: 100;
-  white-space: normal;
-  max-width: 400px;
-  top: 100%;
-  left: 20px; /* Matches cell padding */
-}
-
-.ag-theme-alpine .ag-cell[col-id="location_name"]:hover::after {
-  visibility: visible;
+.ag-theme-alpine .ag-cell-value {
+  width: 100%;
 }
 
 /* Row styling */
 .ag-theme-alpine .ag-row {
   border-bottom: 1px solid hsl(220 13% 91%);
-  transition: all 0.2s ease;
-}
-
-.ag-theme-alpine .ag-row:hover {
-  background-color: hsl(var(--muted) / 0.3) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.1);
+  background-color: inherit !important;
 }
 
 .ag-theme-alpine .ag-row.ag-row-even {
-  background-color: hsl(var(--muted) / 0.2);
+  background-color: hsl(var(--muted) / 0.1) !important;
 }
 
 .ag-theme-alpine .ag-row.ag-row-odd {
-  background-color: hsl(var(--background));
+  background-color: hsl(var(--background)) !important;
 }
 
 .ag-theme-alpine .ag-row.ag-row-selected {
   background-color: hsl(var(--primary) / 0.1) !important;
-  border-left: 3px solid hsl(var(--primary));
 }
 
-.ag-theme-alpine .ag-row.ag-row-focus {
-  background-color: hsl(var(--primary) / 0.05) !important;
-}
-
-/* Cell states */
 .ag-theme-alpine .ag-cell-focus {
   border: none !important;
-}
-
-.ag-theme-alpine .ag-cell-range-selected {
-  background-color: hsl(var(--primary) / 0.1) !important;
 }
 
 /* Pagination panel */
 .ag-theme-alpine .ag-paging-panel {
   border-top: 1px solid hsl(220 13% 91%);
   background-color: hsl(var(--card));
-  padding: 16px 20px;
+  padding: 12px;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
@@ -177,53 +137,24 @@
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
   background: hsl(var(--muted-foreground) / 0.2);
   border-radius: 2px;
-  transition: all 0.2s ease;
 }
 
-.ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
-.ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.4);
-}
-
-/* Status badges */
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: capitalize;
-  transition: all 0.2s ease;
-}
-
-.status-paid {
-  background-color: rgb(220 252 231);
-  color: rgb(22 163 74);
-}
-
-.status-pending {
-  background-color: rgb(254 249 195);
-  color: rgb(161 98 7);
-}
-
-.status-cancelled {
-  background-color: rgb(254 226 226);
-  color: rgb(220 38 38);
-}
-
-.status-inactive {
-  background-color: rgb(243 244 246);
-  color: rgb(107 114 128);
+/* Disable all hover effects */
+.ag-theme-alpine .ag-row:hover,
+.ag-theme-alpine .ag-row-hover {
+  background-color: inherit !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* Action buttons */
 .action-button {
-  padding: 6px;
-  border-radius: 6px;
+  padding: 4px;
+  border-radius: 4px;
   border: none;
   background: transparent;
   cursor: pointer;
   color: hsl(var(--muted-foreground));
-  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -232,22 +163,10 @@
 .action-button:hover {
   background-color: hsl(var(--muted));
   color: hsl(var(--foreground));
-  transform: scale(1.1);
 }
 
-/* Row selection states */
-.ag-theme-alpine .ag-row-selected {
-  background-color: transparent !important;
-  border-left: none !important;
-}
-
-.ag-theme-alpine .ag-row-selected::before,
-.ag-theme-alpine .ag-row-selected .ag-cell {
-  background-color: transparent !important;
-  border-left: none !important;
-}
-
-.ag-theme-alpine .ag-row:hover,
-.ag-theme-alpine .ag-row-hover {
-  background-color: #f9fafb !important;
+/* Ensure action button is always visible */
+.ag-theme-alpine .ag-cell-action {
+  z-index: 1;
+  position: relative;
 }

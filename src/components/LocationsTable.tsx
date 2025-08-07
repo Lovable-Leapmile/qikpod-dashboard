@@ -84,7 +84,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     setLoading(true);
     try {
       const data = await dashboardApi.getLocations(accessToken, recordCount);
-      console.log('Fetched data:', data); // Debug log
       setLocations(data || []);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -173,7 +172,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       headerName: 'PINCODE',
       width: 120,
       sortable: true,
-      cellClass: 'text-muted-foreground',
+      cellClass: 'text-muted-foreground text-center',
       suppressSizeToFit: true,
       suppressMovable: true
     },
@@ -184,7 +183,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
-      cellClass: 'flex items-center justify-center',
+      cellClass: ['flex', 'items-center', 'justify-center', 'ag-cell-action'],
       suppressMenu: true,
       suppressMovable: true,
       suppressSizeToFit: true
@@ -306,7 +305,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                   rowSelection="single"
                   suppressRowClickSelection={true}
                   suppressMenuHide={true}
-                  onRowClicked={(event) => onLocationClick(event.data.id)}
                   getRowId={(params) => params.data.id.toString()}
                   tooltipShowDelay={0}
                   tooltipHideDelay={3000}
