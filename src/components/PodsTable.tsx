@@ -93,9 +93,10 @@ const PodsTable: React.FC<PodsTableProps> = ({
     setLoading(true);
     try {
       const data = await dashboardApi.getPods(accessToken, recordCount);
-      setPods(data);
+      setPods(data || []); // Ensure we have an array even if data is undefined
     } catch (error) {
       console.error('Error fetching pods:', error);
+      setPods([]);
     } finally {
       setLoading(false);
     }
@@ -252,12 +253,32 @@ const PodsTable: React.FC<PodsTableProps> = ({
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact ref={gridRef} rowData={pods} columnDefs={columnDefs} defaultColDef={{
-              resizable: true,
-              sortable: true,
-              filter: true,
-              cellClass: 'flex items-center'
-            }} pagination={true} paginationPageSize={25} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={38} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+                <AgGridReact
+                  ref={gridRef}
+                  rowData={pods}
+                  columnDefs={columnDefs}
+                  defaultColDef={{
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                    cellClass: 'flex items-center'
+                  }}
+                  pagination={true}
+                  paginationPageSize={25}
+                  loading={loading}
+                  suppressRowHoverHighlight={true}
+                  suppressCellFocus={true}
+                  animateRows={false}
+                  rowBuffer={10}
+                  enableCellTextSelection={true}
+                  onGridReady={onGridReady}
+                  rowHeight={40}
+                  headerHeight={40}
+                  suppressColumnVirtualisation={true}
+                  rowSelection="single"
+                  suppressRowClickSelection={true}
+                  onRowClicked={(event) => onPodClick(event.data.id)}
+                />
               </div>
             </div>
 
