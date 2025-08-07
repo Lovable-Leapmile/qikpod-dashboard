@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { FileX, Inbox, Package } from 'lucide-react';
+import { FileX, Inbox, Package, MapPin } from 'lucide-react';
 
 interface NoDataIllustrationProps {
   title?: string;
   description?: string;
-  icon?: 'inbox' | 'file' | 'package';
+  icon?: 'inbox' | 'file' | 'package' | 'map-pin';
 }
 
 const NoDataIllustration: React.FC<NoDataIllustrationProps> = ({ 
@@ -13,7 +13,7 @@ const NoDataIllustration: React.FC<NoDataIllustrationProps> = ({
   description = "There are no records to display at this time.",
   icon = 'inbox'
 }) => {
-  const IconComponent = icon === 'file' ? FileX : icon === 'package' ? Package : Inbox;
+  const IconComponent = icon === 'file' ? FileX : icon === 'package' ? Package : icon === 'map-pin' ? MapPin : Inbox;
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
