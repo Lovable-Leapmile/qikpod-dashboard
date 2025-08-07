@@ -198,7 +198,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
           sortable: true,
           filter: true,
           cellClass: 'flex items-center'
-        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={30} headerHeight={32} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} quickFilterText={globalFilter} />
+        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} quickFilterText={globalFilter} />
           </div> : <NoDataIllustration title="No locations found" description={locations.length === 0 ? "No locations data available." : "No matching locations found."} icon="map-pin" />}
       </div>
     </div>;
