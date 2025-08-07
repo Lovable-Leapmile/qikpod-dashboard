@@ -313,7 +313,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                 h-[calc(100vh-240px)] - taller
                 h-[calc(100vh-320px)] - shorter
               */}
-              <div className="ag-theme-alpine h-[calc(100vh-240px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={currentData}
@@ -333,8 +333,8 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                   rowBuffer={10}
                   enableCellTextSelection={true}
                   onGridReady={onGridReady}
-                  rowHeight={52}
-                  headerHeight={50}
+                  rowHeight={36}
+                  headerHeight={38}
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}

@@ -285,8 +285,8 @@ const NotificationsPage: React.FC = () => {
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50],
     domLayout: 'normal' as const,
-    rowHeight: 50,
-    headerHeight: 50,
+    rowHeight: 36,
+    headerHeight: 38,
     suppressCellFocus: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple' as const,
@@ -388,7 +388,7 @@ const NotificationsPage: React.FC = () => {
               rowData={smsData}
               columnDefs={smsColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={{...gridOptions, headerHeight: 45, rowHeight: 48, suppressRowClickSelection: true, rowSelection: 'single'}}
+              gridOptions={{...gridOptions, headerHeight: 38, rowHeight: 36, suppressRowClickSelection: true, rowSelection: 'single'}}
               onGridReady={(params) => setSmsGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}
@@ -406,7 +406,7 @@ const NotificationsPage: React.FC = () => {
               rowData={emailData}
               columnDefs={emailColumnDefs}
               defaultColDef={defaultColDef}
-              gridOptions={{...gridOptions, headerHeight: 45, rowHeight: 48, suppressRowClickSelection: true, rowSelection: 'single'}}
+              gridOptions={{...gridOptions, headerHeight: 38, rowHeight: 36, suppressRowClickSelection: true, rowSelection: 'single'}}
               onGridReady={(params) => setEmailGridApi(params.api)}
               suppressMenuHide={true}
               enableRangeSelection={true}

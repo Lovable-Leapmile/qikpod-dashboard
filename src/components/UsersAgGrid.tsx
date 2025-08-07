@@ -222,7 +222,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           </div>
         ) : hasData ? (
-          <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+          <div className="ag-theme-alpine h-[calc(100vh-200px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
             <AgGridReact 
               ref={gridRef} 
               rowData={users} 
