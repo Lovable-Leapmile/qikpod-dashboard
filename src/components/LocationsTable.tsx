@@ -84,10 +84,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     setLoading(true);
     try {
       const data = await dashboardApi.getLocations(accessToken, recordCount);
-      setLocations(data);
+      setLocations(data || []); // Ensure we have an array even if data is undefined
     } catch (error) {
       console.error('Error fetching locations:', error);
-      setLocations([]); // Ensure we set empty array on error
+      setLocations([]);
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     };
   }, [autoRefresh, fetchData]);
 
-  // Fixed ActionCellRenderer with proper hover and click handling
   const ActionCellRenderer = ({ data }: { data: Location }) => (
     <div className="h-full flex items-center justify-center">
       <Button
@@ -130,53 +129,59 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     </div>
   );
 
-  // Column definitions with specific widths (adjust these values as needed)
   const columnDefs: ColDef[] = [
     {
       field: 'id',
       headerName: 'ID',
-      width: 100, // Adjust width here
+      width: 80,
       sortable: true,
-      cellClass: 'font-medium text-center'
+      cellClass: 'font-medium text-center',
+      suppressSizeToFit: true
     },
     {
       field: 'primary_name',
       headerName: 'NAME',
-      width: 180, // Adjust width here
+      width: 150,
       sortable: true,
-      cellClass: 'font-medium'
+      cellClass: 'font-medium',
+      suppressSizeToFit: true
     },
     {
       field: 'location_name',
-      headerName: 'LOCATION NAME',
-      width: 200, // Adjust width here
+      headerName: 'LOCATION',
+      width: 180,
       sortable: true,
-      cellClass: 'text-muted-foreground'
+      cellClass: 'text-muted-foreground',
+      suppressSizeToFit: true
     },
     {
       field: 'location_address',
       headerName: 'ADDRESS',
-      width: 300, // Adjust width here
+      width: 300,
       sortable: true,
       cellClass: 'text-muted-foreground',
-      flex: 1 // This column will take remaining space
+      suppressSizeToFit: true,
+      flex: 1
     },
     {
       field: 'location_pincode',
       headerName: 'PINCODE',
-      width: 120, // Adjust width here
+      width: 100,
       sortable: true,
-      cellClass: 'text-muted-foreground'
+      cellClass: 'text-muted-foreground',
+      suppressSizeToFit: true
     },
     {
       field: 'action',
       headerName: 'ACTION',
-      width: 100, // Adjust width here
+      width: 100,
       cellRenderer: ActionCellRenderer,
       sortable: false,
       filter: false,
       cellClass: 'flex items-center justify-center',
-      suppressMovable: true
+      suppressMenu: true,
+      suppressMovable: true,
+      suppressSizeToFit: true
     }
   ];
 
@@ -195,7 +200,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     fetchData();
   }, [fetchData]);
 
-  const hasData = locations && locations.length > 0;
+  const hasData = locations.length > 0;
   const filteredLocations = locations.filter(location => {
     if (!globalFilter) return true;
     const searchLower = globalFilter.toLowerCase();
@@ -209,35 +214,35 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   });
 
   return (
-    <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Section - Updated with better layout */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="w-full h-full flex flex-col">
+      {/* Header Section - Compact */}
+      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm mb-4">
+        <div className="p-3 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             {/* Title section - left aligned */}
-            <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-gray-900" />
-              <h2 className="text-lg font-semibold text-gray-900">Locations</h2>
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4 text-gray-900" />
+              <h2 className="text-md font-semibold text-gray-900">Locations</h2>
             </div>
 
             {/* Controls section - right aligned */}
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-center gap-3">
               {/* Search bar */}
-              <div className="relative flex-1 min-w-[200px] max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <div className="relative flex-1 min-w-[180px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                 <Input
-                  placeholder="Search locations..."
+                  placeholder="Search..."
                   value={globalFilter}
                   onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
+                  className="pl-9 h-8 text-sm"
                 />
               </div>
 
               {/* Page size selector */}
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                <span className="text-xs text-gray-600 whitespace-nowrap">Show:</span>
                 <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-16 h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -249,21 +254,9 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                 </Select>
               </div>
 
-              {/* Auto refresh checkbox */}
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="auto-refresh-locations"
-                  checked={autoRefresh}
-                  onCheckedChange={checked => setAutoRefresh(checked === true)}
-                />
-                <label htmlFor="auto-refresh-locations" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
-                  Auto Refresh
-                </label>
-              </div>
-
               {/* Refresh button */}
-              <Button variant="outline" size="sm" onClick={refreshData} disabled={loading}>
-                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              <Button variant="outline" size="sm" onClick={refreshData} disabled={loading} className="h-8">
+                <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
               </Button>
             </div>
           </div>
@@ -280,7 +273,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-220px)] w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={locations}
@@ -294,26 +287,26 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                   pagination={true}
                   paginationPageSize={25}
                   loading={loading}
-                  suppressRowHoverHighlight={false}
+                  suppressRowHoverHighlight={true} // Disable hover effects
                   suppressCellFocus={true}
-                  animateRows={true}
+                  animateRows={false} // Disable row animations
                   rowBuffer={10}
                   enableCellTextSelection={true}
                   onGridReady={onGridReady}
-                  rowHeight={48} // Increased row height for better visibility
-                  headerHeight={48} // Increased header height
+                  rowHeight={40} // Slightly reduced row height
+                  headerHeight={40} // Slightly reduced header height
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}
                   suppressMenuHide={true}
-                  onRowClicked={(event) => onLocationClick(event.data.id)} // Added row click handler
+                  onRowClicked={(event) => onLocationClick(event.data.id)}
                 />
               </div>
             </div>
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
+              <div className="space-y-3 max-h-[calc(100vh-220px)] overflow-y-auto">
                 {filteredLocations.map(location => (
                   <LocationCard
                     key={location.id}
