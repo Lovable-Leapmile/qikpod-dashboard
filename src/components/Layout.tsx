@@ -100,7 +100,12 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Main Content with top padding for fixed header */}
       <main className="w-full py-3 px-3 sm:px-4 lg:px-6 pt-16">
         {/* Page Header - Only show for non-dashboard pages */}
-        {currentView !== 'dashboard'}
+        {currentView !== 'dashboard' && <div className="mb-4">
+            
+            <h1 className="text-xl font-semibold text-gray-900">
+              {title}
+            </h1>
+          </div>}
 
         {/* Dynamic Content */}
         {children}

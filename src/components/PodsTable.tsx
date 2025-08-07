@@ -93,10 +93,9 @@ const PodsTable: React.FC<PodsTableProps> = ({
     setLoading(true);
     try {
       const data = await dashboardApi.getPods(accessToken, recordCount);
-      setPods(data || []); // Ensure we have an array even if data is undefined
+      setPods(data);
     } catch (error) {
       console.error('Error fetching pods:', error);
-      setPods([]);
     } finally {
       setLoading(false);
     }
@@ -145,46 +144,46 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'POD ID',
     width: 120,
     sortable: true,
-    cellClass: 'ag-cell-pod-id'
+    cellClass: 'font-medium text-center'
   }, {
     field: 'pod_name',
     headerName: 'POD NAME',
     width: 200,
     sortable: true,
-    cellClass: 'ag-cell-pod-name'
+    cellClass: 'font-medium'
   }, {
     field: 'pod_power_status',
     headerName: 'POWER STATUS',
     width: 150,
     sortable: true,
     cellRenderer: PowerStatusCellRenderer,
-    cellClass: 'ag-cell-status'
+    cellClass: 'flex items-center'
   }, {
     field: 'status',
     headerName: 'STATUS',
     width: 130,
     sortable: true,
     cellRenderer: StatusCellRenderer,
-    cellClass: 'ag-cell-status'
+    cellClass: 'flex items-center'
   }, {
     field: 'pod_health',
     headerName: 'HEALTH',
     width: 150,
     sortable: true,
-    cellClass: 'ag-cell-health'
+    cellClass: 'text-muted-foreground'
   }, {
     field: 'pod_numtotaldoors',
     headerName: 'TOTAL DOORS',
     width: 140,
     sortable: true,
-    cellClass: 'ag-cell-doors'
+    cellClass: 'text-muted-foreground'
   }, {
     field: 'location_name',
     headerName: 'LOCATION',
     flex: 1,
     minWidth: 200,
     sortable: true,
-    cellClass: 'ag-cell-location'
+    cellClass: 'text-muted-foreground'
   }, {
     field: 'action',
     headerName: 'ACTION',
@@ -192,7 +191,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
     cellRenderer: ActionCellRenderer,
     sortable: false,
     filter: false,
-    cellClass: 'ag-cell-action'
+    cellClass: 'flex items-center justify-center'
   }];
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -253,32 +252,12 @@ const PodsTable: React.FC<PodsTableProps> = ({
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact
-                  ref={gridRef}
-                  rowData={pods}
-                  columnDefs={columnDefs}
-                  defaultColDef={{
-                    resizable: true,
-                    sortable: true,
-                    filter: true
-                  }}
-                  pagination={true}
-                  paginationPageSize={25}
-                  paginationPageSizeSelector={[10, 25, 50, 100]}
-                  loading={loading}
-                  suppressRowHoverHighlight={false}
-                  suppressCellFocus={true}
-                  animateRows={false}
-                  rowBuffer={10}
-                  enableCellTextSelection={true}
-                  onGridReady={onGridReady}
-                  rowHeight={50}
-                  headerHeight={45}
-                  suppressColumnVirtualisation={false}
-                  rowSelection="single"
-                  suppressRowClickSelection={true}
-                  onRowClicked={(event) => onPodClick(event.data.id)}
-                />
+                <AgGridReact ref={gridRef} rowData={pods} columnDefs={columnDefs} defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+              cellClass: 'flex items-center'
+            }} pagination={true} paginationPageSize={25} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={38} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
               </div>
             </div>
 
