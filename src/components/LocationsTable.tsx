@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye, RefreshCw, Search } from 'lucide-react';
+import { MapPin, Eye, RefreshCw, Search, Filter } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { dashboardApi, Location } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,7 +23,7 @@ const LocationCard: React.FC<{
   location: Location;
   onLocationClick: (id: number) => void;
 }> = ({ location, onLocationClick }) => (
-  <Card className="bg-white shadow-sm rounded-xl border-gray-200 mb-4">
+  <Card className="bg-white shadow-sm rounded-lg lg:rounded-xl border-gray-200 mb-4">
     <CardContent className="p-4">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -34,7 +34,8 @@ const LocationCard: React.FC<{
           variant="ghost"
           size="sm"
           onClick={() => onLocationClick(location.id)}
-          className="text-gray-800 bg-gray-100 hover:bg-gray-200"
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          title="View Location Details"
         >
           <Eye className="h-4 w-4" />
         </Button>
@@ -66,7 +67,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [recordCount, setRecordCount] = useState(25);
+  const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -83,7 +84,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const data = await dashboardApi.getLocations(accessToken, recordCount);
+      const data = await dashboardApi.getLocations(accessToken, pageSize);
       setLocations(data || []);
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -91,7 +92,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, recordCount]);
+  }, [accessToken, pageSize]);
 
   useEffect(() => {
     fetchData();
@@ -113,79 +114,80 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     };
   }, [autoRefresh, fetchData]);
 
-  const ActionCellRenderer = ({ data }: { data: Location }) => (
-    <div className="h-full flex items-center justify-center">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onLocationClick(data.id);
-        }}
-        className="text-gray-800 bg-gray-100 hover:bg-gray-200"
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
-    </div>
-  );
+  const ActionRenderer = ({ data }: { data: Location }) => {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onLocationClick(data.id);
+          }}
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+      </div>
+    );
+  };
 
   const columnDefs: ColDef[] = [
     {
       field: 'id',
       headerName: 'ID',
-      width: 100,
       sortable: true,
-      cellClass: 'font-medium text-center',
-      suppressSizeToFit: true,
-      suppressMovable: true
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+      cellClass: 'font-medium text-center'
     },
     {
       field: 'primary_name',
-      headerName: 'NAME',
-      width: 180,
+      headerName: 'Name',
       sortable: true,
-      cellClass: 'font-medium',
-      suppressSizeToFit: true,
-      suppressMovable: true
+      filter: true,
+      flex: 2,
+      minWidth: 180,
+      cellClass: 'font-medium'
     },
     {
       field: 'location_name',
-      headerName: 'LOCATION',
-      width: 200,
+      headerName: 'Location',
       sortable: true,
-      cellClass: 'text-muted-foreground',
-      suppressSizeToFit: true,
-      suppressMovable: true
+      filter: true,
+      flex: 2,
+      minWidth: 200,
+      cellClass: 'text-muted-foreground'
     },
     {
       field: 'location_address',
-      headerName: 'ADDRESS',
-      width: 350,
+      headerName: 'Address',
       sortable: true,
+      filter: true,
+      flex: 3,
+      minWidth: 300,
       cellClass: 'text-muted-foreground',
-      suppressSizeToFit: true,
-      suppressMovable: true,
       tooltipField: 'location_address'
     },
     {
       field: 'location_pincode',
-      headerName: 'PINCODE',
-      width: 120,
+      headerName: 'Pincode',
       sortable: true,
-      cellClass: 'text-muted-foreground text-center',
-      suppressSizeToFit: true,
-      suppressMovable: true
+      filter: true,
+      flex: 1,
+      minWidth: 120,
+      cellClass: 'text-muted-foreground text-center'
     },
     {
+      headerName: 'Action',
       field: 'action',
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: ActionCellRenderer,
+      width: 80,
+      cellRenderer: ActionRenderer,
       sortable: false,
       filter: false,
-      cellClass: 'ag-cell-action',
-      suppressMovable: true,
-      suppressSizeToFit: true
+      resizable: false,
+      cellClass: ['flex', 'items-center', 'justify-center']
     }
   ];
 
@@ -218,50 +220,63 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   });
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col animate-fade-in px-2 sm:px-4 lg:px-6">
       {/* Header Section - Compact */}
-      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm mb-4">
-        <div className="p-3 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            {/* Title section - left aligned */}
-            <div className="flex items-center space-x-2">
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-3">
+            <div className="flex items-center space-x-3">
               <MapPin className="h-4 w-4 text-gray-900" />
-              <h2 className="text-md font-semibold text-gray-900">Locations</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Locations</h2>
             </div>
 
-            {/* Controls section - right aligned */}
-            <div className="flex flex-col md:flex-row md:items-center gap-3">
-              {/* Search bar */}
-              <div className="relative flex-1 min-w-[180px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
-                <Input
-                  placeholder="Search..."
-                  value={globalFilter}
-                  onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-9 h-8 text-sm"
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="auto-refresh"
+                  checked={autoRefresh}
+                  onCheckedChange={checked => setAutoRefresh(checked === true)}
                 />
+                <label htmlFor="auto-refresh" className="text-xs sm:text-sm text-muted-foreground font-medium">
+                  <span className="hidden sm:inline">Auto Refresh (2m)</span>
+                  <span className="sm:hidden">Auto (2m)</span>
+                </label>
               </div>
 
-              {/* Page size selector */}
-              <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-600 whitespace-nowrap">Show:</span>
-                <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
-                  <SelectTrigger className="w-16 h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Refresh button */}
-              <Button variant="outline" size="sm" onClick={refreshData} disabled={loading} className="h-8">
-                <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
+              <Button variant="outline" size="sm" onClick={refreshData} disabled={loading}>
+                <RefreshCw className={cn('h-3 w-3 sm:h-4 sm:w-4', loading && 'animate-spin')} />
+                <span className="hidden md:inline ml-1">Refresh</span>
               </Button>
+            </div>
+          </div>
+
+          {/* Search and Filter Controls */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            {/* Search */}
+            <div className="relative flex-1 max-w-full sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+              <Input
+                placeholder="Search locations..."
+                value={globalFilter}
+                onChange={e => handleGlobalFilter(e.target.value)}
+                className="pl-8 sm:pl-10 text-sm"
+              />
+            </div>
+
+            {/* Page Size Selector */}
+            <div className="flex items-center space-x-2">
+              <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                <SelectTrigger className="w-16 sm:w-20 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-xs sm:text-sm text-gray-600">records</span>
             </div>
           </div>
         </div>
@@ -277,42 +292,38 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-220px)] w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                  <AgGridReact
-                    ref={gridRef}
-                    rowData={locations}
-                    columnDefs={columnDefs}
-                    defaultColDef={{
-                      resizable: true,
-                      sortable: true,
-                      filter: true,
-                      suppressMovable: true
-                    }}
-                    pagination={true}
-                    paginationPageSize={25}
-                    paginationPageSizeSelector={[10, 25, 50, 100]}
-                    loading={loading}
-                    suppressRowHoverHighlight={false}
-                    suppressCellFocus={true}
-                    animateRows={false}
-                    rowBuffer={10}
-                    enableCellTextSelection={true}
-                    onGridReady={onGridReady}
-                    rowHeight={50}
-                    headerHeight={45}
-                    suppressColumnVirtualisation={false}
-                    rowSelection="single"
-                    suppressRowClickSelection={true}
-                    getRowId={(params) => params.data.id.toString()}
-                    tooltipShowDelay={500}
-                    tooltipHideDelay={2000}
-                  />
+              <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                <AgGridReact
+                  ref={gridRef}
+                  rowData={filteredLocations}
+                  columnDefs={columnDefs}
+                  defaultColDef={{
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                    cellClass: 'flex items-center'
+                  }}
+                  pagination={true}
+                  paginationPageSize={pageSize}
+                  loading={loading}
+                  suppressRowHoverHighlight={false}
+                  suppressCellFocus={true}
+                  animateRows={true}
+                  rowBuffer={10}
+                  enableCellTextSelection={true}
+                  onGridReady={onGridReady}
+                  rowHeight={52}
+                  headerHeight={50}
+                  suppressColumnVirtualisation={true}
+                  rowSelection="single"
+                  suppressRowClickSelection={true}
+                />
               </div>
             </div>
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
-              <div className="space-y-3 max-h-[calc(100vh-220px)] overflow-y-auto">
+              <div className="space-y-3 max-h-[calc(100vh-240px)] sm:max-h-[calc(100vh-280px)] overflow-y-auto">
                 {filteredLocations.map(location => (
                   <LocationCard
                     key={location.id}
