@@ -1,4 +1,3 @@
-
 /* AG Grid Custom Styles with Enhanced Design */
 .ag-theme-alpine {
   --ag-header-background-color: hsl(var(--card));
@@ -9,7 +8,7 @@
   --ag-even-row-background-color: hsl(var(--muted) / 0.3);
   --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --ag-font-size: 12px; /* Updated to 12px for uniform font size */
+  --ag-font-size: 12px;
   --ag-header-font-weight: 600;
   --ag-cell-horizontal-padding: 20px;
   --ag-header-height: 56px;
@@ -29,12 +28,53 @@
   border-bottom: 1px solid hsl(var(--border));
 }
 
+/* Cell overflow handling - NEW */
+.ag-theme-alpine .ag-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-right: none !important;
+  border-bottom: none;
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+}
+
+/* Location column specific treatment - NEW */
+.ag-theme-alpine .ag-cell[col-id="location_name"] {
+  min-width: 200px;
+  max-width: 300px;
+  position: relative;
+}
+
+/* Tooltip for location cells - NEW */
+.ag-theme-alpine .ag-cell[col-id="location_name"]::after {
+  content: attr(data-value);
+  position: absolute;
+  visibility: hidden;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  white-space: normal;
+  max-width: 400px;
+  top: 100%;
+  left: 0;
+}
+
+.ag-theme-alpine .ag-cell[col-id="location_name"]:hover::after {
+  visibility: visible;
+}
+
 .ag-theme-alpine .ag-header-cell {
   border-right: none !important;
-  border-bottom: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-bottom: 1px solid hsl(220 13% 91%);
   font-weight: 600;
   color: hsl(var(--foreground));
-  font-size: 12px; /* Updated to 12px for uniform font size */
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background-color: hsl(var(--card)) !important;
@@ -47,17 +87,8 @@
   background-color: hsl(var(--muted) / 0.5) !important;
 }
 
-.ag-theme-alpine .ag-cell {
-  border-right: none !important;
-  border-bottom: none;
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  transition: all 0.2s ease;
-}
-
 .ag-theme-alpine .ag-row {
-  border-bottom: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-bottom: 1px solid hsl(220 13% 91%);
   transition: all 0.2s ease;
 }
 
@@ -93,7 +124,7 @@
 }
 
 .ag-theme-alpine .ag-paging-panel {
-  border-top: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-top: 1px solid hsl(220 13% 91%);
   background-color: hsl(var(--card));
   padding: 16px 20px;
   border-bottom-left-radius: 12px;
@@ -101,14 +132,8 @@
 }
 
 /* Remove search icons from filter headers */
-.ag-theme-alpine .ag-header-cell-menu-button {
-  display: none;
-}
-
-.ag-theme-alpine .ag-floating-filter-button {
-  display: none;
-}
-
+.ag-theme-alpine .ag-header-cell-menu-button,
+.ag-theme-alpine .ag-floating-filter-button,
 .ag-theme-alpine .ag-icon-filter {
   display: none;
 }
@@ -117,15 +142,9 @@
   display: none;
 }
 
-/* Hide all vertical lines in AG Grid */
-.ag-theme-alpine .ag-ltr .ag-cell {
-  border-right: none !important;
-}
-
-.ag-theme-alpine .ag-ltr .ag-header-cell {
-  border-right: none !important;
-}
-
+/* Hide all vertical lines */
+.ag-theme-alpine .ag-ltr .ag-cell,
+.ag-theme-alpine .ag-ltr .ag-header-cell,
 .ag-theme-alpine .ag-body-horizontal-scroll {
   border-right: none !important;
 }
@@ -133,25 +152,25 @@
 /* Enhanced subtle scrollbars */
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar {
-  width: 4px; /* Thinner scrollbar */
+  width: 4px;
   height: 4px;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-track,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-track {
-  background: transparent; /* Transparent track */
+  background: transparent;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.2); /* Light gray, semi-transparent */
+  background: hsl(var(--muted-foreground) / 0.2);
   border-radius: 2px;
   transition: all 0.2s ease;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.4); /* Slightly more visible on hover */
+  background: hsl(var(--muted-foreground) / 0.4);
 }
 
 /* Status badge styling */
@@ -204,27 +223,19 @@
   transform: scale(1.1);
 }
 
-/* Remove row selection highlight and orange left border */
+/* Row selection and hover states */
 .ag-theme-alpine .ag-row-selected {
   background-color: transparent !important;
   border-left: none !important;
 }
 
-.ag-theme-alpine .ag-row-selected::before {
+.ag-theme-alpine .ag-row-selected::before,
+.ag-theme-alpine .ag-row-selected .ag-cell {
   background-color: transparent !important;
   border-left: none !important;
 }
 
-/* Remove orange left indentation on row press */
-.ag-theme-alpine .ag-row-selected .ag-cell {
-  border-left: none !important;
-}
-
-/* Ensure consistent row hover behavior */
-.ag-theme-alpine .ag-row:hover {
-  background-color: #f9fafb !important;
-}
-
+.ag-theme-alpine .ag-row:hover,
 .ag-theme-alpine .ag-row-hover {
   background-color: #f9fafb !important;
 }
