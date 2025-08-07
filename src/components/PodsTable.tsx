@@ -5,67 +5,19 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Package, Eye, RefreshCw, Search } from 'lucide-react';
+import { Package, Eye, RefreshCw, Search, Filter, Download } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { dashboardApi, Pod } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
+
 interface PodsTableProps {
   onPodClick: (id: number) => void;
 }
-const PodCard: React.FC<{
-  pod: Pod;
-  onPodClick: (id: number) => void;
-}> = ({
-  pod,
-  onPodClick
-}) => <Card className="bg-white shadow-sm rounded-xl border-gray-200 mb-4">
-    <CardContent className="p-4">
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">{pod.pod_name}</h3>
-          <p className="text-sm text-muted-foreground">{pod.location_name}</p>
-        </div>
-        <Button variant="ghost" size="sm" onClick={() => onPodClick(pod.id)} className="text-gray-800 bg-gray-100 hover:bg-gray-200">
-          <Eye className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="space-y-2 text-sm">
-        <div className="flex flex-wrap gap-x-4 gap-y-2">
-          <div>
-            <span className="font-medium text-gray-700">ID: </span>
-            <span className="text-muted-foreground">{pod.id}</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Doors: </span>
-            <span className="text-muted-foreground">{pod.pod_numtotaldoors}</span>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <div className="flex items-center">
-            <span className="font-medium text-gray-700 mr-1">Power: </span>
-            <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', pod.pod_power_status === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
-              {pod.pod_power_status}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-medium text-gray-700 mr-1">Status: </span>
-            <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', pod.status === 'active' ? 'bg-green-100 text-green-800' : pod.status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')}>
-              {pod.status}
-            </span>
-          </div>
-        </div>
-        <div>
-          <span className="font-medium text-gray-700">Health: </span>
-          <span className="text-muted-foreground">{pod.pod_health}</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>;
+
 const PodsTable: React.FC<PodsTableProps> = ({
   onPodClick
 }) => {
@@ -77,33 +29,27 @@ const PodsTable: React.FC<PodsTableProps> = ({
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [recordCount, setRecordCount] = useState(25);
+  const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const data = await dashboardApi.getPods(accessToken, recordCount);
-      setPods(data || []); // Ensure we have an array even if data is undefined
+      const data = await dashboardApi.getPods(accessToken, pageSize);
+      setPods(data || []);
     } catch (error) {
       console.error('Error fetching pods:', error);
       setPods([]);
     } finally {
       setLoading(false);
     }
-  }, [accessToken, recordCount]);
+  }, [accessToken, pageSize]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
   useEffect(() => {
     if (autoRefresh) {
       intervalRef.current = setInterval(fetchData, 2 * 60 * 1000);
@@ -119,129 +65,177 @@ const PodsTable: React.FC<PodsTableProps> = ({
       }
     };
   }, [autoRefresh, fetchData]);
-  const ActionCellRenderer = ({
+
+  const ActionRenderer = ({
     data
   }: {
     data: Pod;
-  }) => <Button variant="ghost" size="sm" onClick={() => onPodClick(data.id)} className="text-gray-800 bg-gray-100 hover:bg-gray-200">
-      <Eye className="h-4 w-4" />
-    </Button>;
-  const StatusCellRenderer = ({
+  }) => {
+    return <div className="flex items-center justify-center h-full">
+        <Button variant="ghost" size="sm" onClick={e => {
+        e.stopPropagation();
+        onPodClick(data.id);
+      }} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black" title="View Pod Details">
+          <Eye className="h-4 w-4" />
+        </Button>
+      </div>;
+  };
+
+  const StatusRenderer = ({
     value
   }: {
     value: string;
-  }) => <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', value === 'active' ? 'bg-green-100 text-green-800' : value === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')}>
+  }) => {
+    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
+      value === 'active' ? 'bg-green-100 text-green-800' :
+      value === 'inactive' ? 'bg-red-100 text-red-800' :
+      'bg-gray-100 text-gray-800')}>
       {value}
     </span>;
-  const PowerStatusCellRenderer = ({
+  };
+
+  const PowerStatusRenderer = ({
     value
   }: {
     value: string;
-  }) => <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
+  }) => {
+    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
+      value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
       {value}
     </span>;
+  };
+
   const columnDefs: ColDef[] = [{
     field: 'id',
-    headerName: 'POD ID',
-    width: 120,
+    headerName: 'ID',
     sortable: true,
-    cellClass: 'ag-cell-pod-id'
+    filter: true,
+    flex: 1,
+    minWidth: 100,
+    cellClass: 'font-medium text-center'
   }, {
     field: 'pod_name',
-    headerName: 'POD NAME',
-    width: 200,
+    headerName: 'Pod Name',
     sortable: true,
-    cellClass: 'ag-cell-pod-name'
+    filter: true,
+    flex: 2,
+    minWidth: 180,
+    cellClass: 'font-medium'
   }, {
     field: 'pod_power_status',
-    headerName: 'POWER STATUS',
-    width: 150,
+    headerName: 'Power Status',
     sortable: true,
-    cellRenderer: PowerStatusCellRenderer,
-    cellClass: 'ag-cell-status'
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellRenderer: PowerStatusRenderer,
+    cellClass: 'text-center'
   }, {
     field: 'status',
-    headerName: 'STATUS',
-    width: 130,
+    headerName: 'Status',
     sortable: true,
-    cellRenderer: StatusCellRenderer,
-    cellClass: 'ag-cell-status'
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellRenderer: StatusRenderer,
+    cellClass: 'text-center'
   }, {
     field: 'pod_health',
-    headerName: 'HEALTH',
-    width: 150,
+    headerName: 'Health',
     sortable: true,
-    cellClass: 'ag-cell-health'
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'text-muted-foreground text-center'
   }, {
     field: 'pod_numtotaldoors',
-    headerName: 'TOTAL DOORS',
-    width: 140,
+    headerName: 'Total Doors',
     sortable: true,
-    cellClass: 'ag-cell-doors'
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'text-muted-foreground text-center'
   }, {
     field: 'location_name',
-    headerName: 'LOCATION',
-    flex: 1,
-    minWidth: 200,
+    headerName: 'Location',
     sortable: true,
-    cellClass: 'ag-cell-location'
+    filter: true,
+    flex: 2,
+    minWidth: 200,
+    cellClass: 'text-muted-foreground'
   }, {
+    headerName: 'Action',
     field: 'action',
-    headerName: 'ACTION',
-    width: 120,
-    cellRenderer: ActionCellRenderer,
+    width: 80,
+    cellRenderer: ActionRenderer,
     sortable: false,
     filter: false,
-    cellClass: 'ag-cell-action'
+    resizable: false,
+    cellClass: ['flex', 'items-center', 'justify-center']
   }];
+
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
+
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
       gridRef.current.api.setGridOption('quickFilterText', value);
     }
   }, []);
+
   const refreshData = useCallback(() => {
     fetchData();
   }, [fetchData]);
-  const hasData = pods && pods.length > 0;
-  const filteredPods = pods.filter(pod => {
-    if (!globalFilter) return true;
-    const searchLower = globalFilter.toLowerCase();
-    return pod.pod_name?.toLowerCase().includes(searchLower) || pod.location_name?.toLowerCase().includes(searchLower) || pod.status?.toLowerCase().includes(searchLower) || pod.pod_power_status?.toLowerCase().includes(searchLower) || pod.pod_health?.toLowerCase().includes(searchLower) || pod.id.toString().includes(searchLower);
-  });
-  return <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          
 
-          {/* Search Controls */}
-          <div className="flex items-center space-x-4">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input placeholder="Search pods..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10" />
+  const exportData = () => {
+    if (gridRef.current?.api) {
+      gridRef.current.api.exportDataAsCsv({
+        fileName: `pods-${new Date().toISOString().split('T')[0]}.csv`
+      });
+    }
+  };
+
+  const hasData = pods.length > 0;
+
+  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+      {/* Header Section - Compact */}
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
+        <div className="p-3 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-row items-center justify-between gap-4 w-full">
+            <div className="flex items-center space-x-2">
+              <Package className="h-3.5 w-3.5 text-gray-900" />
+              <h2 className="text-sm font-semibold text-gray-900">Pods</h2>
             </div>
 
-            {/* Page Size Selector */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Show:</span>
-              <Select value={recordCount.toString()} onValueChange={value => setRecordCount(Number(value))}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="500">500</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-gray-600">per page</span>
+            <div className="flex items-center space-x-3 flex-1 max-w-2xl">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[120px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
+                <Input placeholder="Search..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-8 text-xs h-8" />
+              </div>
+
+              {/* Page Size Selector */}
+              <div className="flex items-center space-x-1">
+                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                  <SelectTrigger className="w-16 text-xs h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-gray-600">/page</span>
+              </div>
+
+              <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 text-xs">
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Refresh
+              </Button>
             </div>
           </div>
         </div>
@@ -249,47 +243,38 @@ const PodsTable: React.FC<PodsTableProps> = ({
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        {hasData ? <>
-            {/* Desktop view - AG Grid */}
-            <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-280px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact
-                  ref={gridRef}
-                  rowData={pods}
-                  columnDefs={columnDefs}
-                  defaultColDef={{
-                    resizable: true,
-                    sortable: true,
-                    filter: true
-                  }}
-                  pagination={true}
-                  paginationPageSize={25}
-                  paginationPageSizeSelector={[10, 25, 50, 100]}
-                  loading={loading}
-                  suppressRowHoverHighlight={false}
-                  suppressCellFocus={true}
-                  animateRows={false}
-                  rowBuffer={10}
-                  enableCellTextSelection={true}
-                  onGridReady={onGridReady}
-                  rowHeight={50}
-                  headerHeight={45}
-                  suppressColumnVirtualisation={false}
-                  rowSelection="single"
-                  suppressRowClickSelection={true}
-                  onRowClicked={(event) => onPodClick(event.data.id)}
-                />
-              </div>
-            </div>
-
-            {/* Mobile view - Cards */}
-            <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {filteredPods.map(pod => <PodCard key={pod.id} pod={pod} onPodClick={onPodClick} />)}
-              </div>
-            </div>
-          </> : <NoDataIllustration title="No pods found" description="No pods data available." icon="package" />}
+        {loading ? <div className="flex items-center justify-center h-[200px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div> : hasData ? <div className="ag-theme-alpine h-[calc(100vh-240px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+            <AgGridReact
+              ref={gridRef}
+              rowData={pods}
+              columnDefs={columnDefs}
+              defaultColDef={{
+                resizable: true,
+                sortable: true,
+                filter: true,
+                cellClass: 'flex items-center'
+              }}
+              pagination={true}
+              paginationPageSize={pageSize}
+              loading={loading}
+              suppressRowHoverHighlight={false}
+              suppressCellFocus={true}
+              animateRows={true}
+              rowBuffer={10}
+              enableCellTextSelection={true}
+              onGridReady={onGridReady}
+              rowHeight={30}
+              headerHeight={32}
+              suppressColumnVirtualisation={true}
+              rowSelection="single"
+              suppressRowClickSelection={true}
+              quickFilterText={globalFilter}
+            />
+          </div> : <NoDataIllustration title="No pods found" description={pods.length === 0 ? "No pods data available." : "No matching pods found."} icon="package" />}
       </div>
     </div>;
 };
+
 export default PodsTable;
