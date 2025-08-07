@@ -84,7 +84,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     setLoading(true);
     try {
       const data = await dashboardApi.getLocations(accessToken, recordCount);
-      setLocations(data || []); // Ensure we have an array even if data is undefined
+      console.log('Fetched data:', data); // Debug log
+      setLocations(data || []);
     } catch (error) {
       console.error('Error fetching locations:', error);
       setLocations([]);
@@ -133,43 +134,48 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     {
       field: 'id',
       headerName: 'ID',
-      width: 80,
+      width: 100,
       sortable: true,
       cellClass: 'font-medium text-center',
-      suppressSizeToFit: true
+      suppressSizeToFit: true,
+      suppressMovable: true
     },
     {
       field: 'primary_name',
       headerName: 'NAME',
-      width: 150,
+      width: 180,
       sortable: true,
       cellClass: 'font-medium',
-      suppressSizeToFit: true
+      suppressSizeToFit: true,
+      suppressMovable: true
     },
     {
       field: 'location_name',
       headerName: 'LOCATION',
-      width: 180,
+      width: 200,
       sortable: true,
       cellClass: 'text-muted-foreground',
-      suppressSizeToFit: true
+      suppressSizeToFit: true,
+      suppressMovable: true
     },
     {
       field: 'location_address',
       headerName: 'ADDRESS',
-      width: 300,
+      width: 350,
       sortable: true,
       cellClass: 'text-muted-foreground',
       suppressSizeToFit: true,
-      flex: 1
+      suppressMovable: true,
+      tooltipField: 'location_address'
     },
     {
       field: 'location_pincode',
       headerName: 'PINCODE',
-      width: 100,
+      width: 120,
       sortable: true,
       cellClass: 'text-muted-foreground',
-      suppressSizeToFit: true
+      suppressSizeToFit: true,
+      suppressMovable: true
     },
     {
       field: 'action',
@@ -179,6 +185,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       sortable: false,
       filter: false,
       cellClass: 'flex items-center justify-center',
+      suppressMenu: true,
       suppressMovable: true,
       suppressSizeToFit: true
     }
@@ -281,24 +288,28 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                     resizable: true,
                     sortable: true,
                     filter: true,
-                    cellClass: 'flex items-center'
+                    cellClass: 'flex items-center',
+                    suppressMovable: true
                   }}
                   pagination={true}
                   paginationPageSize={25}
                   loading={loading}
-                  suppressRowHoverHighlight={true} // Disable hover effects
+                  suppressRowHoverHighlight={true}
                   suppressCellFocus={true}
-                  animateRows={false} // Disable row animations
+                  animateRows={false}
                   rowBuffer={10}
                   enableCellTextSelection={true}
                   onGridReady={onGridReady}
-                  rowHeight={40} // Slightly reduced row height
-                  headerHeight={40} // Slightly reduced header height
+                  rowHeight={40}
+                  headerHeight={40}
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}
                   suppressMenuHide={true}
                   onRowClicked={(event) => onLocationClick(event.data.id)}
+                  getRowId={(params) => params.data.id.toString()}
+                  tooltipShowDelay={0}
+                  tooltipHideDelay={3000}
                 />
               </div>
             </div>
