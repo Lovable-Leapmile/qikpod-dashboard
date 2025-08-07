@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardStats from '@/components/DashboardStats';
-import LocationsTable from '@/components/LocationsTable';
-import PodsTable from '@/components/PodsTable';
+import DashboardLocationsTable from '@/components/DashboardLocationsTable';
+import DashboardPodsTable from '@/components/DashboardPodsTable';
 import LocationDetail from '@/components/LocationDetail';
 import PodDetail from '@/components/PodDetail';
 import Layout from '@/components/Layout';
@@ -82,11 +82,11 @@ const DashboardPage: React.FC = () => {
         <main className="w-full lg:flex-1 px-4 py-6">
           <div className="space-y-10 w-full">
             <div className="w-full">
-              <LocationsTable onLocationClick={handleLocationClick} />
+              <DashboardLocationsTable onLocationClick={handleLocationClick} />
             </div>
 
             <div className="w-full">
-              <PodsTable onPodClick={handlePodClick} />
+              <DashboardPodsTable onPodClick={handlePodClick} />
             </div>
           </div>
         </main>
