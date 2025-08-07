@@ -1,22 +1,23 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservationDetail } from '@/services/dashboardApi';
-
 interface ReservationDetailProps {
   reservationId: number;
   onBack: () => void;
 }
-
-const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, onBack }) => {
-  const { accessToken } = useAuth();
+const ReservationDetail: React.FC<ReservationDetailProps> = ({
+  reservationId,
+  onBack
+}) => {
+  const {
+    accessToken
+  } = useAuth();
   const [reservation, setReservation] = useState<StandardReservationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [showMoreDetails, setShowMoreDetails] = useState(false);
-
   useEffect(() => {
     const fetchReservationDetail = async () => {
       if (!accessToken) return;
@@ -30,41 +31,26 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
         setLoading(false);
       }
     };
-
     fetchReservationDetail();
   }, [reservationId, accessToken]);
-
   const handleResendOTP = () => {
     console.log('Resending OTP for reservation:', reservationId);
     // Implement resend OTP functionality here
   };
-
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900"
-        >
+    return <div className="space-y-6">
+        <Button variant="ghost" onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Reservations
         </Button>
         <div className="flex justify-center items-center py-8">
           <div className="text-gray-500">Loading reservation details...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!reservation) {
-    return (
-      <div className="space-y-6">
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900"
-        >
+    return <div className="space-y-6">
+        <Button variant="ghost" onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Reservations
         </Button>
@@ -73,18 +59,11 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
             <p className="text-gray-600">Reservation not found.</p>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900"
-        >
+        <Button variant="ghost" onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Reservations
         </Button>
@@ -146,7 +125,7 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
           {/* Action Buttons */}
           <div className="border-t pt-6">
             <div className="flex flex-wrap gap-3">
-              <Button onClick={handleResendOTP} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleResendOTP} className="bg-[#fddc4e]">
                 Resend OTP
               </Button>
             </div>
@@ -154,26 +133,17 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
 
           {/* Show More Details */}
           <div className="border-t pt-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowMoreDetails(!showMoreDetails)}
-              className="flex items-center text-gray-600 hover:text-gray-900"
-            >
-              {showMoreDetails ? (
-                <>
+            <Button variant="ghost" onClick={() => setShowMoreDetails(!showMoreDetails)} className="flex items-center text-gray-600 hover:text-gray-900">
+              {showMoreDetails ? <>
                   <EyeOff className="w-4 h-4 mr-2" />
                   Hide Details
-                </>
-              ) : (
-                <>
+                </> : <>
                   <Eye className="w-4 h-4 mr-2" />
                   Show More Details
-                </>
-              )}
+                </>}
             </Button>
 
-            {showMoreDetails && (
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+            {showMoreDetails && <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
                 <div>
                   <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Created By</label>
                   <p className="text-sm text-gray-900">{reservation.created_by_name}</p>
@@ -199,19 +169,14 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
                   <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">User ID</label>
                   <p className="text-sm text-gray-900">{reservation.user_id}</p>
                 </div>
-                {reservation.notes && (
-                  <div className="md:col-span-2 lg:col-span-3">
+                {reservation.notes && <div className="md:col-span-2 lg:col-span-3">
                     <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Notes</label>
                     <p className="text-sm text-gray-900">{reservation.notes}</p>
-                  </div>
-                )}
-              </div>
-            )}
+                  </div>}
+              </div>}
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default ReservationDetail;
