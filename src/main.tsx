@@ -4,6 +4,6 @@ import App from './App.tsx'
 import './index.css'
 
 // Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule])
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 createRoot(document.getElementById("root")!).render(<App />);

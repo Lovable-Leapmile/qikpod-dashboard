@@ -1,15 +1,14 @@
-
 /* AG Grid Custom Styles with Enhanced Design */
 .ag-theme-alpine {
   --ag-header-background-color: hsl(var(--card));
   --ag-header-foreground-color: hsl(var(--foreground));
-  --ag-border-color: hsl(220 13% 91%); /* Light gray border #e5e7eb equivalent */
+  --ag-border-color: hsl(220 13% 91%);
   --ag-row-hover-color: hsl(var(--muted) / 0.5);
   --ag-odd-row-background-color: hsl(var(--background));
   --ag-even-row-background-color: hsl(var(--muted) / 0.3);
   --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --ag-font-size: 12px; /* Updated to 12px for uniform font size */
+  --ag-font-size: 12px;
   --ag-header-font-weight: 600;
   --ag-cell-horizontal-padding: 20px;
   --ag-header-height: 56px;
@@ -19,11 +18,13 @@
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
+/* Root wrapper */
 .ag-theme-alpine .ag-root-wrapper {
   border-radius: 12px;
   overflow: hidden;
 }
 
+/* Header alignment fixes */
 .ag-theme-alpine .ag-header {
   background: hsl(var(--card));
   border-bottom: 1px solid hsl(var(--border));
@@ -31,33 +32,73 @@
 
 .ag-theme-alpine .ag-header-cell {
   border-right: none !important;
-  border-bottom: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-bottom: 1px solid hsl(220 13% 91%);
   font-weight: 600;
   color: hsl(var(--foreground));
-  font-size: 12px; /* Updated to 12px for uniform font size */
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background-color: hsl(var(--card)) !important;
   display: flex;
   align-items: center;
   transition: all 0.2s ease;
+  padding-left: 20px; /* Added for alignment */
 }
 
-.ag-theme-alpine .ag-header-cell:hover {
-  background-color: hsl(var(--muted) / 0.5) !important;
+.ag-theme-alpine .ag-header-cell-label {
+  padding: 0;
+  justify-content: flex-start;
+  width: 100%;
 }
 
+.ag-theme-alpine .ag-header-cell-text {
+  padding-left: 0; /* Reset default padding */
+}
+
+/* Cell alignment fixes */
 .ag-theme-alpine .ag-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   border-right: none !important;
   border-bottom: none;
   display: flex;
   align-items: center;
-  padding: 16px 20px;
+  padding: 16px 20px; /* Consistent with header */
   transition: all 0.2s ease;
 }
 
+/* Location column specific treatment */
+.ag-theme-alpine .ag-cell[col-id="location_name"] {
+  min-width: 200px;
+  max-width: 300px;
+  position: relative;
+}
+
+/* Tooltip for location cells */
+.ag-theme-alpine .ag-cell[col-id="location_name"]::after {
+  content: attr(data-value);
+  position: absolute;
+  visibility: hidden;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  white-space: normal;
+  max-width: 400px;
+  top: 100%;
+  left: 20px; /* Matches cell padding */
+}
+
+.ag-theme-alpine .ag-cell[col-id="location_name"]:hover::after {
+  visibility: visible;
+}
+
+/* Row styling */
 .ag-theme-alpine .ag-row {
-  border-bottom: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-bottom: 1px solid hsl(220 13% 91%);
   transition: all 0.2s ease;
 }
 
@@ -84,6 +125,7 @@
   background-color: hsl(var(--primary) / 0.05) !important;
 }
 
+/* Cell states */
 .ag-theme-alpine .ag-cell-focus {
   border: none !important;
 }
@@ -92,23 +134,18 @@
   background-color: hsl(var(--primary) / 0.1) !important;
 }
 
+/* Pagination panel */
 .ag-theme-alpine .ag-paging-panel {
-  border-top: 1px solid hsl(220 13% 91%); /* Light gray border */
+  border-top: 1px solid hsl(220 13% 91%);
   background-color: hsl(var(--card));
   padding: 16px 20px;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
 
-/* Remove search icons from filter headers */
-.ag-theme-alpine .ag-header-cell-menu-button {
-  display: none;
-}
-
-.ag-theme-alpine .ag-floating-filter-button {
-  display: none;
-}
-
+/* Filter UI cleanup */
+.ag-theme-alpine .ag-header-cell-menu-button,
+.ag-theme-alpine .ag-floating-filter-button,
 .ag-theme-alpine .ag-icon-filter {
   display: none;
 }
@@ -117,44 +154,38 @@
   display: none;
 }
 
-/* Hide all vertical lines in AG Grid */
-.ag-theme-alpine .ag-ltr .ag-cell {
-  border-right: none !important;
-}
-
-.ag-theme-alpine .ag-ltr .ag-header-cell {
-  border-right: none !important;
-}
-
+/* Border cleanup */
+.ag-theme-alpine .ag-ltr .ag-cell,
+.ag-theme-alpine .ag-ltr .ag-header-cell,
 .ag-theme-alpine .ag-body-horizontal-scroll {
   border-right: none !important;
 }
 
-/* Enhanced subtle scrollbars */
+/* Scrollbar styling */
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar {
-  width: 4px; /* Thinner scrollbar */
+  width: 4px;
   height: 4px;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-track,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-track {
-  background: transparent; /* Transparent track */
+  background: transparent;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.2); /* Light gray, semi-transparent */
+  background: hsl(var(--muted-foreground) / 0.2);
   border-radius: 2px;
   transition: all 0.2s ease;
 }
 
 .ag-theme-alpine .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
 .ag-theme-alpine .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.4); /* Slightly more visible on hover */
+  background: hsl(var(--muted-foreground) / 0.4);
 }
 
-/* Status badge styling */
+/* Status badges */
 .status-badge {
   padding: 4px 12px;
   border-radius: 9999px;
@@ -184,7 +215,7 @@
   color: rgb(107 114 128);
 }
 
-/* Action button styling */
+/* Action buttons */
 .action-button {
   padding: 6px;
   border-radius: 6px;
@@ -204,27 +235,19 @@
   transform: scale(1.1);
 }
 
-/* Remove row selection highlight and orange left border */
+/* Row selection states */
 .ag-theme-alpine .ag-row-selected {
   background-color: transparent !important;
   border-left: none !important;
 }
 
-.ag-theme-alpine .ag-row-selected::before {
+.ag-theme-alpine .ag-row-selected::before,
+.ag-theme-alpine .ag-row-selected .ag-cell {
   background-color: transparent !important;
   border-left: none !important;
 }
 
-/* Remove orange left indentation on row press */
-.ag-theme-alpine .ag-row-selected .ag-cell {
-  border-left: none !important;
-}
-
-/* Ensure consistent row hover behavior */
-.ag-theme-alpine .ag-row:hover {
-  background-color: #f9fafb !important;
-}
-
+.ag-theme-alpine .ag-row:hover,
 .ag-theme-alpine .ag-row-hover {
   background-color: #f9fafb !important;
 }
