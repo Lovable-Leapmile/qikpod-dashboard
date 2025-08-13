@@ -26,7 +26,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [isMobile, setIsMobile] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check for mobile view
+  // Mobile detection without external hook
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -35,7 +35,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     // Initial check
     checkIfMobile();
 
-    // Add event listener for window resize
+    // Add event listener
     window.addEventListener('resize', checkIfMobile);
 
     // Cleanup
