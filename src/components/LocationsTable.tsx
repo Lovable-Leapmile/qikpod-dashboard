@@ -7,13 +7,10 @@ import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye, RefreshCw, Search, Filter, Download } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { MapPin, Eye, RefreshCw, Search } from 'lucide-react';
 import { dashboardApi, Location } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
-import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
@@ -25,11 +22,25 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [autoRefresh, setAutoRefresh] = useState(false);
   const [pageSize, setPageSize] = useState(25);
+  const [isMobile, setIsMobile] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  // Check for mobile view
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
@@ -49,22 +60,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    if (autoRefresh) {
-      intervalRef.current = setInterval(fetchData, 2 * 60 * 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [autoRefresh, fetchData]);
-
   const ActionRenderer = ({ data }: { data: Location }) => {
     return (
       <div className="flex items-center justify-center h-full">
@@ -76,7 +71,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
             onLocationClick(data.id);
           }}
           className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-          >
+          title="View Location Details"
+        >
           <Eye className="h-4 w-4" />
         </Button>
       </div>
@@ -101,7 +97,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       filter: true,
       flex: 2,
       minWidth: 180,
-      cellClass: 'font-medium',
+      cellClass: 'font-medium'
     },
     {
       field: 'location_name',
@@ -142,8 +138,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       sortable: false,
       filter: false,
       resizable: false,
-      cellClass: ['flex', 'items-center', 'justify-center'],
-    },
+      cellClass: ['flex', 'items-center', 'justify-center']
+    }
   ];
 
   const onGridReady = (params: any) => {
@@ -161,19 +157,11 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     fetchData();
   }, [fetchData]);
 
-  const exportData = () => {
-    if (gridRef.current?.api) {
-      gridRef.current.api.exportDataAsCsv({
-        fileName: `locations-${new Date().toISOString().split('T')[0]}.csv`,
-      });
-    }
-  };
-
   const hasData = locations.length > 0;
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
-      {/* Header Section - Compact */}
+      {/* Header Section */}
       <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
         <div className="p-3 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
@@ -221,7 +209,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
         </div>
       </div>
 
-      {/* AG Grid Table */}
+      {/* Content Section */}
       <div className="flex-1 w-full">
         {loading ? (
           <div className="flex items-center justify-center h-[200px]">
@@ -233,7 +221,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               {locations.map((location) => (
                 <div
                   key={location.id}
-                  className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm"
+                  className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => onLocationClick(location.id)}
                 >
                   <div className="flex justify-between items-start">
@@ -270,7 +258,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                   resizable: true,
                   sortable: true,
                   filter: true,
-                  cellClass: 'flex items-center',
+                  cellClass: 'flex items-center'
                 }}
                 pagination={true}
                 paginationPageSize={pageSize}
