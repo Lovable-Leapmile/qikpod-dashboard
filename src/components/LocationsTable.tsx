@@ -8,34 +8,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye, RefreshCw, Search } from 'lucide-react';
-import { dashboardApi, Location } from '@/services/dashboardApi';
+import { Package, Eye, RefreshCw, Search, Filter, Download } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { dashboardApi, Pod } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 
-interface LocationsTableProps {
-  onLocationClick: (id: number) => void;
+interface PodsTableProps {
+  onPodClick: (id: number) => void;
 }
 
-const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
-  const { accessToken } = useAuth();
+const PodsTable: React.FC<PodsTableProps> = ({
+  onPodClick
+}) => {
+  const {
+    accessToken
+  } = useAuth();
   const gridRef = useRef<AgGridReact>(null);
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [pods, setPods] = useState<Pod[]>([]);
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
-  const [pageSize, setPageSize] = useState(25);
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const data = await dashboardApi.getLocations(accessToken, pageSize);
-      setLocations(data || []);
+      const data = await dashboardApi.getPods(accessToken, pageSize);
+      setPods(data || []);
     } catch (error) {
-      console.error('Error fetching locations:', error);
-      setLocations([]);
+      console.error('Error fetching pods:', error);
+      setPods([]);
     } finally {
       setLoading(false);
     }
@@ -61,78 +67,101 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
     };
   }, [autoRefresh, fetchData]);
 
-  const ActionRenderer = ({ data }: { data: Location }) => {
-    return (
+  const StatusBadge = ({
+    value
+  }: {
+    value: string;
+  }) => {
+    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
+      value === 'active' ? 'bg-green-100 text-green-800' :
+      value === 'inactive' ? 'bg-red-100 text-red-800' :
+      'bg-gray-100 text-gray-800')}>
+      {value}
+    </span>;
+  };
+
+  const PowerStatusBadge = ({
+    value
+  }: {
+    value: string;
+  }) => {
+    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
+      value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
+      {value}
+    </span>;
+  };
+
+  const columnDefs: ColDef[] = [{
+    field: 'id',
+    headerName: 'ID',
+    sortable: true,
+    filter: true,
+    width: 80,
+    cellClass: 'font-medium text-center'
+  }, {
+    field: 'pod_name',
+    headerName: 'Pod Name',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'font-medium'
+  }, {
+    field: 'pod_power_status',
+    headerName: 'Power',
+    sortable: true,
+    filter: true,
+    width: 100,
+    cellRenderer: ({ value }: { value: string }) => <PowerStatusBadge value={value} />,
+    cellClass: 'text-center'
+  }, {
+    field: 'status',
+    headerName: 'Status',
+    sortable: true,
+    filter: true,
+    width: 100,
+    cellRenderer: ({ value }: { value: string }) => <StatusBadge value={value} />,
+    cellClass: 'text-center'
+  }, {
+    field: 'pod_health',
+    headerName: 'Health',
+    sortable: true,
+    filter: true,
+    width: 100,
+    cellClass: 'text-muted-foreground text-center'
+  }, {
+    field: 'pod_numtotaldoors',
+    headerName: 'Doors',
+    sortable: true,
+    filter: true,
+    width: 80,
+    cellClass: 'text-muted-foreground text-center'
+  }, {
+    field: 'location_name',
+    headerName: 'Location',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'Action',
+    width: 80,
+    cellRenderer: ({ data }: { data: Pod }) => (
       <Button
         variant="ghost"
         size="sm"
         onClick={(e) => {
           e.stopPropagation();
-          onLocationClick(data.id);
+          onPodClick(data.id);
         }}
-        className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-        title="View Location Details"
+        className="text-gray-800 bg-gray-100 hover:bg-gray-200"
       >
         <Eye className="h-4 w-4" />
       </Button>
-    );
-  };
-
-  const columnDefs: ColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      sortable: true,
-      filter: true,
-      width: 80,
-      cellClass: 'font-medium text-center'
-    },
-    {
-      field: 'primary_name',
-      headerName: 'Name',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'font-medium'
-    },
-    {
-      field: 'location_name',
-      headerName: 'Location',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    },
-    {
-      field: 'location_address',
-      headerName: 'Address',
-      sortable: true,
-      filter: true,
-      flex: 2,
-      minWidth: 200,
-      cellClass: 'text-muted-foreground',
-      tooltipField: 'location_address'
-    },
-    {
-      field: 'location_pincode',
-      headerName: 'Pincode',
-      sortable: true,
-      filter: true,
-      width: 120,
-      cellClass: 'text-muted-foreground text-center'
-    },
-    {
-      headerName: 'Action',
-      width: 100,
-      cellRenderer: ActionRenderer,
-      sortable: false,
-      filter: false,
-      resizable: false,
-      cellClass: ['flex', 'items-center', 'justify-center']
-    }
-  ];
+    ),
+    cellClass: 'flex items-center justify-center'
+  }];
 
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -152,12 +181,12 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `locations-${new Date().toISOString().split('T')[0]}.csv`
+        fileName: `pods-${new Date().toISOString().split('T')[0]}.csv`
       });
     }
   };
 
-  const hasData = locations.length > 0;
+  const hasData = pods.length > 0;
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
@@ -167,8 +196,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {/* Title with Icon */}
             <div className="flex items-center space-x-3">
-              <MapPin className="h-5 w-5 text-gray-700" />
-              <h2 className="text-lg font-semibold text-gray-900">Locations</h2>
+              <Package className="h-5 w-5 text-gray-700" />
+              <h2 className="text-lg font-semibold text-gray-900">Pods</h2>
             </div>
 
             {/* Controls */}
@@ -177,16 +206,16 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search locations..."
+                  placeholder="Search pods..."
                   value={globalFilter}
-                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  onChange={e => handleGlobalFilter(e.target.value)}
                   className="pl-10"
                 />
               </div>
 
               {/* Page Size Selector */}
               <div className="flex items-center space-x-2">
-                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
                   <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
@@ -197,30 +226,31 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline" size="sm" onClick={refreshData}>
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Refresh</span>
-                </Button>
               </div>
+
+              <Button
+                variant="outline"
+                onClick={refreshData}
+                className="text-gray-800 bg-gray-100 hover:bg-gray-200"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        {loading ? (
-          <div className="flex items-center justify-center h-[200px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div>
-        ) : hasData ? (
+        {hasData ? (
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
-                  rowData={locations}
+                  rowData={pods}
                   columnDefs={columnDefs}
                   defaultColDef={{
                     resizable: true,
@@ -242,7 +272,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}
-                  quickFilterText={globalFilter}
                 />
               </div>
             </div>
@@ -250,35 +279,40 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {locations.map((location) => (
-                  <Card key={location.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                {pods.map(pod => (
+                  <Card key={pod.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
-                          <div className="text-lg font-semibold mt-1">{location.primary_name}</div>
+                          <div className="text-sm font-medium text-gray-900">ID: {pod.id}</div>
+                          <div className="text-lg font-semibold mt-1">{pod.pod_name}</div>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onLocationClick(location.id);
-                          }}
-                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                          onClick={() => onPodClick(pod.id)}
+                          className="text-gray-800 bg-gray-100 hover:bg-gray-200"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="space-y-2">
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Location:</span> {location.location_name}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700">Power:</span>
+                          <PowerStatusBadge value={pod.pod_power_status} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700">Status:</span>
+                          <StatusBadge value={pod.status} />
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Address:</span> {location.location_address}
+                          <span className="font-medium text-gray-700">Health:</span> {pod.pod_health}
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Pincode:</span> {location.location_pincode}
+                          <span className="font-medium text-gray-700">Doors:</span> {pod.pod_numtotaldoors}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Location:</span> {pod.location_name}
                         </div>
                       </div>
                     </CardContent>
@@ -289,9 +323,9 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
           </>
         ) : (
           <NoDataIllustration
-            title="No locations found"
-            description={locations.length === 0 ? "No locations data available." : "No matching locations found."}
-            icon="map-pin"
+            title="No pods found"
+            description={pods.length === 0 ? "No pods data available." : "No matching pods found."}
+            icon="package"
           />
         )}
       </div>
@@ -299,4 +333,4 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   );
 };
 
-export default LocationsTable;
+export default PodsTable;
