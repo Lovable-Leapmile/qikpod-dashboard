@@ -107,12 +107,12 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-screen-xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button 
-          onClick={onBack} 
-          variant="ghost" 
+      <div className="flex items-center gap-4 mb-4">
+        <Button
+          onClick={onBack}
+          variant="outline"
           size="sm"
           className="flex items-center gap-2"
         >
@@ -122,25 +122,25 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       </div>
 
       {/* Partner Dashboard */}
-      <Card className="bg-white shadow-sm rounded-xl border-gray-200">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold text-gray-900">
-              Partner Dashboard
-            </CardTitle>
-            <Button 
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm">
+        <div className="p-3 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-row items-center justify-between gap-4 w-full">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-sm font-semibold text-gray-900">Partner Dashboard</h2>
+            </div>
+            <Button
               onClick={() => setShowModal(true)}
-              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2"
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8 px-3"
             >
-              <Play className="w-4 h-4" />
+              <Play className="w-3 h-3" />
               Run Batch Application
             </Button>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {dashboardStats.map((stat, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <span className="text-sm font-medium text-gray-700">{stat.title}</span>
                 <span className={`text-lg font-bold ${stat.color} bg-white px-3 py-1 rounded-full border`}>
                   {statsLoading ? (
@@ -153,7 +153,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
             ))}
           </div>
         </CardContent>
-      </Card>
+      </div>
 
       {/* Partner Reservations AG Grid Table */}
       <PartnerReservationsAgGrid />
@@ -169,7 +169,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
               Batch Reservation
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6">
             {/* Step Header */}
             <div className="text-center">
@@ -185,18 +185,18 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                   Enter details of parcels to be delivered to QikPod into a CSV file.
                   You may wish to download a blank CSV template file to get started.
                 </div>
-                
+
                 <div className="flex justify-center">
-                  <Button 
+                  <Button
                     onClick={downloadSampleCSV}
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs h-8"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-3 h-3" />
                     Click here to Download
                   </Button>
                 </div>
-                
+
                 <div className="text-xs text-gray-500 text-center">
                   Once parcel details are entered into the CSV file, click next to upload it.
                 </div>
@@ -207,7 +207,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                 <div className="text-sm text-gray-600 leading-relaxed">
                   Upload the CSV file you updated with parcel details.
                 </div>
-                
+
                 <div className="flex flex-col items-center gap-3">
                   <input
                     type="file"
@@ -217,18 +217,18 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                     id="csv-upload"
                   />
                   <label htmlFor="csv-upload">
-                    <Button 
+                    <Button
                       variant="outline"
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer text-xs h-8"
                       asChild
                     >
                       <span>
-                        <Upload className="w-4 h-4" />
+                        <Upload className="w-3 h-3" />
                         Click here to upload a file
                       </span>
                     </Button>
                   </label>
-                  
+
                   {selectedFile && (
                     <div className="text-sm text-green-600">
                       Selected: {selectedFile.name}
@@ -242,38 +242,38 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
             <div className="flex justify-between pt-4 border-t">
               {currentStep === 1 ? (
                 <>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowModal(false)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs h-8"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-3 h-3" />
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => setCurrentStep(2)}
-                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2"
+                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8"
                   >
                     Next
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3 h-3" />
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setCurrentStep(1)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs h-8"
                   >
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-3 h-3" />
                     Back
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleUpload}
-                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2"
+                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8"
                     disabled={!selectedFile}
                   >
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-3 h-3" />
                     Upload
                   </Button>
                 </>
