@@ -5,12 +5,12 @@ import { ArrowLeft, Play, Download, Upload, X, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PartnerReservationsAgGrid from './PartnerReservationsAgGrid';
 import { usePartnerStats } from '@/hooks/usePartnerStats';
+
 interface PartnerProps {
   onBack: () => void;
 }
-const Partner: React.FC<PartnerProps> = ({
-  onBack
-}) => {
+
+const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -18,6 +18,7 @@ const Partner: React.FC<PartnerProps> = ({
     stats: dashboardStats,
     loading: statsLoading
   } = usePartnerStats();
+
   const downloadSampleCSV = () => {
     const jsonDataList = [{
       created_by_phone: 9999999999,
@@ -32,22 +33,28 @@ const Partner: React.FC<PartnerProps> = ({
       payment_amount: null,
       payment_method: null
     }];
+
     if (!jsonDataList || jsonDataList.length === 0) {
       console.log("JSON list is null or empty.");
       return;
     }
+
     const headers = Object.keys(jsonDataList[0]);
     let csvData = headers.join(",") + "\n";
+
     jsonDataList.forEach(obj => {
       const values = headers.map(header => obj[header] !== null ? obj[header] : "");
       csvData += values.join(",") + "\n";
     });
+
     const now = new Date();
     const formattedDateTime = now.toISOString().replace(/[-:T]/g, "").slice(0, 15);
     const fileName = `sample_csv_${formattedDateTime}.csv`;
+
     const blob = new Blob([csvData], {
       type: 'text/csv;charset=utf-8;'
     });
+
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.setAttribute("download", fileName);
@@ -55,6 +62,7 @@ const Partner: React.FC<PartnerProps> = ({
     link.click();
     document.body.removeChild(link);
   };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type === 'text/csv') {
@@ -63,13 +71,16 @@ const Partner: React.FC<PartnerProps> = ({
       alert('Please select a valid CSV file');
     }
   };
+
   const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file first');
       return;
     }
+
     const formData = new FormData();
     formData.append('in_file', selectedFile);
+
     try {
       const response = await fetch('https://stagingv3.leapmile.com/podcore/upload_csv/', {
         method: 'POST',
@@ -79,6 +90,7 @@ const Partner: React.FC<PartnerProps> = ({
         },
         body: formData
       });
+
       if (response.ok) {
         alert('File uploaded successfully!');
         setShowModal(false);
@@ -92,13 +104,16 @@ const Partner: React.FC<PartnerProps> = ({
       alert('Upload failed. Please try again.');
     }
   };
+
   const resetModal = () => {
     setCurrentStep(1);
     setSelectedFile(null);
   };
-  return <div className="space-y-4 w-full max-w-screen-xl mx-auto px-4 sm:px-0">
+
+  return (
+    <div className="space-y-4 w-full max-w-screen-xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-2">
+      <div className="flex items-center gap-4 mb-2 px-4 sm:px-0">
         <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -106,7 +121,7 @@ const Partner: React.FC<PartnerProps> = ({
       </div>
 
       {/* Partner Dashboard */}
-      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm px-4 sm:px-0">
         <div className="p-3 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-row items-center justify-between gap-4 w-full">
             <div className="flex items-center space-x-2">
@@ -120,26 +135,30 @@ const Partner: React.FC<PartnerProps> = ({
         </div>
         <CardContent className="p-3">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-            {dashboardStats.map((stat, index) => <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 min-w-0 h-10">
+            {dashboardStats.map((stat, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 min-w-0 h-10">
                 <span className="text-xs font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
                 <span className={`text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border ml-2`}>
                   {statsLoading ? <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div> : stat.value}
                 </span>
-              </div>)}
+              </div>
+            ))}
           </div>
         </CardContent>
       </div>
 
       {/* Partner Reservations AG Grid Table */}
-      <PartnerReservationsAgGrid />
+      <div className="px-4 sm:px-0">
+        <PartnerReservationsAgGrid />
+      </div>
 
       {/* Batch Reservation Modal */}
       <Dialog open={showModal} onOpenChange={open => {
-      setShowModal(open);
-      if (!open) resetModal();
-    }}>
+        setShowModal(open);
+        if (!open) resetModal();
+      }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
@@ -155,8 +174,9 @@ const Partner: React.FC<PartnerProps> = ({
               </h3>
             </div>
 
-            {currentStep === 1 ? (/* Step 1 Content */
-          <div className="space-y-4">
+            {currentStep === 1 ? (
+              /* Step 1 Content */
+              <div className="space-y-4">
                 <div className="text-sm text-gray-600 leading-relaxed">
                   Enter details of parcels to be delivered to QikPod into a CSV file.
                   You may wish to download a blank CSV template file to get started.
@@ -172,8 +192,10 @@ const Partner: React.FC<PartnerProps> = ({
                 <div className="text-xs text-gray-500 text-center">
                   Once parcel details are entered into the CSV file, click next to upload it.
                 </div>
-              </div>) : (/* Step 2 Content */
-          <div className="space-y-4">
+              </div>
+            ) : (
+              /* Step 2 Content */
+              <div className="space-y-4">
                 <div className="text-sm text-gray-600 leading-relaxed">
                   Upload the CSV file you updated with parcel details.
                 </div>
@@ -189,15 +211,19 @@ const Partner: React.FC<PartnerProps> = ({
                     </Button>
                   </label>
 
-                  {selectedFile && <div className="text-sm text-green-600">
+                  {selectedFile && (
+                    <div className="text-sm text-green-600">
                       Selected: {selectedFile.name}
-                    </div>}
+                    </div>
+                  )}
                 </div>
-              </div>)}
+              </div>
+            )}
 
             {/* Modal Footer Buttons */}
             <div className="flex justify-between pt-4 border-t">
-              {currentStep === 1 ? <>
+              {currentStep === 1 ? (
+                <>
                   <Button variant="outline" onClick={() => setShowModal(false)} className="flex items-center gap-2 text-xs h-8">
                     <X className="w-3 h-3" />
                     Cancel
@@ -206,7 +232,9 @@ const Partner: React.FC<PartnerProps> = ({
                     Next
                     <ArrowRight className="w-3 h-3" />
                   </Button>
-                </> : <>
+                </>
+              ) : (
+                <>
                   <Button variant="outline" onClick={() => setCurrentStep(1)} className="flex items-center gap-2 text-xs h-8">
                     <ArrowLeft className="w-3 h-3" />
                     Back
@@ -215,11 +243,14 @@ const Partner: React.FC<PartnerProps> = ({
                     <Upload className="w-3 h-3" />
                     Upload
                   </Button>
-                </>}
+                </>
+              )}
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </div>;
+    </div>
+  );
 };
+
 export default Partner;
