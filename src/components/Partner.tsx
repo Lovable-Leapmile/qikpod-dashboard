@@ -5,52 +5,49 @@ import { ArrowLeft, Play, Download, Upload, X, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PartnerReservationsAgGrid from './PartnerReservationsAgGrid';
 import { usePartnerStats } from '@/hooks/usePartnerStats';
-
 interface PartnerProps {
   onBack: () => void;
 }
-
-const Partner: React.FC<PartnerProps> = ({ onBack }) => {
+const Partner: React.FC<PartnerProps> = ({
+  onBack
+}) => {
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { stats: dashboardStats, loading: statsLoading } = usePartnerStats();
-
+  const {
+    stats: dashboardStats,
+    loading: statsLoading
+  } = usePartnerStats();
   const downloadSampleCSV = () => {
-    const jsonDataList = [
-      {
-        created_by_phone: 9999999999,
-        drop_by_phone: 9999999999,
-        pickup_by_phone: 9999999999,
-        reservation_awbno: "AWB_RESERVATION_NO",
-        location_id: "001",
-        length: 440,
-        width: 380,
-        height: 150,
-        payment_mode: "prepaid",
-        payment_amount: null,
-        payment_method: null
-      }
-    ];
-
+    const jsonDataList = [{
+      created_by_phone: 9999999999,
+      drop_by_phone: 9999999999,
+      pickup_by_phone: 9999999999,
+      reservation_awbno: "AWB_RESERVATION_NO",
+      location_id: "001",
+      length: 440,
+      width: 380,
+      height: 150,
+      payment_mode: "prepaid",
+      payment_amount: null,
+      payment_method: null
+    }];
     if (!jsonDataList || jsonDataList.length === 0) {
       console.log("JSON list is null or empty.");
       return;
     }
-
     const headers = Object.keys(jsonDataList[0]);
     let csvData = headers.join(",") + "\n";
-
     jsonDataList.forEach(obj => {
       const values = headers.map(header => obj[header] !== null ? obj[header] : "");
       csvData += values.join(",") + "\n";
     });
-
     const now = new Date();
     const formattedDateTime = now.toISOString().replace(/[-:T]/g, "").slice(0, 15);
     const fileName = `sample_csv_${formattedDateTime}.csv`;
-
-    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvData], {
+      type: 'text/csv;charset=utf-8;'
+    });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.setAttribute("download", fileName);
@@ -58,7 +55,6 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
     link.click();
     document.body.removeChild(link);
   };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type === 'text/csv') {
@@ -67,16 +63,13 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       alert('Please select a valid CSV file');
     }
   };
-
   const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file first');
       return;
     }
-
     const formData = new FormData();
     formData.append('in_file', selectedFile);
-
     try {
       const response = await fetch('https://stagingv3.leapmile.com/podcore/upload_csv/', {
         method: 'POST',
@@ -86,7 +79,6 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
         },
         body: formData
       });
-
       if (response.ok) {
         alert('File uploaded successfully!');
         setShowModal(false);
@@ -100,22 +92,14 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       alert('Upload failed. Please try again.');
     }
   };
-
   const resetModal = () => {
     setCurrentStep(1);
     setSelectedFile(null);
   };
-
-  return (
-    <div className="space-y-4 w-full max-w-screen-xl mx-auto px-4 sm:px-6">
+  return <div className="space-y-4 w-full max-w-screen-xl mx-auto px-4 sm:px-0">
       {/* Header */}
       <div className="flex items-center gap-4 mb-2">
-        <Button
-          onClick={onBack}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 h-8"
-        >
+        <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
@@ -128,10 +112,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
             <div className="flex items-center space-x-2">
               <h2 className="text-sm font-semibold text-gray-900">Partner Dashboard</h2>
             </div>
-            <Button
-              onClick={() => setShowModal(true)}
-              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8 px-3"
-            >
+            <Button onClick={() => setShowModal(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8 px-3">
               <Play className="w-3 h-3" />
               Run Batch Application
             </Button>
@@ -139,20 +120,14 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
         </div>
         <CardContent className="p-3">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
-            {dashboardStats.map((stat, index) => (
-              <div key={index} className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0">
+            {dashboardStats.map((stat, index) => <div key={index} className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0">
                 <span className="text-xs font-medium text-gray-700 text-center mb-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
                   {stat.title}
                 </span>
                 <span className={`text-base font-bold ${stat.color} bg-white px-2 py-1 rounded-full border w-full text-center`}>
-                  {statsLoading ? (
-                    <div className="w-5 h-5 mx-auto animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
-                  ) : (
-                    stat.value
-                  )}
+                  {statsLoading ? <div className="w-5 h-5 mx-auto animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div> : stat.value}
                 </span>
-              </div>
-            ))}
+              </div>)}
           </div>
         </CardContent>
       </div>
@@ -161,10 +136,10 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       <PartnerReservationsAgGrid />
 
       {/* Batch Reservation Modal */}
-      <Dialog open={showModal} onOpenChange={(open) => {
-        setShowModal(open);
-        if (!open) resetModal();
-      }}>
+      <Dialog open={showModal} onOpenChange={open => {
+      setShowModal(open);
+      if (!open) resetModal();
+    }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
@@ -180,20 +155,15 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
               </h3>
             </div>
 
-            {currentStep === 1 ? (
-              /* Step 1 Content */
-              <div className="space-y-4">
+            {currentStep === 1 ? (/* Step 1 Content */
+          <div className="space-y-4">
                 <div className="text-sm text-gray-600 leading-relaxed">
                   Enter details of parcels to be delivered to QikPod into a CSV file.
                   You may wish to download a blank CSV template file to get started.
                 </div>
 
                 <div className="flex justify-center">
-                  <Button
-                    onClick={downloadSampleCSV}
-                    variant="outline"
-                    className="flex items-center gap-2 text-xs h-8"
-                  >
+                  <Button onClick={downloadSampleCSV} variant="outline" className="flex items-center gap-2 text-xs h-8">
                     <Download className="w-3 h-3" />
                     Click here to Download
                   </Button>
@@ -202,28 +172,16 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                 <div className="text-xs text-gray-500 text-center">
                   Once parcel details are entered into the CSV file, click next to upload it.
                 </div>
-              </div>
-            ) : (
-              /* Step 2 Content */
-              <div className="space-y-4">
+              </div>) : (/* Step 2 Content */
+          <div className="space-y-4">
                 <div className="text-sm text-gray-600 leading-relaxed">
                   Upload the CSV file you updated with parcel details.
                 </div>
 
                 <div className="flex flex-col items-center gap-3">
-                  <input
-                    type="file"
-                    accept=".csv"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="csv-upload"
-                  />
+                  <input type="file" accept=".csv" onChange={handleFileSelect} className="hidden" id="csv-upload" />
                   <label htmlFor="csv-upload">
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-2 cursor-pointer text-xs h-8"
-                      asChild
-                    >
+                    <Button variant="outline" className="flex items-center gap-2 cursor-pointer text-xs h-8" asChild>
                       <span>
                         <Upload className="w-3 h-3" />
                         Click here to upload a file
@@ -231,61 +189,37 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                     </Button>
                   </label>
 
-                  {selectedFile && (
-                    <div className="text-sm text-green-600">
+                  {selectedFile && <div className="text-sm text-green-600">
                       Selected: {selectedFile.name}
-                    </div>
-                  )}
+                    </div>}
                 </div>
-              </div>
-            )}
+              </div>)}
 
             {/* Modal Footer Buttons */}
             <div className="flex justify-between pt-4 border-t">
-              {currentStep === 1 ? (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowModal(false)}
-                    className="flex items-center gap-2 text-xs h-8"
-                  >
+              {currentStep === 1 ? <>
+                  <Button variant="outline" onClick={() => setShowModal(false)} className="flex items-center gap-2 text-xs h-8">
                     <X className="w-3 h-3" />
                     Cancel
                   </Button>
-                  <Button
-                    onClick={() => setCurrentStep(2)}
-                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8"
-                  >
+                  <Button onClick={() => setCurrentStep(2)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8">
                     Next
                     <ArrowRight className="w-3 h-3" />
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentStep(1)}
-                    className="flex items-center gap-2 text-xs h-8"
-                  >
+                </> : <>
+                  <Button variant="outline" onClick={() => setCurrentStep(1)} className="flex items-center gap-2 text-xs h-8">
                     <ArrowLeft className="w-3 h-3" />
                     Back
                   </Button>
-                  <Button
-                    onClick={handleUpload}
-                    className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8"
-                    disabled={!selectedFile}
-                  >
+                  <Button onClick={handleUpload} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8" disabled={!selectedFile}>
                     <Upload className="w-3 h-3" />
                     Upload
                   </Button>
-                </>
-              )}
+                </>}
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Partner;
