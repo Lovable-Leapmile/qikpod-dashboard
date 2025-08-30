@@ -274,7 +274,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
         {loading ? <div className="flex justify-center items-center py-8">
             <div className="text-gray-500">Loading...</div>
           </div> : filteredData.length === 0 ? <div className="flex justify-center items-center py-8">
-            <div className="text-gray-500">No reservations found</div>
+            
           </div> : filteredData.map((reservation, index) => <Card key={index} className="rounded-xl border border-gray-200 shadow-sm">
               <CardContent className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
