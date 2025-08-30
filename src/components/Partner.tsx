@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { ArrowLeft, Play, Download, Upload, X, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PartnerReservationsAgGrid from './PartnerReservationsAgGrid';
@@ -107,14 +107,14 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="space-y-6 w-full max-w-screen-xl mx-auto">
+    <div className="space-y-4 w-full max-w-screen-xl mx-auto px-4 sm:px-6">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-2">
         <Button
           onClick={onBack}
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 h-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -122,7 +122,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       </div>
 
       {/* Partner Dashboard */}
-      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm">
+      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
         <div className="p-3 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-row items-center justify-between gap-4 w-full">
             <div className="flex items-center space-x-2">
@@ -137,14 +137,16 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
             </Button>
           </div>
         </div>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <CardContent className="p-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {dashboardStats.map((stat, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-sm font-medium text-gray-700">{stat.title}</span>
-                <span className={`text-lg font-bold ${stat.color} bg-white px-3 py-1 rounded-full border`}>
+              <div key={index} className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0">
+                <span className="text-xs font-medium text-gray-700 text-center mb-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                  {stat.title}
+                </span>
+                <span className={`text-base font-bold ${stat.color} bg-white px-2 py-1 rounded-full border w-full text-center`}>
                   {statsLoading ? (
-                    <div className="w-6 h-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
+                    <div className="w-5 h-5 mx-auto animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div>
                   ) : (
                     stat.value
                   )}
