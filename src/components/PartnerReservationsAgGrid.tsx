@@ -198,7 +198,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
     }
   };
   const hasData = filteredData.length > 0;
-  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-px">
       {/* Header Card Section - Compact */}
       <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
         <div className="p-3 border-b border-gray-200 bg-gray-100">
