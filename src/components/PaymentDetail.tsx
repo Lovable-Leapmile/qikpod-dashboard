@@ -39,9 +39,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     
     setLoading(true);
     try {
-      // API call to fetch payment details for the specific payment ID
       const response = await fetch(
-        `https://stagingv3.leapmile.com/payments/payments/?record_id=${paymentId}&order_by_field=updated_at&order_by_type=DESC`, 
+        `https://stagingv3.leapmile.com/payments/payments/?record_id=${paymentId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -52,7 +51,6 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
 
       if (response.ok) {
         const data = await response.json();
-        // Transform the data to match our interface
         const transformedData = data.records?.map((record: any) => ({
           payment_id: record.payment_id || record.id || paymentId,
           payment_type: record.payment_type || record.type || 'N/A',
@@ -62,11 +60,10 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
           payment_status: record.payment_status || record.status || 'pending',
           client_reference_id: record.client_reference_id || record.payment_client_reference_id || 'N/A'
         })) || [];
-        
+
         setRowData(transformedData);
       } else {
         console.error('Failed to fetch payment details:', response.statusText);
-        // Fallback with mock data for demonstration
         setRowData([{
           payment_id: paymentId,
           payment_type: 'Online Payment',
@@ -79,7 +76,6 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       }
     } catch (error) {
       console.error('Error fetching payment details:', error);
-      // Fallback with mock data for demonstration
       setRowData([{
         payment_id: paymentId,
         payment_type: 'Online Payment',
@@ -107,7 +103,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       cancelled: 'status-cancelled',
       failed: 'status-inactive'
     };
-    
+
     return (
       <span className={cn('status-badge', statusClasses[status as keyof typeof statusClasses] || 'status-inactive')}>
         {params.value}
@@ -226,78 +222,65 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col animate-fade-in px-2 sm:px-4 lg:px-6">
-      {/* Header with centered title and back button */}
-      <div className="mb-4 sm:mb-6">
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="flex items-center gap-2 text-xs sm:text-sm"
-            size="sm"
-          >
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="hidden xs:inline">Back to Payments</span>
-            <span className="xs:hidden">Back</span>
-          </Button>
-        </div>
-        
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-center text-gray-900 mb-4 sm:mb-6">
-          Payment Center Details
-        </h1>
-      </div>
-
-      {/* Compact Header Section */}
-      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
-        {/* Table Title and Controls */}
-        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-3">
+    <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Header Section */}
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Title with Back Button */}
             <div className="flex items-center space-x-3">
-              <h2 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">
+              <Button
+                variant="outline"
+                onClick={onBack}
+                className="flex items-center gap-2"
+                size="sm"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back to Payments</span>
+              </Button>
+              <h2 className="text-lg font-semibold text-gray-900">
                 Payment Details for ID: <span className="break-all">{paymentId}</span>
               </h2>
             </div>
-            
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Button variant="outline" size="sm" onClick={fetchPaymentDetails} disabled={loading}>
-                <RefreshCw className={cn('h-3 w-3 sm:h-4 sm:w-4', loading && 'animate-spin')} />
-                <span className="hidden md:inline ml-1">Refresh</span>
-              </Button>
 
-              <Button variant="outline" size="sm" onClick={exportData}>
-                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Export</span>
-              </Button>
-            </div>
-          </div>
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search payment details..."
+                  value={globalFilter}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
 
-          {/* Search and Controls */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-            {/* Search */}
-            <div className="relative flex-1 max-w-full sm:max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
-              <Input 
-                placeholder="Search payment details..." 
-                value={globalFilter} 
-                onChange={(e) => handleGlobalFilter(e.target.value)} 
-                className="pl-8 sm:pl-10 text-sm" 
-              />
-            </div>
+              {/* Page Size Selector and Buttons */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
+                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="sm" onClick={fetchPaymentDetails} disabled={loading}>
+                    <RefreshCw className={cn('h-4 w-4 mr-1', loading && 'animate-spin')} />
+                    <span className="hidden sm:inline">Refresh</span>
+                  </Button>
+                </div>
 
-            {/* Page Size Selector */}
-            <div className="flex items-center space-x-2">
-              <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                <SelectTrigger className="w-16 sm:w-20 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-xs sm:text-sm text-gray-600">records</span>
+                <Button variant="outline" size="sm" onClick={exportData}>
+                  <Download className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Export</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -305,7 +288,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        <div className="ag-theme-alpine h-[calc(100vh-280px)] sm:h-[calc(100vh-320px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+        <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
@@ -325,8 +308,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
             rowBuffer={10}
             enableCellTextSelection={true}
             onGridReady={onGridReady}
-            rowHeight={52}
-            headerHeight={50}
+            rowHeight={36}
+            headerHeight={38}
             suppressColumnVirtualisation={true}
             rowSelection="single"
             suppressRowClickSelection={true}
