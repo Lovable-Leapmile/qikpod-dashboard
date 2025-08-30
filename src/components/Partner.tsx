@@ -151,8 +151,21 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
 
       {/* Partner Reservations AG Grid Table */}
       <div className="px-4 sm:px-0">
-        <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm p-0">
-          <PartnerReservationsAgGrid />
+        <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+          {/* Custom header to match the Partner Dashboard styling */}
+          <div className="p-3 border-b border-gray-200 bg-gray-100">
+            <div className="flex flex-row items-center justify-between gap-4 w-full">
+              <div className="flex items-center space-x-2">
+                <h2 className="text-sm font-semibold text-gray-900">Partner Reservations</h2>
+              </div>
+              <div className="flex items-center space-x-2">
+                {/* You can add any header buttons here if needed */}
+              </div>
+            </div>
+          </div>
+          <div className="p-0">
+            <PartnerReservationsAgGrid />
+          </div>
         </div>
       </div>
 
