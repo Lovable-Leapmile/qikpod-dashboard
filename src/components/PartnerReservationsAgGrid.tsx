@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-
 interface PartnerReservation {
   reservation_type: string;
   reservation_awbno: string;
@@ -23,7 +22,6 @@ interface PartnerReservation {
   payment_amount: number | null;
   payment_status: string;
 }
-
 const PartnerReservationsAgGrid: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<PartnerReservation[]>([]);
@@ -32,84 +30,80 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(25);
-
-  const columnDefs: ColDef[] = useMemo(() => [
-    {
-      headerName: 'TYPE',
-      field: 'reservation_type',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'font-medium text-center'
-    }, {
-      headerName: 'AWB NO',
-      field: 'reservation_awbno',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'font-medium'
-    }, {
-      headerName: 'STATUS',
-      field: 'reservation_status',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'CREATED NAME',
-      field: 'created_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'CREATED PHONE',
-      field: 'created_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'DELIVERY NAME',
-      field: 'drop_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'DELIVERY PHONE',
-      field: 'drop_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PICKUP NAME',
-      field: 'pickup_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PICKUP PHONE',
-      field: 'pickup_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT MODE',
-      field: 'payment_mode',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT AMOUNT',
-      field: 'payment_amount',
-      flex: 1,
-      minWidth: 140,
-      valueFormatter: params => params.value ? `₹${params.value}` : '-',
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT STATUS',
-      field: 'payment_status',
-      flex: 1,
-      minWidth: 140,
-      cellClass: 'text-muted-foreground'
-    }
-  ], []);
-
+  const columnDefs: ColDef[] = useMemo(() => [{
+    headerName: 'TYPE',
+    field: 'reservation_type',
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'font-medium text-center'
+  }, {
+    headerName: 'AWB NO',
+    field: 'reservation_awbno',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'font-medium'
+  }, {
+    headerName: 'STATUS',
+    field: 'reservation_status',
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'CREATED NAME',
+    field: 'created_by_name',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'CREATED PHONE',
+    field: 'created_by_phone',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'DELIVERY NAME',
+    field: 'drop_by_name',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'DELIVERY PHONE',
+    field: 'drop_by_phone',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'PICKUP NAME',
+    field: 'pickup_by_name',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'PICKUP PHONE',
+    field: 'pickup_by_phone',
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'PAYMENT MODE',
+    field: 'payment_mode',
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'PAYMENT AMOUNT',
+    field: 'payment_amount',
+    flex: 1,
+    minWidth: 140,
+    valueFormatter: params => params.value ? `₹${params.value}` : '-',
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'PAYMENT STATUS',
+    field: 'payment_status',
+    flex: 1,
+    minWidth: 140,
+    cellClass: 'text-muted-foreground'
+  }], []);
   const fetchPartnerReservations = async (reservationType: string = 'FK_Delivery') => {
     try {
       setLoading(true);
@@ -137,11 +131,9 @@ const PartnerReservationsAgGrid: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchPartnerReservations();
   }, []);
-
   const handleFilterChange = (value: string) => {
     setSelectedFilter(value);
     if (value === 'all') {
@@ -151,26 +143,21 @@ const PartnerReservationsAgGrid: React.FC = () => {
       setFilteredData(filtered);
     }
   };
-
   const downloadCSV = (jsonDataList: PartnerReservation[]) => {
     if (!Array.isArray(jsonDataList) || jsonDataList.length === 0) {
       console.log("JSON list is null or empty.");
       return;
     }
-
     const headers = Object.keys(jsonDataList[0]);
     let csvData = headers.join(",") + "\n";
-
     jsonDataList.forEach(json => {
       const values = headers.map(header => json[header] !== null && json[header] !== undefined ? json[header].toString() : "");
       csvData += values.join(",") + "\n";
     });
-
     const now = new Date();
     const pad = (n: number) => n < 10 ? "0" + n : n;
     const formattedDateTime = now.getFullYear().toString() + pad(now.getMonth() + 1) + pad(now.getDate()) + "_" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
     const fileName = `QikPod_${formattedDateTime}.csv`;
-
     const blob = new Blob([csvData], {
       type: 'text/csv;charset=utf-8;'
     });
@@ -182,26 +169,21 @@ const PartnerReservationsAgGrid: React.FC = () => {
     link.click();
     document.body.removeChild(link);
   };
-
   const handleDownloadCSV = () => {
     downloadCSV(filteredData);
   };
-
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
-
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
       gridRef.current.api.setGridOption('quickFilterText', value);
     }
   }, []);
-
   const refreshData = useCallback(() => {
     fetchPartnerReservations();
   }, []);
-
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'droppending':
@@ -215,11 +197,8 @@ const PartnerReservationsAgGrid: React.FC = () => {
         return 'text-gray-600 bg-gray-50';
     }
   };
-
   const hasData = filteredData.length > 0;
-
-  return (
-    <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
       {/* Header Card Section - Compact */}
       <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
         <div className="p-3 border-b border-gray-200 bg-gray-100">
@@ -248,7 +227,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
               {/* Page Size Selector */}
               <div className="flex items-center space-x-1">
-                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
                   <SelectTrigger className="w-16 text-xs h-8">
                     <SelectValue />
                   </SelectTrigger>
@@ -262,22 +241,12 @@ const PartnerReservationsAgGrid: React.FC = () => {
                 <span className="text-xs text-gray-600">/page</span>
               </div>
 
-              <Button
-                onClick={handleDownloadCSV}
-                variant="outline"
-                size="sm"
-                className="h-8 px-2 text-xs"
-              >
+              <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-8 px-2 text-xs">
                 <Download className="h-3 w-3 mr-1" />
                 Export
               </Button>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshData}
-                className="h-8 px-2 text-xs"
-              >
+              <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 text-xs">
                 <RefreshCw className="h-3 w-3 mr-1" />
                 Refresh
               </Button>
@@ -288,61 +257,25 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        {loading ? (
-          <div className="flex items-center justify-center h-[200px]">
+        {loading ? <div className="flex items-center justify-center h-[200px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div>
-        ) : hasData ? (
-          <div className="ag-theme-alpine h-[calc(100vh-200px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-            <AgGridReact
-              ref={gridRef}
-              rowData={filteredData}
-              columnDefs={columnDefs}
-              defaultColDef={{
-                resizable: true,
-                sortable: true,
-                filter: true,
-                cellClass: 'flex items-center'
-              }}
-              pagination={true}
-              paginationPageSize={pageSize}
-              loading={loading}
-              suppressRowHoverHighlight={false}
-              suppressCellFocus={true}
-              animateRows={true}
-              rowBuffer={10}
-              enableCellTextSelection={true}
-              onGridReady={onGridReady}
-              rowHeight={36}
-              headerHeight={38}
-              suppressColumnVirtualisation={true}
-              rowSelection="single"
-              suppressRowClickSelection={true}
-              quickFilterText={globalFilter}
-            />
-          </div>
-        ) : (
-          <NoDataIllustration
-            title="No reservations found"
-            description={rowData.length === 0 ? "No reservation data available." : "No matching reservations found."}
-            icon="inbox"
-          />
-        )}
+          </div> : hasData ? <div className="ag-theme-alpine h-[calc(100vh-200px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+            <AgGridReact ref={gridRef} rowData={filteredData} columnDefs={columnDefs} defaultColDef={{
+          resizable: true,
+          sortable: true,
+          filter: true,
+          cellClass: 'flex items-center'
+        }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} quickFilterText={globalFilter} />
+          </div> : <NoDataIllustration title="No reservations found" description={rowData.length === 0 ? "No reservation data available." : "No matching reservations found."} icon="inbox" />}
       </div>
 
       {/* Mobile Card View */}
       <div className="lg:hidden p-4 space-y-4 max-h-[600px] overflow-y-auto">
-        {loading ? (
-          <div className="flex justify-center items-center py-8">
+        {loading ? <div className="flex justify-center items-center py-8">
             <div className="text-gray-500">Loading...</div>
-          </div>
-        ) : filteredData.length === 0 ? (
-          <div className="flex justify-center items-center py-8">
+          </div> : filteredData.length === 0 ? <div className="flex justify-center items-center py-8">
             <div className="text-gray-500">No reservations found</div>
-          </div>
-        ) : (
-          filteredData.map((reservation, index) => (
-            <Card key={index} className="rounded-xl border border-gray-200 shadow-sm">
+          </div> : filteredData.map((reservation, index) => <Card key={index} className="rounded-xl border border-gray-200 shadow-sm">
               <CardContent className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
@@ -361,21 +294,17 @@ const PartnerReservationsAgGrid: React.FC = () => {
                     <div className="text-sm text-gray-600">{reservation.created_by_phone}</div>
                   </div>
 
-                  {reservation.drop_by_name && (
-                    <div>
+                  {reservation.drop_by_name && <div>
                       <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Delivery</div>
                       <div className="text-sm text-gray-900">{reservation.drop_by_name}</div>
                       <div className="text-sm text-gray-600">{reservation.drop_by_phone}</div>
-                    </div>
-                  )}
+                    </div>}
 
-                  {reservation.pickup_by_name && (
-                    <div>
+                  {reservation.pickup_by_name && <div>
                       <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Pickup</div>
                       <div className="text-sm text-gray-900">{reservation.pickup_by_name}</div>
                       <div className="text-sm text-gray-600">{reservation.pickup_by_phone}</div>
-                    </div>
-                  )}
+                    </div>}
 
                   <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                     <div>
@@ -383,20 +312,14 @@ const PartnerReservationsAgGrid: React.FC = () => {
                       <div className="text-sm text-gray-900">{reservation.payment_mode}</div>
                       <div className="text-sm text-gray-600">{reservation.payment_status}</div>
                     </div>
-                    {reservation.payment_amount && (
-                      <div className="text-lg font-semibold text-gray-900">
+                    {reservation.payment_amount && <div className="text-lg font-semibold text-gray-900">
                         ₹{reservation.payment_amount}
-                      </div>
-                    )}
+                      </div>}
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          ))
-        )}
+            </Card>)}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PartnerReservationsAgGrid;
