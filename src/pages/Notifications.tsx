@@ -60,7 +60,6 @@ const NotificationsPage: React.FC = () => {
   const {
     accessToken
   } = useAuth();
-  const navigate = useNavigate();
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [smsData, setSmsData] = useState<SMSRecord[]>([]);
