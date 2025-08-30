@@ -151,9 +151,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
 
       {/* Partner Reservations AG Grid Table */}
       <div className="px-4 sm:px-0">
-        <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-          <PartnerReservationsAgGrid />
-        </div>
+        <PartnerReservationsAgGrid />
       </div>
 
       {/* Batch Reservation Modal */}
