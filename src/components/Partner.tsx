@@ -119,13 +119,13 @@ const Partner: React.FC<PartnerProps> = ({
           </div>
         </div>
         <CardContent className="p-3">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
-            {dashboardStats.map((stat, index) => <div key={index} className="flex flex-col items-center p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0">
-                <span className="text-xs font-medium text-gray-700 text-center mb-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+            {dashboardStats.map((stat, index) => <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 min-w-0 h-10">
+                <span className="text-xs font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
-                <span className={`text-base font-bold ${stat.color} bg-white px-2 py-1 rounded-full border w-full text-center`}>
-                  {statsLoading ? <div className="w-5 h-5 mx-auto animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div> : stat.value}
+                <span className={`text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border ml-2`}>
+                  {statsLoading ? <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div> : stat.value}
                 </span>
               </div>)}
           </div>
