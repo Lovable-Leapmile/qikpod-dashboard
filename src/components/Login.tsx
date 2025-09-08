@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,8 +47,12 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 flex-col justify-center items-center text-white p-12">
         <div className="text-center max-w-md">
           <div className="mb-8">
-            <div className="w-32 h-32 mx-auto bg-yellow-300 rounded-full flex items-center justify-center mb-6 shadow-lg">
-              <Lock className="w-16 h-16 text-yellow-700" />
+            <div className="w-48 h-48 mx-auto bg-white rounded-full flex items-center justify-center mb-6 shadow-lg p-4">
+              <img 
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                alt="QikPod Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <h1 className="text-4xl font-bold mb-4">Welcome to QikPod</h1>
@@ -62,8 +65,12 @@ const Login = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 mx-auto bg-yellow-500 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-white font-bold text-xl">QP</span>
+            <div className="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center mb-4 shadow-md p-4">
+              <img 
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                alt="QikPod Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
 
