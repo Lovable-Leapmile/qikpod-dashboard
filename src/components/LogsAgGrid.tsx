@@ -200,12 +200,11 @@ const LogsAgGrid = () => {
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center space-x-3">
-              <h2 className="text-lg font-semibold text-gray-900">Logs</h2>
-            </div>
+          {/* Single line for all controls on desktop */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full lg:w-auto">
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Logs</h2>
 
-            <div className="flex items-center gap-3">
               {/* Auto Refresh Checkbox */}
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -213,8 +212,8 @@ const LogsAgGrid = () => {
                   checked={autoRefresh}
                   onCheckedChange={checked => setAutoRefresh(checked === true)}
                 />
-                <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium">
-                  Auto Refresh
+                <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                  Auto Refresh (2m)
                 </label>
               </div>
 
@@ -229,39 +228,39 @@ const LogsAgGrid = () => {
                 </Button>
               </div>
             </div>
-          </div>
 
-          {/* Search Controls - Single Line */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
-            {/* Search */}
-            <div className="relative flex-1 w-full sm:max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search logs..."
-                value={globalFilter}
-                onChange={e => handleGlobalFilter(e.target.value)}
-                className="pl-10 w-full"
-              />
-            </div>
+            {/* Search and pagination in single line */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+              {/* Search */}
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search logs..."
+                  value={globalFilter}
+                  onChange={e => handleGlobalFilter(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
 
-            {/* Page Size Selector */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Show:</span>
-              <Select
-                value={pageSize.toString()}
-                onValueChange={value => setPageSize(Number(value))}
-              >
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-gray-600">per page</span>
+              {/* Page Size Selector */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                <Select
+                  value={pageSize.toString()}
+                  onValueChange={value => setPageSize(Number(value))}
+                >
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-gray-600 whitespace-nowrap">per page</span>
+              </div>
             </div>
           </div>
         </div>
