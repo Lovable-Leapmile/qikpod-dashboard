@@ -126,11 +126,10 @@ const PaymentsAgGrid = () => {
   const DateRenderer = (params: any) => {
     const date = new Date(params.value);
     return <div className="text-sm">
-        <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
-        <div className="text-muted-foreground">{date.toLocaleTimeString('en-IN', {
+        {date.toLocaleDateString('en-IN')} {date.toLocaleTimeString('en-IN', {
           hour: '2-digit',
           minute: '2-digit'
-        })}</div>
+        })}
       </div>;
   };
 
@@ -139,40 +138,40 @@ const PaymentsAgGrid = () => {
     field: 'payment_client_reference_id',
     sortable: true,
     filter: true,
-    flex: 2,
-    minWidth: 200,
+    flex: 3,
+    minWidth: 220,
     cellClass: 'font-medium'
   }, {
     headerName: 'User ID',
     field: 'user_id',
     sortable: true,
     filter: true,
-    flex: 1,
-    minWidth: 120,
+    flex: 0.8,
+    minWidth: 100,
     cellClass: 'text-muted-foreground'
   }, {
     headerName: 'Amount',
     field: 'payment_amount',
     sortable: true,
     filter: true,
-    flex: 1,
-    minWidth: 120,
+    flex: 0.8,
+    minWidth: 100,
     cellRenderer: AmountRenderer
   }, {
     headerName: 'Date & Time',
     field: 'created_at',
     sortable: true,
     filter: true,
-    flex: 1.5,
-    minWidth: 160,
+    flex: 1.2,
+    minWidth: 140,
     cellRenderer: DateRenderer
   }, {
     headerName: 'Status',
     field: 'payment_status',
     sortable: true,
     filter: true,
-    flex: 1,
-    minWidth: 120,
+    flex: 0.8,
+    minWidth: 100,
     cellRenderer: StatusRenderer
   }, {
     headerName: 'Action',
@@ -226,7 +225,7 @@ const PaymentsAgGrid = () => {
               <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
 
               {/* Auto Refresh Checkbox */}
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Checkbox
                   id="auto-refresh-payments"
                   checked={autoRefresh}
@@ -254,8 +253,8 @@ const PaymentsAgGrid = () => {
               </div>
             </div>
 
-            {/* Search and pagination in single line */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+            {/* Desktop layout */}
+            <div className="hidden lg:flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
               {/* Status Filter */}
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -302,6 +301,72 @@ const PaymentsAgGrid = () => {
                   </SelectContent>
                 </Select>
                 <span className="text-sm text-gray-600 whitespace-nowrap">per page</span>
+              </div>
+            </div>
+
+            {/* Mobile layout */}
+            <div className="lg:hidden w-full space-y-3">
+              {/* Search */}
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search payments..."
+                  value={globalFilter}
+                  onChange={e => handleGlobalFilter(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
+
+              {/* Status Filter and Page Size in single line */}
+              <div className="flex items-center justify-between w-full gap-2">
+                {/* Status Filter */}
+                <div className="flex items-center gap-2 flex-1">
+                  <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full max-w-[140px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Page Size Selector */}
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                  <Select
+                    value={pageSize.toString()}
+                    onValueChange={value => setPageSize(Number(value))}
+                  >
+                    <SelectTrigger className="w-16">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Auto Refresh for mobile */}
+              <div className="flex sm:hidden items-center gap-2">
+                <Checkbox
+                  id="auto-refresh-payments-mobile"
+                  checked={autoRefresh}
+                  onCheckedChange={checked => setAutoRefresh(checked === true)}
+                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
+                />
+                <label htmlFor="auto-refresh-payments-mobile" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                  Auto Refresh (2m)
+                </label>
               </div>
             </div>
           </div>
