@@ -139,7 +139,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 3,
-    minWidth: 300,
+    minWidth: 850,
     cellClass: 'font-medium'
   }, {
     headerName: 'User ID',
@@ -147,7 +147,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 0.8,
-    minWidth: 70,
+    minWidth: 50,
     cellClass: 'text-muted-foreground'
   }, {
     headerName: 'Amount',
