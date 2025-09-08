@@ -47,10 +47,10 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 flex-col justify-center items-center text-white p-12">
         <div className="text-center max-w-md">
           <div className="mb-8">
-            <div className="w-48 h-48 mx-auto bg-white rounded-full flex items-center justify-center mb-6 shadow-lg p-4">
-              <img 
-                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
-                alt="QikPod Logo" 
+            <div className="w-48 h-32 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-6 shadow-lg p-4">
+              <img
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
+                alt="QikPod Logo"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -65,7 +65,7 @@ const Login = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center mb-4 shadow-md p-4">
+            <div className="w-40 h-28 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-4 shadow-md p-4">
               <img 
                 src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
                 alt="QikPod Logo" 
