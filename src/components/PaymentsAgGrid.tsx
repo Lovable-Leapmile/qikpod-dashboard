@@ -216,92 +216,92 @@ const PaymentsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Section */}
+      {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title */}
-            <div className="flex items-center space-x-3">
-              <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
+          {/* Single line for all controls on desktop */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full lg:w-auto">
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
+
+              {/* Auto Refresh Checkbox */}
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="auto-refresh-payments"
+                  checked={autoRefresh}
+                  onCheckedChange={checked => setAutoRefresh(checked === true)}
+                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
+                />
+                <label htmlFor="auto-refresh-payments" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                  Auto Refresh (2m)
+                </label>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
+                  <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                </Button>
+
+                <Button variant="outline" size="sm" onClick={exportData}>
+                  <Download className="h-4 w-4" />
+                </Button>
+
+                <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+            {/* Search and pagination in single line */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+              {/* Status Filter */}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Search */}
-              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
+              <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search payments..."
                   value={globalFilter}
                   onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full"
                 />
               </div>
 
-              {/* Controls Row */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                {/* Status Filter */}
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Page Size Selector */}
-                <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Auto Refresh Checkbox */}
-                <div className="flex items-center space-x-2 border-l border-gray-200 pl-3 ml-1 w-full sm:w-auto">
-                  <Checkbox
-                    id="auto-refresh"
-                    checked={autoRefresh}
-                    onCheckedChange={checked => setAutoRefresh(checked === true)}
-                    className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
-                  />
-                  <Label htmlFor="auto-refresh" className="text-sm text-gray-600 font-medium whitespace-nowrap">
-                    Auto Refresh
-                  </Label>
-                </div>
-
-                {/* Buttons */}
-                <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading} className="flex-1 sm:flex-none">
-                    <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-                    <span className="hidden sm:inline ml-1">Refresh</span>
-                  </Button>
-
-                  <Button variant="outline" size="sm" onClick={exportData} className="flex-1 sm:flex-none">
-                    <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-1">Export</span>
-                  </Button>
-
-                  <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex-1 sm:flex-none">
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-1">Create</span>
-                  </Button>
-                </div>
+              {/* Page Size Selector */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                <Select
+                  value={pageSize.toString()}
+                  onValueChange={value => setPageSize(Number(value))}
+                >
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-sm text-gray-600 whitespace-nowrap">per page</span>
               </div>
             </div>
           </div>
@@ -355,8 +355,7 @@ const PaymentsAgGrid = () => {
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {payment.id}</div>
-                          <div className="text-lg font-semibold mt-1">{payment.payment_client_reference_id}</div>
+                          <div className="text-lg font-semibold">{payment.payment_client_reference_id}</div>
                         </div>
                         <Button
                           variant="ghost"
@@ -367,25 +366,31 @@ const PaymentsAgGrid = () => {
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="space-y-2">
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">User ID:</span> {payment.user_id}
+                      <div className="space-y-3">
+                        {/* User ID and Amount in single line */}
+                        <div className="flex justify-between items-center">
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">User ID:</span> {payment.user_id}
+                          </div>
+                          <div className="text-sm font-semibold">
+                            ₹{parseFloat(payment.payment_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          </div>
                         </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Amount:</span> ₹{parseFloat(payment.payment_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Date:</span> {new Date(payment.created_at).toLocaleDateString('en-IN')}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Status:</span>
-                          <span className={cn('ml-2 px-2 py-1 rounded-full text-xs font-medium', {
-                            'bg-green-100 text-green-800': payment.payment_status === 'paid',
-                            'bg-yellow-100 text-yellow-800': payment.payment_status === 'pending',
-                            'bg-red-100 text-red-800': payment.payment_status === 'cancelled' || payment.payment_status === 'inactive'
-                          })}>
-                            {payment.payment_status}
-                          </span>
+
+                        {/* Status and Date in single line */}
+                        <div className="flex justify-between items-center">
+                          <div className="text-sm">
+                            <span className={cn('px-2 py-1 rounded-full text-xs font-medium', {
+                              'bg-green-100 text-green-800': payment.payment_status === 'paid',
+                              'bg-yellow-100 text-yellow-800': payment.payment_status === 'pending',
+                              'bg-red-100 text-red-800': payment.payment_status === 'cancelled' || payment.payment_status === 'inactive'
+                            })}>
+                              {payment.payment_status}
+                            </span>
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(payment.created_at).toLocaleDateString('en-IN')}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
