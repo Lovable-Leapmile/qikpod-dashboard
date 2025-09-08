@@ -322,7 +322,7 @@ const SMSDetailsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
           <h1 className="text-xl font-semibold text-gray-900">SMS Info</h1>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Input
               placeholder="Search all columns..."
               value={searchText}
@@ -334,7 +334,7 @@ const SMSDetailsPage: React.FC = () => {
               disabled={loading}
               variant="outline"
               size="sm"
-              className="w-full sm:w-auto"
+              className="h-10 w-10 p-0 flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
