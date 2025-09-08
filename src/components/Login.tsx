@@ -47,11 +47,11 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 flex-col justify-center items-center text-white p-12">
         <div className="text-center max-w-md">
           <div className="mb-8">
-            <div className="w-48 h-32 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-6 shadow-lg p-4">
+            <div className="w-48 mx-auto flex items-center justify-center mb-6 p-4">
               <img
                 src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
                 alt="QikPod Logo"
-                className="w-full h-full object-contain"
+                className="w-full h-auto object-contain"
               />
             </div>
           </div>
@@ -63,9 +63,9 @@ const Login = () => {
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
-          {/* Mobile Logo */}
+          {/* Mobile/Tablet Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-40 h-28 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-4 shadow-md p-4">
+            <div className="w-36 h-24 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-4 shadow-md p-3">
               <img 
                 src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
                 alt="QikPod Logo" 
