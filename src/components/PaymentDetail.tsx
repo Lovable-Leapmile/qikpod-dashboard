@@ -33,10 +33,23 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(25);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check screen size on mount and resize
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const fetchPaymentDetails = useCallback(async () => {
     if (!accessToken || !paymentId) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(
@@ -142,8 +155,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       field: 'payment_id',
       sortable: true,
       filter: true,
-      flex: 1.5,
-      minWidth: 150,
+      flex: 1,
+      minWidth: 120,
       cellClass: 'font-medium'
     },
     {
@@ -151,8 +164,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       field: 'payment_type',
       sortable: true,
       filter: true,
-      flex: 1.2,
-      minWidth: 140,
+      flex: 1,
+      minWidth: 120,
       cellClass: 'text-muted-foreground'
     },
     {
@@ -160,8 +173,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       field: 'created_time',
       sortable: true,
       filter: true,
-      flex: 1.5,
-      minWidth: 160,
+      flex: 1,
+      minWidth: 140,
       cellRenderer: DateRenderer
     },
     {
@@ -169,8 +182,8 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       field: 'payment_time',
       sortable: true,
       filter: true,
-      flex: 1.5,
-      minWidth: 160,
+      flex: 1,
+      minWidth: 140,
       cellRenderer: DateRenderer
     },
     {
@@ -179,7 +192,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       sortable: true,
       filter: true,
       flex: 1,
-      minWidth: 120,
+      minWidth: 100,
       cellRenderer: AmountRenderer
     },
     {
@@ -188,7 +201,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       sortable: true,
       filter: true,
       flex: 1,
-      minWidth: 140,
+      minWidth: 130,
       cellRenderer: StatusRenderer
     },
     {
@@ -197,7 +210,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
       sortable: true,
       filter: true,
       flex: 1.5,
-      minWidth: 180,
+      minWidth: 150,
       cellClass: 'font-medium'
     }
   ];
@@ -221,27 +234,101 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     }
   };
 
+  // Mobile Card View
+  const MobileCardView = () => {
+    return (
+      <div className="space-y-4 md:hidden">
+        {rowData.map((payment, index) => (
+          <div key={index} className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <div className="space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium text-gray-900">Payment ID</h3>
+                  <p className="text-sm text-muted-foreground">{payment.payment_id}</p>
+                </div>
+                <div className={cn(
+                  'px-2 py-1 rounded-full text-xs font-medium',
+                  payment.payment_status === 'completed' || payment.payment_status === 'paid'
+                    ? 'bg-green-100 text-green-800'
+                    : payment.payment_status === 'pending'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-red-100 text-red-800'
+                )}>
+                  {payment.payment_status}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <h3 className="font-medium text-gray-900 text-sm">Payment Type</h3>
+                  <p className="text-sm text-muted-foreground">{payment.payment_type}</p>
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900 text-sm">Amount</h3>
+                  <p className="text-sm font-semibold">
+                    ₹{parseFloat(payment.amount || '0').toLocaleString('en-IN', {
+                      minimumFractionDigits: 2
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-gray-900 text-sm">Created Time</h3>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(payment.created_time).toLocaleDateString('en-IN')} at {' '}
+                  {new Date(payment.created_time).toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-gray-900 text-sm">Payment Time</h3>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(payment.payment_time).toLocaleDateString('en-IN')} at {' '}
+                  {new Date(payment.payment_time).toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-gray-900 text-sm">Client Reference ID</h3>
+                <p className="text-sm text-muted-foreground break-all">{payment.client_reference_id}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Back Button - Always at the top */}
+      <div className="mb-4">
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="flex items-center gap-2"
+          size="sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back to Payments</span>
+        </Button>
+      </div>
+
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title with Back Button */}
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                onClick={onBack}
-                className="flex items-center gap-2"
-                size="sm"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Payments</span>
-              </Button>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Payment Details for ID: <span className="break-all">{paymentId}</span>
-              </h2>
-            </div>
+            {/* Title */}
+            <h2 className="text-lg font-semibold text-gray-900">
+              Payment Details for ID: <span className="break-all">{paymentId}</span>
+            </h2>
 
             {/* Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
@@ -286,8 +373,11 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
         </div>
       </div>
 
-      {/* AG Grid Table */}
-      <div className="flex-1 w-full">
+      {/* Mobile Card View */}
+      <MobileCardView />
+
+      {/* AG Grid Table - Hidden on mobile */}
+      <div className="flex-1 w-full hidden md:block">
         <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
           <AgGridReact
             ref={gridRef}
