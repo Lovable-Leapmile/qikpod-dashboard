@@ -214,7 +214,7 @@ const LogsAgGrid = () => {
                   onCheckedChange={checked => setAutoRefresh(checked === true)}
                 />
                 <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium">
-                  Auto Refresh (2m)
+                  Auto Refresh
                 </label>
               </div>
 
