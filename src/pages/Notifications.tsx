@@ -281,63 +281,59 @@ const NotificationsPage: React.FC = () => {
         {/* Compact Header Controls - RESPONSIVE VERSION */}
         <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
           <div className="p-4 border-b border-gray-200 bg-gray-100">
-            {/* Top Row: Title and Main Controls */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+            {/* Single Row Header for Desktop */}
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               {/* Title with Icons */}
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  
                   <Mail className="h-5 w-5 text-gray-700" />
                 </div>
                 <h2 className="text-lg font-semibold text-gray-900">Notification Centre</h2>
               </div>
 
-              {/* Main Controls */}
-              <div className="flex items-center gap-3 flex-wrap">
-                {/* Auto Refresh */}
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="auto-refresh" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked as boolean)} className="h-4 w-4" />
-                  <Label htmlFor="auto-refresh" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
-                    Auto Refresh
-                  </Label>
+              {/* Controls Row - Single line on desktop */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+                {/* Search */}
+                <div className="relative flex-1 w-full sm:min-w-[250px]">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input placeholder="Search notifications..." value={searchText} onChange={onSearchChange} className="pl-10 w-full" />
                 </div>
 
-                <Button onClick={refreshData} disabled={loading} variant="outline" size="sm" className="h-8 px-2">
-                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                  <span className="hidden xs:inline ml-1">Refresh</span>
-                </Button>
+                {/* Right side controls */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  {/* Auto Refresh */}
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="auto-refresh" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked as boolean)} className="h-4 w-4" />
+                    <Label htmlFor="auto-refresh" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                      Auto Refresh
+                    </Label>
+                  </div>
 
-                <Button onClick={() => setShowSettings(true)} variant="outline" size="sm" className="h-8 px-2">
-                  <Settings className="w-4 h-4" />
-                  <span className="hidden xs:inline ml-1">Settings</span>
-                </Button>
-              </div>
-            </div>
+                  <Button onClick={refreshData} disabled={loading} variant="outline" size="sm" className="h-8 px-2">
+                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    <span className="hidden xs:inline ml-1">Refresh</span>
+                  </Button>
 
-            {/* Bottom Row: Search and Page Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              {/* Search */}
-              <div className="relative flex-1 w-full sm:min-w-[250px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input placeholder="Search notifications..." value={searchText} onChange={onSearchChange} className="pl-10 w-full" />
-              </div>
+                  <Button onClick={() => setShowSettings(true)} variant="outline" size="sm" className="h-8 px-2">
+                    <Settings className="w-4 h-4" />
+                    <span className="hidden xs:inline ml-1">Settings</span>
+                  </Button>
 
-              {/* Page Size Selector */}
-              <div className="flex items-center space-x-2 w-full sm:w-auto">
-                <div className="flex items-center space-x-2 flex-1 sm:flex-none">
-                  <span className="text-sm text-gray-600 whitespace-nowrap hidden sm:block">Show:</span>
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20 h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
+                  {/* Page Size Selector */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600 whitespace-nowrap hidden sm:block">Show:</span>
+                    <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                      <SelectTrigger className="w-20 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -380,21 +376,23 @@ const NotificationsPage: React.FC = () => {
                               {sms.sms_delivery_status}
                             </span>
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-sm">
-                              <span className="font-medium text-gray-700">Vendor:</span> {sms.sms_vendor}
+                          <div className="flex justify-between items-center mt-3">
+                            <div className="space-y-2 flex-1">
+                              <div className="text-sm">
+                                <span className="font-medium text-gray-700">Vendor:</span> {sms.sms_vendor}
+                              </div>
+                              <div className="text-sm">
+                                <span className="font-medium text-gray-700">Retries:</span> {sms.sms_num_retries}
+                              </div>
                             </div>
-                            <div className="text-sm">
-                              <span className="font-medium text-gray-700">Retries:</span> {sms.sms_num_retries}
+                            <div className="flex items-center gap-2">
+                              <Button size="sm" variant="outline" onClick={() => toast.info(`Retrying SMS ${sms.id}`)} className="text-xs">
+                                Retry
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => navigate(`/notification/sms/${sms.id}`)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
+                                <Eye className="h-4 w-4" />
+                              </Button>
                             </div>
-                          </div>
-                          <div className="flex justify-end mt-3 space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => toast.info(`Retrying SMS ${sms.id}`)} className="text-xs">
-                              Retry
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/notification/sms/${sms.id}`)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
-                              <Eye className="h-4 w-4" />
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>)}
@@ -445,21 +443,23 @@ const NotificationsPage: React.FC = () => {
                               {email.email_delivery_status}
                             </span>
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-sm">
-                              <span className="font-medium text-gray-700">Vendor:</span> {email.email_vendor}
+                          <div className="flex justify-between items-center mt-3">
+                            <div className="space-y-2 flex-1">
+                              <div className="text-sm">
+                                <span className="font-medium text-gray-700">Vendor:</span> {email.email_vendor}
+                              </div>
+                              <div className="text-sm">
+                                <span className="font-medium text-gray-700">Retries:</span> {email.email_num_retries}
+                              </div>
                             </div>
-                            <div className="text-sm">
-                              <span className="font-medium text-gray-700">Retries:</span> {email.email_num_retries}
+                            <div className="flex items-center gap-2">
+                              <Button size="sm" variant="outline" onClick={() => toast.info(`Retrying Email ${email.id}`)} className="text-xs">
+                                Retry
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => navigate(`/notification/email/${email.id}`)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
+                                <Eye className="h-4 w-4" />
+                              </Button>
                             </div>
-                          </div>
-                          <div className="flex justify-end mt-3 space-x-2">
-                            <Button size="sm" variant="outline" onClick={() => toast.info(`Retrying Email ${email.id}`)} className="text-xs">
-                              Retry
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/notification/email/${email.id}`)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
-                              <Eye className="h-4 w-4" />
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>)}
