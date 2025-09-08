@@ -139,7 +139,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 3,
-    minWidth: 850,
+    minWidth: 400,
     cellClass: 'font-medium'
   }, {
     headerName: 'User ID',
@@ -147,7 +147,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 0.8,
-    minWidth: 50,
+    minWidth: 40,
     cellClass: 'text-muted-foreground'
   }, {
     headerName: 'Amount',
@@ -155,7 +155,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 0.8,
-    minWidth: 70,
+    minWidth: 40,
     cellRenderer: AmountRenderer
   }, {
     headerName: 'Date & Time',
@@ -163,7 +163,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 1.2,
-    minWidth: 70,
+    minWidth: 50,
     cellRenderer: DateRenderer
   }, {
     headerName: 'Status',
@@ -171,7 +171,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 0.8,
-    minWidth: 70,
+    minWidth: 40,
     cellRenderer: StatusRenderer
   }, {
     headerName: 'Action',
