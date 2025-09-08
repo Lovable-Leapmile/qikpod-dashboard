@@ -1,45 +1,50 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
+import { useNavigate } from 'react-router-dom';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Search, Download, Eye } from 'lucide-react';
+import { RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
+import CreatePaymentPopup from '@/components/CreatePaymentPopup';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface LogData {
+interface PaymentData {
   id: number;
-  log_id: string;
-  log_level: string;
-  log_type: string;
-  log_message: string;
-  log_eventtime: string;
+  payment_reference_id: string;
+  user_id: string;
+  payment_amount: string;
   created_at: string;
-  updated_at: string;
-  status: string | null;
+  payment_status: string;
+  payment_client_reference_id: string;
+  payment_client_awbno: string;
 }
 
-const LogsAgGrid = () => {
+const PaymentsAgGrid = () => {
   const { accessToken } = useAuth();
+  const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
-  const [rowData, setRowData] = useState<LogData[]>([]);
+  const [rowData, setRowData] = useState<PaymentData[]>([]);
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [showCreatePayment, setShowCreatePayment] = useState(false);
   const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchLogs = useCallback(async () => {
+  const fetchPayments = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const response = await fetch(`https://stagingv3.leapmile.com/logstore/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/payments/payments/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Accept': 'application/json'
@@ -49,22 +54,22 @@ const LogsAgGrid = () => {
         const data = await response.json();
         setRowData(data.records || []);
       } else {
-        console.error('Failed to fetch logs:', response.statusText);
+        console.error('Failed to fetch payments:', response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      console.error('Error fetching payments:', error);
     } finally {
       setLoading(false);
     }
   }, [accessToken, pageSize]);
 
   useEffect(() => {
-    fetchLogs();
-  }, [fetchLogs]);
+    fetchPayments();
+  }, [fetchPayments]);
 
   useEffect(() => {
     if (autoRefresh) {
-      intervalRef.current = setInterval(fetchLogs, 2 * 60 * 1000);
+      intervalRef.current = setInterval(fetchPayments, 2 * 60 * 1000);
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -76,102 +81,109 @@ const LogsAgGrid = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [autoRefresh, fetchLogs]);
+  }, [autoRefresh, fetchPayments]);
 
-  const LogLevelRenderer = (params: any) => {
-    const level = params.value;
-    const levelClasses = {
-      INFO: 'bg-blue-100 text-blue-800',
-      WARNING: 'bg-yellow-100 text-yellow-800',
-      ERROR: 'bg-red-100 text-red-800',
-      DEBUG: 'bg-gray-100 text-gray-800'
+  const StatusRenderer = (params: any) => {
+    const status = params.value;
+    const statusClasses = {
+      paid: 'status-paid',
+      pending: 'status-pending',
+      cancelled: 'status-cancelled',
+      inactive: 'status-inactive'
     };
-    return (
-      <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', levelClasses[level as keyof typeof levelClasses] || 'bg-gray-100 text-gray-800')}>
-        {level}
-      </span>
-    );
+    return <span className={cn('status-badge', statusClasses[status as keyof typeof statusClasses] || 'status-inactive')}>
+        {status}
+      </span>;
   };
 
-  const MessageRenderer = (params: any) => {
-    return (
-      <div className="text-sm text-foreground truncate" title={params.value}>
-        {params.value}
-      </div>
-    );
+  const ActionRenderer = (params: any) => {
+    const handleViewDetails = () => {
+      const paymentId = params.data.id || params.data.payment_reference_id;
+      navigate(`/payments/${paymentId}`);
+    };
+
+    return <div className="flex items-center justify-center h-full">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleViewDetails}
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          title="View Payment Details"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+      </div>;
+  };
+
+  const AmountRenderer = (params: any) => {
+    return <span className="font-semibold text-foreground">
+        ₹{parseFloat(params.value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2
+      })}
+      </span>;
   };
 
   const DateRenderer = (params: any) => {
     const date = new Date(params.value);
-    return (
-      <div className="text-sm">
+    return <div className="text-sm">
         <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
-        <div className="text-muted-foreground">
-          {date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          })}
-        </div>
-      </div>
-    );
+        <div className="text-muted-foreground">{date.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })}</div>
+      </div>;
   };
 
-  const columnDefs: ColDef[] = [
-    {
-      headerName: 'ID',
-      field: 'id',
-      sortable: true,
-      filter: true,
-      width: 80,
-      cellClass: 'font-medium text-center'
-    },
-    {
-      headerName: 'Log ID',
-      field: 'log_id',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'font-medium text-primary'
-    },
-    {
-      headerName: 'Log Level',
-      field: 'log_level',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 120,
-      cellRenderer: LogLevelRenderer
-    },
-    {
-      headerName: 'Log Type',
-      field: 'log_type',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 100,
-      cellClass: 'text-muted-foreground'
-    },
-    {
-      headerName: 'Log Message',
-      field: 'log_message',
-      sortable: true,
-      filter: true,
-      flex: 3,
-      minWidth: 300,
-      cellRenderer: MessageRenderer
-    },
-    {
-      headerName: 'Time',
-      field: 'log_eventtime',
-      sortable: true,
-      filter: true,
-      flex: 1.5,
-      minWidth: 160,
-      cellRenderer: DateRenderer
-    }
-  ];
+  const columnDefs: ColDef[] = [{
+    headerName: 'Reservation ID',
+    field: 'payment_client_reference_id',
+    sortable: true,
+    filter: true,
+    flex: 2,
+    minWidth: 200,
+    cellClass: 'font-medium'
+  }, {
+    headerName: 'User ID',
+    field: 'user_id',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellClass: 'text-muted-foreground'
+  }, {
+    headerName: 'Amount',
+    field: 'payment_amount',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellRenderer: AmountRenderer
+  }, {
+    headerName: 'Date & Time',
+    field: 'created_at',
+    sortable: true,
+    filter: true,
+    flex: 1.5,
+    minWidth: 160,
+    cellRenderer: DateRenderer
+  }, {
+    headerName: 'Status',
+    field: 'payment_status',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 120,
+    cellRenderer: StatusRenderer
+  }, {
+    headerName: 'Action',
+    field: 'action',
+    width: 80,
+    cellRenderer: ActionRenderer,
+    sortable: false,
+    filter: false,
+    resizable: false,
+    cellClass: ['flex', 'items-center', 'justify-center']
+  }];
 
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -184,10 +196,18 @@ const LogsAgGrid = () => {
     }
   }, []);
 
+  const getFilteredData = useCallback(() => {
+    let filtered = rowData;
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(row => row.payment_status === statusFilter);
+    }
+    return filtered;
+  }, [rowData, statusFilter]);
+
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `logs-${new Date().toISOString().split('T')[0]}.csv`
+        fileName: `payments-${new Date().toISOString().split('T')[0]}.csv`
       });
     }
   };
@@ -196,46 +216,68 @@ const LogsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Compact Header Section */}
+      {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           {/* Single line for all controls on desktop */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full lg:w-auto">
-              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Logs</h2>
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
 
               {/* Auto Refresh Checkbox */}
               <div className="flex items-center gap-2">
                 <Checkbox
-                  id="auto-refresh-logs"
+                  id="auto-refresh-payments"
                   checked={autoRefresh}
                   onCheckedChange={checked => setAutoRefresh(checked === true)}
+                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
                 />
-                <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                <label htmlFor="auto-refresh-payments" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
                   Auto Refresh (2m)
                 </label>
               </div>
 
               {/* Buttons */}
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
+                <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
                   <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
                 </Button>
 
                 <Button variant="outline" size="sm" onClick={exportData}>
                   <Download className="h-4 w-4" />
                 </Button>
+
+                <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </div>
 
             {/* Search and pagination in single line */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+              {/* Status Filter */}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Search */}
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search logs..."
+                  placeholder="Search payments..."
                   value={globalFilter}
                   onChange={e => handleGlobalFilter(e.target.value)}
                   className="pl-10 w-full"
@@ -279,7 +321,7 @@ const LogsAgGrid = () => {
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
-                  rowData={rowData}
+                  rowData={getFilteredData()}
                   columnDefs={columnDefs}
                   defaultColDef={{
                     resizable: true,
@@ -308,43 +350,46 @@ const LogsAgGrid = () => {
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {rowData.map((log) => (
-                  <Card key={log.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                {getFilteredData().map((payment) => (
+                  <Card key={payment.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
-                          <div className="text-lg font-semibold mt-1">{log.log_id}</div>
+                          <div className="text-lg font-semibold">{payment.payment_client_reference_id}</div>
                         </div>
-                        <span className={cn('px-2 py-1 rounded-full text-xs font-semibold self-start', {
-                          'bg-blue-100 text-blue-800': log.log_level === 'INFO',
-                          'bg-yellow-100 text-yellow-800': log.log_level === 'WARNING',
-                          'bg-red-100 text-red-800': log.log_level === 'ERROR',
-                          'bg-gray-100 text-gray-800': log.log_level === 'DEBUG'
-                        })}>
-                          {log.log_level}
-                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/payments/${payment.id || payment.payment_reference_id}`)}
+                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </div>
-                      <div className="space-y-2">
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Type:</span> {log.log_type}
-                        </div>
-                        <div className="text-sm flex items-start">
-                          <span className="font-medium text-gray-700 shrink-0 mr-1">Message:</span>
-                          <div className="text-muted-foreground truncate" title={log.log_message}>
-                            {log.log_message}
+                      <div className="space-y-3">
+                        {/* User ID and Amount in single line */}
+                        <div className="flex justify-between items-center">
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">User ID:</span> {payment.user_id}
+                          </div>
+                          <div className="text-sm font-semibold">
+                            ₹{parseFloat(payment.payment_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                           </div>
                         </div>
-                        <div className="text-sm flex items-center">
-                          <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
-                          <div>
-                            {new Date(log.log_eventtime).toLocaleDateString('en-IN')}
-                            <span className="text-muted-foreground mx-1">•</span>
-                            {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
-                            })}
+
+                        {/* Status and Date in single line */}
+                        <div className="flex justify-between items-center">
+                          <div className="text-sm">
+                            <span className={cn('px-2 py-1 rounded-full text-xs font-medium', {
+                              'bg-green-100 text-green-800': payment.payment_status === 'paid',
+                              'bg-yellow-100 text-yellow-800': payment.payment_status === 'pending',
+                              'bg-red-100 text-red-800': payment.payment_status === 'cancelled' || payment.payment_status === 'inactive'
+                            })}>
+                              {payment.payment_status}
+                            </span>
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(payment.created_at).toLocaleDateString('en-IN')}
                           </div>
                         </div>
                       </div>
@@ -357,13 +402,16 @@ const LogsAgGrid = () => {
         ) : (
           <div className="flex items-center justify-center h-[200px]">
             <div className="text-gray-500 text-center">
-              <p>No log data available</p>
+              <p>No payment data available</p>
             </div>
           </div>
         )}
       </div>
+
+      {/* Create Payment Modal */}
+      <CreatePaymentPopup isOpen={showCreatePayment} onClose={() => setShowCreatePayment(false)} onSuccess={fetchPayments} />
     </div>
   );
 };
 
-export default LogsAgGrid;
+export default PaymentsAgGrid;
