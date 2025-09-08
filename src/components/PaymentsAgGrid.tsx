@@ -1,50 +1,45 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
-import { useNavigate } from 'react-router-dom';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucide-react';
+import { RefreshCw, Search, Download, Eye } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import CreatePaymentPopup from '@/components/CreatePaymentPopup';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface PaymentData {
+interface LogData {
   id: number;
-  payment_reference_id: string;
-  user_id: string;
-  payment_amount: string;
+  log_id: string;
+  log_level: string;
+  log_type: string;
+  log_message: string;
+  log_eventtime: string;
   created_at: string;
-  payment_status: string;
-  payment_client_reference_id: string;
-  payment_client_awbno: string;
+  updated_at: string;
+  status: string | null;
 }
 
-const PaymentsAgGrid = () => {
+const LogsAgGrid = () => {
   const { accessToken } = useAuth();
-  const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
-  const [rowData, setRowData] = useState<PaymentData[]>([]);
+  const [rowData, setRowData] = useState<LogData[]>([]);
   const [loading, setLoading] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [showCreatePayment, setShowCreatePayment] = useState(false);
   const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchPayments = useCallback(async () => {
+  const fetchLogs = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const response = await fetch(`https://stagingv3.leapmile.com/payments/payments/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
+      const response = await fetch(`https://stagingv3.leapmile.com/logstore/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Accept': 'application/json'
@@ -54,22 +49,22 @@ const PaymentsAgGrid = () => {
         const data = await response.json();
         setRowData(data.records || []);
       } else {
-        console.error('Failed to fetch payments:', response.statusText);
+        console.error('Failed to fetch logs:', response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching payments:', error);
+      console.error('Error fetching logs:', error);
     } finally {
       setLoading(false);
     }
   }, [accessToken, pageSize]);
 
   useEffect(() => {
-    fetchPayments();
-  }, [fetchPayments]);
+    fetchLogs();
+  }, [fetchLogs]);
 
   useEffect(() => {
     if (autoRefresh) {
-      intervalRef.current = setInterval(fetchPayments, 2 * 60 * 1000);
+      intervalRef.current = setInterval(fetchLogs, 2 * 60 * 1000);
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -81,109 +76,102 @@ const PaymentsAgGrid = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [autoRefresh, fetchPayments]);
+  }, [autoRefresh, fetchLogs]);
 
-  const StatusRenderer = (params: any) => {
-    const status = params.value;
-    const statusClasses = {
-      paid: 'status-paid',
-      pending: 'status-pending',
-      cancelled: 'status-cancelled',
-      inactive: 'status-inactive'
+  const LogLevelRenderer = (params: any) => {
+    const level = params.value;
+    const levelClasses = {
+      INFO: 'bg-blue-100 text-blue-800',
+      WARNING: 'bg-yellow-100 text-yellow-800',
+      ERROR: 'bg-red-100 text-red-800',
+      DEBUG: 'bg-gray-100 text-gray-800'
     };
-    return <span className={cn('status-badge', statusClasses[status as keyof typeof statusClasses] || 'status-inactive')}>
-        {status}
-      </span>;
+    return (
+      <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', levelClasses[level as keyof typeof levelClasses] || 'bg-gray-100 text-gray-800')}>
+        {level}
+      </span>
+    );
   };
 
-  const ActionRenderer = (params: any) => {
-    const handleViewDetails = () => {
-      const paymentId = params.data.id || params.data.payment_reference_id;
-      navigate(`/payments/${paymentId}`);
-    };
-
-    return <div className="flex items-center justify-center h-full">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleViewDetails}
-          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-          title="View Payment Details"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
-      </div>;
-  };
-
-  const AmountRenderer = (params: any) => {
-    return <span className="font-semibold text-foreground">
-        ₹{parseFloat(params.value).toLocaleString('en-IN', {
-        minimumFractionDigits: 2
-      })}
-      </span>;
+  const MessageRenderer = (params: any) => {
+    return (
+      <div className="text-sm text-foreground truncate" title={params.value}>
+        {params.value}
+      </div>
+    );
   };
 
   const DateRenderer = (params: any) => {
     const date = new Date(params.value);
-    return <div className="text-sm">
+    return (
+      <div className="text-sm">
         <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
-        <div className="text-muted-foreground">{date.toLocaleTimeString('en-IN', {
-          hour: '2-digit',
-          minute: '2-digit'
-        })}</div>
-      </div>;
+        <div className="text-muted-foreground">
+          {date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          })}
+        </div>
+      </div>
+    );
   };
 
-  const columnDefs: ColDef[] = [{
-    headerName: 'Reservation ID',
-    field: 'payment_client_reference_id',
-    sortable: true,
-    filter: true,
-    flex: 2,
-    minWidth: 200,
-    cellClass: 'font-medium'
-  }, {
-    headerName: 'User ID',
-    field: 'user_id',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 120,
-    cellClass: 'text-muted-foreground'
-  }, {
-    headerName: 'Amount',
-    field: 'payment_amount',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 120,
-    cellRenderer: AmountRenderer
-  }, {
-    headerName: 'Date & Time',
-    field: 'created_at',
-    sortable: true,
-    filter: true,
-    flex: 1.5,
-    minWidth: 160,
-    cellRenderer: DateRenderer
-  }, {
-    headerName: 'Status',
-    field: 'payment_status',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 120,
-    cellRenderer: StatusRenderer
-  }, {
-    headerName: 'Action',
-    field: 'action',
-    width: 80,
-    cellRenderer: ActionRenderer,
-    sortable: false,
-    filter: false,
-    resizable: false,
-    cellClass: ['flex', 'items-center', 'justify-center']
-  }];
+  const columnDefs: ColDef[] = [
+    {
+      headerName: 'ID',
+      field: 'id',
+      sortable: true,
+      filter: true,
+      width: 80,
+      cellClass: 'font-medium text-center'
+    },
+    {
+      headerName: 'Log ID',
+      field: 'log_id',
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 120,
+      cellClass: 'font-medium text-primary'
+    },
+    {
+      headerName: 'Log Level',
+      field: 'log_level',
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 120,
+      cellRenderer: LogLevelRenderer
+    },
+    {
+      headerName: 'Log Type',
+      field: 'log_type',
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+      cellClass: 'text-muted-foreground'
+    },
+    {
+      headerName: 'Log Message',
+      field: 'log_message',
+      sortable: true,
+      filter: true,
+      flex: 3,
+      minWidth: 300,
+      cellRenderer: MessageRenderer
+    },
+    {
+      headerName: 'Time',
+      field: 'log_eventtime',
+      sortable: true,
+      filter: true,
+      flex: 1.5,
+      minWidth: 160,
+      cellRenderer: DateRenderer
+    }
+  ];
 
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -196,18 +184,10 @@ const PaymentsAgGrid = () => {
     }
   }, []);
 
-  const getFilteredData = useCallback(() => {
-    let filtered = rowData;
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(row => row.payment_status === statusFilter);
-    }
-    return filtered;
-  }, [rowData, statusFilter]);
-
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `payments-${new Date().toISOString().split('T')[0]}.csv`
+        fileName: `logs-${new Date().toISOString().split('T')[0]}.csv`
       });
     }
   };
@@ -216,93 +196,72 @@ const PaymentsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Section */}
+      {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-3">
             <div className="flex items-center space-x-3">
-              <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Logs</h2>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              {/* Search */}
-              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search payments..."
-                  value={globalFilter}
-                  onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+              {/* Auto Refresh Checkbox */}
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="auto-refresh-logs"
+                  checked={autoRefresh}
+                  onCheckedChange={checked => setAutoRefresh(checked === true)}
                 />
+                <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium">
+                  Auto Refresh (2m)
+                </label>
               </div>
 
-              {/* Controls Row */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                {/* Status Filter */}
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Buttons */}
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
+                  <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                </Button>
 
-                {/* Page Size Selector */}
-                <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Auto Refresh Checkbox */}
-                <div className="flex items-center space-x-2 border-l border-gray-200 pl-3 ml-1 w-full sm:w-auto">
-                  <Checkbox
-                    id="auto-refresh"
-                    checked={autoRefresh}
-                    onCheckedChange={checked => setAutoRefresh(checked === true)}
-                    className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
-                  />
-                  <Label htmlFor="auto-refresh" className="text-sm text-gray-600 font-medium whitespace-nowrap">
-                    Auto Refresh
-                  </Label>
-                </div>
-
-                {/* Buttons */}
-                <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading} className="flex-1 sm:flex-none">
-                    <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
-                    <span className="hidden sm:inline ml-1">Refresh</span>
-                  </Button>
-
-                  <Button variant="outline" size="sm" onClick={exportData} className="flex-1 sm:flex-none">
-                    <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-1">Export</span>
-                  </Button>
-
-                  <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex-1 sm:flex-none">
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline ml-1">Create</span>
-                  </Button>
-                </div>
+                <Button variant="outline" size="sm" onClick={exportData}>
+                  <Download className="h-4 w-4" />
+                </Button>
               </div>
+            </div>
+          </div>
+
+          {/* Search Controls */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            {/* Search */}
+            <div className="relative flex-1 w-full sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search logs..."
+                value={globalFilter}
+                onChange={e => handleGlobalFilter(e.target.value)}
+                className="pl-10 w-full"
+              />
+            </div>
+
+            {/* Page Size Selector */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">Show:</span>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={value => setPageSize(Number(value))}
+              >
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-600">per page</span>
             </div>
           </div>
         </div>
@@ -321,7 +280,7 @@ const PaymentsAgGrid = () => {
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
-                  rowData={getFilteredData()}
+                  rowData={rowData}
                   columnDefs={columnDefs}
                   defaultColDef={{
                     resizable: true,
@@ -350,42 +309,45 @@ const PaymentsAgGrid = () => {
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {getFilteredData().map((payment) => (
-                  <Card key={payment.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                {rowData.map((log) => (
+                  <Card key={log.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {payment.id}</div>
-                          <div className="text-lg font-semibold mt-1">{payment.payment_client_reference_id}</div>
+                          <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
+                          <div className="text-lg font-semibold mt-1">{log.log_id}</div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/payments/${payment.id || payment.payment_reference_id}`)}
-                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <span className={cn('px-2 py-1 rounded-full text-xs font-semibold self-start', {
+                          'bg-blue-100 text-blue-800': log.log_level === 'INFO',
+                          'bg-yellow-100 text-yellow-800': log.log_level === 'WARNING',
+                          'bg-red-100 text-red-800': log.log_level === 'ERROR',
+                          'bg-gray-100 text-gray-800': log.log_level === 'DEBUG'
+                        })}>
+                          {log.log_level}
+                        </span>
                       </div>
                       <div className="space-y-2">
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">User ID:</span> {payment.user_id}
+                          <span className="font-medium text-gray-700">Type:</span> {log.log_type}
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Amount:</span> ₹{parseFloat(payment.payment_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          <span className="font-medium text-gray-700">Message:</span>
+                          <div className="mt-1 text-muted-foreground truncate" title={log.log_message}>
+                            {log.log_message}
+                          </div>
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Date:</span> {new Date(payment.created_at).toLocaleDateString('en-IN')}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Status:</span>
-                          <span className={cn('ml-2 px-2 py-1 rounded-full text-xs font-medium', {
-                            'bg-green-100 text-green-800': payment.payment_status === 'paid',
-                            'bg-yellow-100 text-yellow-800': payment.payment_status === 'pending',
-                            'bg-red-100 text-red-800': payment.payment_status === 'cancelled' || payment.payment_status === 'inactive'
-                          })}>
-                            {payment.payment_status}
-                          </span>
+                          <span className="font-medium text-gray-700">Time:</span>
+                          <div className="mt-1">
+                            <div>{new Date(log.log_eventtime).toLocaleDateString('en-IN')}</div>
+                            <div className="text-muted-foreground">
+                              {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
@@ -397,16 +359,13 @@ const PaymentsAgGrid = () => {
         ) : (
           <div className="flex items-center justify-center h-[200px]">
             <div className="text-gray-500 text-center">
-              <p>No payment data available</p>
+              <p>No log data available</p>
             </div>
           </div>
         )}
       </div>
-
-      {/* Create Payment Modal */}
-      <CreatePaymentPopup isOpen={showCreatePayment} onClose={() => setShowCreatePayment(false)} onSuccess={fetchPayments} />
     </div>
   );
 };
 
-export default PaymentsAgGrid;
+export default LogsAgGrid;
