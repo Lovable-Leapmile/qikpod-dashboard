@@ -24,7 +24,6 @@ interface PaymentData {
   created_at: string;
   payment_status: string;
   payment_client_reference_id: string;
-  payment_client_reference_id: string;
   payment_client_awbno: string;
 }
 
