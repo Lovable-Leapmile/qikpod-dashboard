@@ -200,12 +200,12 @@ const LogsAgGrid = () => {
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-3">
               <h2 className="text-lg font-semibold text-gray-900">Logs</h2>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-3">
               {/* Auto Refresh Checkbox */}
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -231,8 +231,8 @@ const LogsAgGrid = () => {
             </div>
           </div>
 
-          {/* Search Controls */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          {/* Search Controls - Single Line */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
             {/* Search */}
             <div className="relative flex-1 w-full sm:max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -330,23 +330,22 @@ const LogsAgGrid = () => {
                         <div className="text-sm">
                           <span className="font-medium text-gray-700">Type:</span> {log.log_type}
                         </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Message:</span>
-                          <div className="mt-1 text-muted-foreground truncate" title={log.log_message}>
+                        <div className="text-sm flex items-start">
+                          <span className="font-medium text-gray-700 shrink-0 mr-1">Message:</span>
+                          <div className="text-muted-foreground truncate" title={log.log_message}>
                             {log.log_message}
                           </div>
                         </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Time:</span>
-                          <div className="mt-1">
-                            <div>{new Date(log.log_eventtime).toLocaleDateString('en-IN')}</div>
-                            <div className="text-muted-foreground">
-                              {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
-                              })}
-                            </div>
+                        <div className="text-sm flex items-center">
+                          <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
+                          <div>
+                            {new Date(log.log_eventtime).toLocaleDateString('en-IN')}
+                            <span className="text-muted-foreground mx-1">•</span>
+                            {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
                           </div>
                         </div>
                       </div>
