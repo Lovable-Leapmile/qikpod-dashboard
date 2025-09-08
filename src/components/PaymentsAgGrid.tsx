@@ -8,7 +8,7 @@ import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
@@ -215,6 +215,19 @@ const PaymentsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Back Button - Added at the top */}
+      <div className="mb-4">
+        <Button
+          variant="outline"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
+          size="sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back</span>
+        </Button>
+      </div>
+
       {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
