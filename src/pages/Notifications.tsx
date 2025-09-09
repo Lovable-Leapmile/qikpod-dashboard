@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { RefreshCw, Settings, Search, Eye, Mail, MessageSquare } from 'lucide-react';
+import { RefreshCw, Settings, Search, Eye, Mail, MessageSquare, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -329,8 +329,12 @@ const NotificationsPage: React.FC = () => {
           <div className="p-4 border-b border-gray-200 bg-gray-100">
             {/* Single Row Header for Desktop */}
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-              {/* Title with Icons */}
+              {/* Title with Icons and Back Button */}
               <div className="flex items-center space-x-3">
+                <Button onClick={() => navigate(-1)} variant="outline" size="sm" className="flex items-center gap-2 h-8">
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </Button>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-5 w-5 text-gray-700" />
                 </div>
