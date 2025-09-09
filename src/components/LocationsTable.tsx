@@ -8,11 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye, RefreshCw, Search, ArrowLeft } from 'lucide-react';
+import { MapPin, Eye, RefreshCw, Search } from 'lucide-react';
 import { dashboardApi, Location } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
-import { useNavigate } from 'react-router-dom';
 
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
@@ -20,7 +19,6 @@ interface LocationsTableProps {
 
 const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const { accessToken } = useAuth();
-  const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,10 +26,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [pageSize, setPageSize] = useState(25);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleBack = () => {
-    navigate(-1); // Go back to previous page
-  };
 
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
@@ -171,11 +165,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title with Icon and Back Button */}
+            {/* Title with Icon */}
             <div className="flex items-center space-x-3">
-              <Button onClick={handleBack} variant="outline" size="sm" className="flex items-center gap-2 h-8 mr-2">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
               <MapPin className="h-5 w-5 text-gray-700" />
               <h2 className="text-lg font-semibold text-gray-900">Locations</h2>
             </div>
