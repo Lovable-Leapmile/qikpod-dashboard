@@ -118,7 +118,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json();
       
       if (response.ok) {
-        // Use the dynamic token returned from OTP validation
+        // Check if user_type is customer and prevent login
+        if (data.records && data.records[0] && data.records[0].user_type === 'customer') {
+          toast.error('Customer accounts are not allowed to access this application');
+          return { success: false };
+        }
+        
         return { success: true, data };
       } else {
         toast.error(data.message || 'Invalid OTP');

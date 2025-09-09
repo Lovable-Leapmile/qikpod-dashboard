@@ -95,7 +95,10 @@ const Login = () => {
                     type="tel"
                     placeholder="Enter mobile number"
                     value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      setMobile(value);
+                    }}
                     className="pl-10 h-12 border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
                     disabled={isLoading}
                   />
@@ -125,7 +128,10 @@ const Login = () => {
                         type="text"
                         placeholder="Enter OTP"
                         value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          setOtp(value);
+                        }}
                         className="pl-10 h-12 text-center text-lg tracking-widest border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
                         maxLength={6}
                         disabled={isLoading}
