@@ -168,7 +168,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
               {/* Search */}
               <div className="relative w-full sm:min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
-                <Input placeholder="Search..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-8 text-xs h-8 w-full" />
+                <Input placeholder="Search..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-8 text-xs h-8 w-full px-[16px]" />
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
