@@ -164,10 +164,10 @@ const NotificationsPage: React.FC = () => {
   // Update pagination when pageSize changes
   useEffect(() => {
     if (smsGridApi) {
-      smsGridApi.paginationSetPageSize(pageSize);
+      smsGridApi.setGridOption('paginationPageSize', pageSize);
     }
     if (emailGridApi) {
-      emailGridApi.paginationSetPageSize(pageSize);
+      emailGridApi.setGridOption('paginationPageSize', pageSize);
     }
   }, [pageSize, smsGridApi, emailGridApi]);
 
@@ -302,12 +302,12 @@ const NotificationsPage: React.FC = () => {
 
   const onSmsGridReady = (params: GridReadyEvent) => {
     setSmsGridApi(params.api);
-    params.api.paginationSetPageSize(pageSize);
+    params.api.setGridOption('paginationPageSize', pageSize);
   };
 
   const onEmailGridReady = (params: GridReadyEvent) => {
     setEmailGridApi(params.api);
-    params.api.paginationSetPageSize(pageSize);
+    params.api.setGridOption('paginationPageSize', pageSize);
   };
 
   const handleSendSMS = () => {
