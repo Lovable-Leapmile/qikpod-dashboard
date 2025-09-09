@@ -113,7 +113,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   return (
     <div className="space-y-6 w-full max-w-screen-xl mx-auto px-4 sm:px-6">
       {/* Header with Back button and Run Batch button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+      <div className="flex flex-row items-center justify-between gap-4 mb-2">
         <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -133,10 +133,10 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
           </div>
         </div>
         <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <div className="flex flex-col sm:flex-row gap-3 mb-3">
             {dashboardStats.slice(0, 3).map((stat, index) => (
-              <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis mb-1 sm:mb-0">
+              <div key={index} className="flex flex-1 flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
                 <span className={`text-xs sm:text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border sm:ml-2 min-w-[40px] text-center`}>
@@ -149,10 +149,10 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             {dashboardStats.slice(3, 5).map((stat, index) => (
-              <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis mb-1 sm:mb-0">
+              <div key={index} className="flex flex-1 flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
                 <span className={`text-xs sm:text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border sm:ml-2 min-w-[40px] text-center`}>
