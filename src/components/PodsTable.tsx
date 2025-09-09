@@ -91,6 +91,23 @@ const PodsTable: React.FC<PodsTableProps> = ({
     </span>;
   };
 
+  const ActionRenderer = ({ data }: { data: Pod }) => {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPodClick(data.id);
+        }}
+        className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+        title="View Pod Details"
+      >
+        <Eye className="h-4 w-4" />
+      </Button>
+    );
+  };
+
   const columnDefs: ColDef[] = [{
     field: 'id',
     headerName: 'ID',
@@ -146,21 +163,12 @@ const PodsTable: React.FC<PodsTableProps> = ({
     cellClass: 'text-muted-foreground'
   }, {
     headerName: 'Action',
-    width: 80,
-    cellRenderer: ({ data }: { data: Pod }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onPodClick(data.id);
-        }}
-        className="text-gray-800 bg-gray-100 hover:bg-gray-200"
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
-    ),
-    cellClass: 'flex items-center justify-center'
+    width: 100,
+    cellRenderer: ActionRenderer,
+    sortable: false,
+    filter: false,
+    resizable: false,
+    cellClass: ['flex', 'items-center', 'justify-center']
   }];
 
   const onGridReady = (params: any) => {
@@ -226,16 +234,11 @@ const PodsTable: React.FC<PodsTableProps> = ({
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
+                <Button variant="outline" size="sm" onClick={refreshData}>
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Refresh</span>
+                </Button>
               </div>
-
-              <Button
-                variant="outline"
-                onClick={refreshData}
-                className="text-gray-800 bg-gray-100 hover:bg-gray-200"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
-              </Button>
             </div>
           </div>
         </div>
@@ -243,7 +246,11 @@ const PodsTable: React.FC<PodsTableProps> = ({
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        {hasData ? (
+        {loading ? (
+          <div className="flex items-center justify-center h-[200px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        ) : hasData ? (
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
@@ -272,6 +279,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}
+                  quickFilterText={globalFilter}
                 />
               </div>
             </div>
@@ -290,8 +298,11 @@ const PodsTable: React.FC<PodsTableProps> = ({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onPodClick(pod.id)}
-                          className="text-gray-800 bg-gray-100 hover:bg-gray-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPodClick(pod.id);
+                          }}
+                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
