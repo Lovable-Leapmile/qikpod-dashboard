@@ -157,7 +157,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
 
       {/* Users Card Section - Compact */}
       <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
-        <div className="p-3 border-b border-gray-200 bg-gray-100">
+        <div className="p-3 border-b border-gray-200 bg-gray-100 py-[12px]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
             <div className="flex items-center space-x-2">
               <Users className="h-3.5 w-3.5 text-gray-900" />
