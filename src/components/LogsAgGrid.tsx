@@ -7,11 +7,12 @@ import '@/styles/ag-grid.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Search, Download, Eye } from 'lucide-react';
+import { RefreshCw, Search, Download, Eye, ArrowLeft } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 interface LogData {
   id: number;
@@ -34,6 +35,7 @@ const LogsAgGrid = () => {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const navigate = useNavigate();
 
   const fetchLogs = useCallback(async () => {
     if (!accessToken) return;
@@ -196,6 +198,14 @@ const LogsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Back Button at the top */}
+      <div className="mb-2">
+        <Button onClick={() => navigate(-1)} variant="outline" size="sm" className="flex items-center gap-2 h-8">
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Button>
+      </div>
+
       {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
