@@ -133,9 +133,9 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
           </div>
         </div>
         <CardContent className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          <div className="flex flex-wrap gap-3">
             {dashboardStats.map((stat, index) => (
-              <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0">
+              <div key={index} className="flex-1 min-w-[150px] flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis mb-1 sm:mb-0">
                   {stat.title}
                 </span>
