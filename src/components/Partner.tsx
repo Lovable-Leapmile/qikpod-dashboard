@@ -133,25 +133,9 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
           </div>
         </div>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3 mb-3">
-            {dashboardStats.slice(0, 3).map((stat, index) => (
-              <div key={index} className="flex flex-1 flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
-                  {stat.title}
-                </span>
-                <span className={`text-xs sm:text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border sm:ml-2 min-w-[40px] text-center`}>
-                  {statsLoading ? (
-                    <div className="w-3 h-3 sm:w-4 sm:h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900 mx-auto"></div>
-                  ) : (
-                    stat.value
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            {dashboardStats.slice(3, 5).map((stat, index) => (
-              <div key={index} className="flex flex-1 flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {dashboardStats.map((stat, index) => (
+              <div key={index} className="flex flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
