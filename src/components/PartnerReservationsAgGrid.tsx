@@ -3,7 +3,8 @@ import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi } from 'ag-grid-community';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, RefreshCw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Download, RefreshCw, Search } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -216,19 +217,32 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Card Section - Compact */}
-      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm mb-4">
-        <div className="p-3 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-row items-center justify-between gap-4 w-full">
-            <div className="flex items-center space-x-2">
-              <h2 className="text-sm font-semibold text-gray-900">Partner Reservations</h2>
+      {/* Header Section - Restructured to match Locations table */}
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Title */}
+            <div className="flex items-center space-x-3">
+              <h2 className="text-lg font-semibold text-gray-900">Partner Reservations</h2>
             </div>
 
-            <div className="flex items-center space-x-3 flex-1 max-w-2xl">
-              {/* Status Filter */}
-              <div className="flex items-center space-x-1">
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search reservations..."
+                  value={globalFilter}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Status Filter and Page Size Selector */}
+              <div className="flex items-center space-x-2">
                 <Select value={selectedFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-[140px] text-xs h-8">
+                  <SelectTrigger className="w-[140px] text-xs h-9">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -240,12 +254,9 @@ const PartnerReservationsAgGrid: React.FC = () => {
                     <SelectItem value="rtocompleted">RTO Completed</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
 
-              {/* Page Size Selector */}
-              <div className="flex items-center space-x-1">
                 <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                  <SelectTrigger className="w-16 text-xs h-8">
+                  <SelectTrigger className="w-16 text-xs h-9">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -255,18 +266,17 @@ const PartnerReservationsAgGrid: React.FC = () => {
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-xs text-gray-600">/page</span>
+
+                <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-9 px-2 text-xs">
+                  <Download className="h-4 w-4 mr-1" />
+                  Export
+                </Button>
+
+                <Button variant="outline" size="sm" onClick={refreshData} className="h-9 px-2 text-xs">
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  Refresh
+                </Button>
               </div>
-
-              <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-8 px-2 text-xs">
-                <Download className="h-3 w-3 mr-1" />
-                Export
-              </Button>
-
-              <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 text-xs">
-                <RefreshCw className="h-3 w-3 mr-1" />
-                Refresh
-              </Button>
             </div>
           </div>
         </div>
@@ -279,7 +289,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           </div>
         ) : hasData ? (
-          <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+          <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
             <AgGridReact
               ref={gridRef}
               rowData={filteredData}
