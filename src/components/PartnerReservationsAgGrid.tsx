@@ -229,20 +229,20 @@ const PartnerReservationsAgGrid: React.FC = () => {
             {/* Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
               {/* Search */}
-              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
+              <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search reservations..."
                   value={globalFilter}
                   onChange={(e) => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full"
                 />
               </div>
 
-              {/* Status Filter and Page Size Selector */}
-              <div className="flex items-center space-x-2">
+              {/* Status Filter and Page Size Selector - Mobile optimized */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 <Select value={selectedFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-[140px] text-xs h-9">
+                  <SelectTrigger className="w-full sm:w-[140px] h-9">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -255,27 +255,31 @@ const PartnerReservationsAgGrid: React.FC = () => {
                   </SelectContent>
                 </Select>
 
-                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                  <SelectTrigger className="w-16 text-xs h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2">
+                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                    <SelectTrigger className="w-full sm:w-16 h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-9 px-2 text-xs">
-                  <Download className="h-4 w-4 mr-1" />
-                  Export
-                </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-9 px-2 flex-1 sm:flex-initial">
+                      <Download className="h-4 w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Export</span>
+                    </Button>
 
-                <Button variant="outline" size="sm" onClick={refreshData} className="h-9 px-2 text-xs">
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  Refresh
-                </Button>
+                    <Button variant="outline" size="sm" onClick={refreshData} className="h-9 px-2 flex-1 sm:flex-initial">
+                      <RefreshCw className="h-4 w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Refresh</span>
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
