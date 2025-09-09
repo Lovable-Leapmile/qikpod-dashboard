@@ -93,7 +93,7 @@ const Layout: React.FC<LayoutProps> = ({
   };
   const currentView = getCurrentView();
   const navigationItems = createNavigationItems(currentView, handleNavigationClick, setShowSupportPopup);
-  return <div className="min-h-screen bg-gray-50 w-full px-[8px]">
+  return <div className="min-h-screen bg-gray-50 w-full px-[4px]">
       {/* Fixed Top Navigation */}
       <DashboardNavigation navigationItems={navigationItems} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} setShowLogoutDialog={setShowLogoutDialog} />
 
