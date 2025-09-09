@@ -96,7 +96,7 @@ const Partner: React.FC<PartnerProps> = ({
     setCurrentStep(1);
     setSelectedFile(null);
   };
-  return <div className="space-y-6 w-full max-w-screen-xl mx-auto sm:px-6 px-0">
+  return <div className="space-y-6 w-full max-w-screen-xl mx-auto px-0 sm:px-0">
       {/* Header with Back button and Run Batch button */}
       <div className="flex items-center justify-between gap-4 mb-2">
         <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
