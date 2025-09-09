@@ -44,7 +44,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <div className="ml-6 flex items-center space-x-2">
               {navigationItems.map(item => item.isDropdown ? <DropdownMenu key={item.name}>
                     <DropdownMenuTrigger asChild>
