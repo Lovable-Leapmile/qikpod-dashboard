@@ -87,7 +87,9 @@ const Login = () => {
                   Mobile Number
                 </Label>
                 <div className="relative">
-                  <Smartphone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Smartphone className="h-4 w-4 text-gray-400" />
+                  </div>
                   <Input
                     id="mobile"
                     type="tel"
@@ -114,16 +116,21 @@ const Login = () => {
                     <Label htmlFor="otp" className="text-sm font-medium text-gray-700">
                       Enter OTP
                     </Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="Enter OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      className="h-12 text-center text-lg tracking-widest border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
-                      maxLength={6}
-                      disabled={isLoading}
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Lock className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <Input
+                        id="otp"
+                        type="text"
+                        placeholder="Enter OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        className="pl-10 h-12 text-center text-lg tracking-widest border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
+                        maxLength={6}
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
 
                   <Button
