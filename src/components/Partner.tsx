@@ -111,9 +111,9 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="space-y-4 w-full max-w-screen-xl mx-auto">
+    <div className="space-y-6 w-full max-w-screen-xl mx-auto px-4 sm:px-6">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-2 px-4 sm:px-0">
+      <div className="flex items-center gap-4 mb-2">
         <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -121,27 +121,27 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       </div>
 
       {/* Partner Dashboard */}
-      <div className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm px-4 sm:px-0">
-        <div className="p-3 border-b border-gray-200 bg-gray-100">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex flex-row items-center justify-between gap-4 w-full">
             <div className="flex items-center space-x-2">
-              <h2 className="text-sm font-semibold text-gray-900">Partner Dashboard</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
             </div>
-            <Button onClick={() => setShowModal(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8 px-3">
-              <Play className="w-3 h-3" />
+            <Button onClick={() => setShowModal(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9 px-3">
+              <Play className="w-4 h-4" />
               Run Batch Application
             </Button>
           </div>
         </div>
-        <CardContent className="p-3">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+        <CardContent className="p-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {dashboardStats.map((stat, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 min-w-0 h-10">
-                <span className="text-xs font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 min-w-0 h-12">
+                <span className="text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis">
                   {stat.title}
                 </span>
-                <span className={`text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border ml-2`}>
-                  {statsLoading ? <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900"></div> : stat.value}
+                <span className={`text-sm font-bold ${stat.color} bg-white px-2 py-1 rounded-full border ml-2 min-w-[40px] text-center`}>
+                  {statsLoading ? <div className="w-4 h-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900 mx-auto"></div> : stat.value}
                 </span>
               </div>
             ))}
@@ -150,7 +150,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       </div>
 
       {/* Partner Reservations AG Grid Table */}
-      <div className="px-4 sm:px-0">
+      <div className="w-full">
         <PartnerReservationsAgGrid />
       </div>
 
@@ -183,8 +183,8 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                 </div>
 
                 <div className="flex justify-center">
-                  <Button onClick={downloadSampleCSV} variant="outline" className="flex items-center gap-2 text-xs h-8">
-                    <Download className="w-3 h-3" />
+                  <Button onClick={downloadSampleCSV} variant="outline" className="flex items-center gap-2 h-9">
+                    <Download className="w-4 h-4" />
                     Click here to Download
                   </Button>
                 </div>
@@ -203,9 +203,9 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
                 <div className="flex flex-col items-center gap-3">
                   <input type="file" accept=".csv" onChange={handleFileSelect} className="hidden" id="csv-upload" />
                   <label htmlFor="csv-upload">
-                    <Button variant="outline" className="flex items-center gap-2 cursor-pointer text-xs h-8" asChild>
+                    <Button variant="outline" className="flex items-center gap-2 cursor-pointer h-9" asChild>
                       <span>
-                        <Upload className="w-3 h-3" />
+                        <Upload className="w-4 h-4" />
                         Click here to upload a file
                       </span>
                     </Button>
@@ -224,23 +224,23 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
             <div className="flex justify-between pt-4 border-t">
               {currentStep === 1 ? (
                 <>
-                  <Button variant="outline" onClick={() => setShowModal(false)} className="flex items-center gap-2 text-xs h-8">
-                    <X className="w-3 h-3" />
+                  <Button variant="outline" onClick={() => setShowModal(false)} className="flex items-center gap-2 h-9">
+                    <X className="w-4 h-4" />
                     Cancel
                   </Button>
-                  <Button onClick={() => setCurrentStep(2)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8">
+                  <Button onClick={() => setCurrentStep(2)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9">
                     Next
-                    <ArrowRight className="w-3 h-3" />
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="outline" onClick={() => setCurrentStep(1)} className="flex items-center gap-2 text-xs h-8">
-                    <ArrowLeft className="w-3 h-3" />
+                  <Button variant="outline" onClick={() => setCurrentStep(1)} className="flex items-center gap-2 h-9">
+                    <ArrowLeft className="w-4 h-4" />
                     Back
                   </Button>
-                  <Button onClick={handleUpload} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 text-xs h-8" disabled={!selectedFile}>
-                    <Upload className="w-3 h-3" />
+                  <Button onClick={handleUpload} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9" disabled={!selectedFile}>
+                    <Upload className="w-4 h-4" />
                     Upload
                   </Button>
                 </>
