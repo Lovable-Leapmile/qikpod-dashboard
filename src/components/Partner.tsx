@@ -113,7 +113,7 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   return (
     <div className="space-y-6 w-full max-w-screen-xl mx-auto px-4 sm:px-6">
       {/* Header with Back button and Run Batch button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+      <div className="flex items-center justify-between gap-4 mb-2">
         <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 h-8">
           <ArrowLeft className="w-4 h-4" />
           Back
