@@ -215,23 +215,28 @@ const PaymentsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Back Button - Added at the top */}
-      <div className="mb-4">
-        <Button
-          variant="outline"
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2"
-          size="sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
-        </Button>
-      </div>
-
       {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
+          {/* Top row with back button and create payment button */}
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="outline"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+              size="sm"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </Button>
+
+            <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Payment
+            </Button>
+          </div>
+
           {/* Single line for all controls on desktop */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full lg:w-auto">
@@ -258,10 +263,6 @@ const PaymentsAgGrid = () => {
 
                 <Button variant="outline" size="sm" onClick={exportData}>
                   <Download className="h-4 w-4" />
-                </Button>
-
-                <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
-                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -317,8 +318,61 @@ const PaymentsAgGrid = () => {
               </div>
             </div>
 
+            {/* Tablet layout - Filters and pagination in single line */}
+            <div className="hidden md:flex lg:hidden w-full">
+              <div className="flex items-center justify-between w-full gap-4">
+                {/* Status Filter and Search */}
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="relative flex-1 max-w-xs">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Search payments..."
+                      value={globalFilter}
+                      onChange={e => handleGlobalFilter(e.target.value)}
+                      className="pl-10 w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Page Size Selector */}
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                  <Select
+                    value={pageSize.toString()}
+                    onValueChange={value => setPageSize(Number(value))}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
             {/* Mobile layout */}
-            <div className="lg:hidden w-full space-y-3">
+            <div className="md:hidden w-full space-y-3">
               {/* Search */}
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
