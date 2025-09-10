@@ -64,7 +64,7 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       const data = await response.json();
       
       if (data.payment_url) {
-        // Navigate directly to payment URL
+        // Navigate directly to the payment URL
         window.location.href = data.payment_url;
       } else {
         throw new Error('No payment URL received from the server');
