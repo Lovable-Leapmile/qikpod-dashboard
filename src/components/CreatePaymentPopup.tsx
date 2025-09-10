@@ -182,21 +182,10 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
           payment_url: data.payment_url
         });
 
-        // Open payment URL in new tab
-        paymentWindowRef.current = window.open(data.payment_url, '_blank', 'noopener,noreferrer,width=600,height=700');
-
-        if (!paymentWindowRef.current) {
-          throw new Error('Failed to open payment window. Please check your popup blocker settings.');
-        }
-
-        // Focus on the new window
-        paymentWindowRef.current.focus();
-
-        // Start polling for payment status
-        startPaymentStatusPolling(data.payment_reference_id, data.payment_vendor);
-        setPaymentStatus('pending');
-
-        toast.info('Payment window opened. Complete your payment in the new tab.');
+        // Redirect to payment URL
+        window.location.href = data.payment_url;
+        
+        toast.info('Redirecting to payment portal...');
       } else {
         throw new Error('No payment URL received from the server');
       }
