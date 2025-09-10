@@ -215,28 +215,28 @@ const PaymentsAgGrid = () => {
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Back and Create Payment Buttons - Outside the card */}
+      <div className="flex items-center justify-between mb-4">
+        <Button
+          variant="outline"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
+          size="sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back</span>
+        </Button>
+
+        <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+          <Plus className="h-4 w-4 mr-2" />
+          Create Payment
+        </Button>
+      </div>
+
       {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          {/* Top row with back button and create payment button */}
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2"
-              size="sm"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back</span>
-            </Button>
-
-            <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Payment
-            </Button>
-          </div>
-
           {/* Single line for all controls on desktop */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full lg:w-auto">
