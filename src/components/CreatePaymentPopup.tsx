@@ -1,685 +1,456 @@
-const API_BASE_URL = 'https://stagingv3.leapmile.com/podcore';
-const AUTH_TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkxMTYyMDE1OX0.RMEW55tHQ95GVap8ChrGdPRbuVxef4Shf0NRddNgGJo';
+import React, { useState, useEffect, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CreditCard, DollarSign, Hash, Package, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
-export interface OTPResponse {
-  user_otp: string;
+interface CreatePaymentPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-export interface ValidateOTPResponse {
-  status: string;
-  status_code: number;
-  message: string;
-  timestamp: string;
-  records: Array<{
-    id: number;
-    user_name: string;
-    user_phone: string;
-    user_email: string;
-    user_address: string;
-    user_type: string;
-    user_flatno: string;
-    user_dropcode: string;
-    user_pickupcode: string;
-    user_credit_limit: string;
-    user_credit_used: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-  }>;
-  user_phone: string;
-  access_token: string;
-  statusbool: boolean;
-  ok: boolean;
-  api_processing_time: number;
-}
+const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
+  const { accessToken } = useAuth();
+  const [formData, setFormData] = useState({
+    clientReferenceId: '',
+    awbNo: '',
+    amount: '',
+    paymentMethod: '',
+  });
 
-export interface UserLocation {
-  location_id: number;
-  user_id: number;
-  id: number;
-  user_name: string;
-  user_flatno: string;
-  user_type: string;
-  user_email: string;
-  user_phone: string;
-  location_name: string;
-  location_address: string;
-  location_pincode: string;
-  location_state: string | null;
-  status: string;
-  user_dropcode: string;
-  user_pickupcode: string;
-  user_credit_limit: string;
-  user_credit_used: string;
-  created_at: string;
-  updated_at: string;
-}
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'pending' | 'success' | 'failed'>('idle');
+  const [paymentData, setPaymentData] = useState<{
+    payment_reference_id?: string;
+    payment_vendor?: string;
+    payment_url?: string;
+  }>({});
+  const [showPendingButton, setShowPendingButton] = useState(false);
+  
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const paymentWindowRef = useRef<Window | null>(null);
 
-export interface PodInfo {
-  id: string;
-  name: string;
-  location_id: string;
-  status: string;
-}
+  // Payment vendor logos
+  const paymentLogos = {
+    paytm: 'https://pwebassets.paytm.com/commonwebassets/paytmweb/footer/images/paytmLogo.svg',
+    razorpay: 'https://app.qikpod.com/assets/assets/images/1545306239_rzp-glyph-positive_1.png'
+  };
 
-export interface LocationInfo {
-  id: string;
-  location_name: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
-
-export interface Reservation {
-  id: string;
-  reservation_status: string;
-  reservation_type?: string;
-  drop_code?: string;
-  pickup_code?: string;
-  package_description?: string;
-  created_at: string;
-  pod_name: string;
-  created_by_name?: string;
-  reservation_awbno?: string;
-  location_name?: string;
-}
-
-export const apiService = {
-  async generateOTP(userPhone: string): Promise<OTPResponse> {
-    const response = await fetch(`${API_BASE_URL}/otp/generate_otp/?user_phone=${userPhone}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': AUTH_TOKEN,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate OTP');
+  // Clear polling on component unmount or when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+      if (paymentWindowRef.current && !paymentWindowRef.current.closed) {
+        paymentWindowRef.current.close();
+        paymentWindowRef.current = null;
+      }
     }
 
-    return response.json();
-  },
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    };
+  }, [isOpen]);
 
-  async validateOTP(userPhone: string, otpCode: string): Promise<ValidateOTPResponse> {
-    const response = await fetch(`${API_BASE_URL}/otp/validate_otp/?user_phone=${userPhone}&otp_text=${otpCode}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': AUTH_TOKEN,
-      },
-    });
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
-    if (!response.ok) {
-      throw new Error('Failed to validate OTP');
-    }
+  const isFormValid = () => {
+    return formData.clientReferenceId &&
+           formData.awbNo &&
+           formData.amount &&
+           formData.paymentMethod &&
+           parseFloat(formData.amount) > 0;
+  };
 
-    const data = await response.json();
-    // Store the access token for future use
-    if (data.access_token) {
-      localStorage.setItem('auth_token', data.access_token);
-    }
-
-    return data;
-  },
-
-  async getUserLocations(userId: number): Promise<UserLocation[]> {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/locations/?user_id=${userId}&order_by_field=updated_at&order_by_type=DESC`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to get user locations');
-    }
-
-    const data = await response.json();
-    return data.records || [];
-  },
-
-  async getPodInfo(podName: string): Promise<PodInfo> {
+  const checkPaymentStatus = async (paymentReferenceId: string, paymentVendor: string) => {
     try {
       const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/pods/?pod_name=${podName}`,
+        `https://stagingv3.leapmile.com/payments/payments/get_payment_status/?payment_reference_id=${paymentReferenceId}&payment_vendor=${paymentVendor}`,
         {
           method: 'GET',
           headers: {
-            'accept': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkxMTYyMDE1OX0.RMEW55tHQ95GVap8ChrGdPRbuVxef4Shf0NRddNgGJo'
-          }
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.status || data.payment_status || 'pending';
+      }
+      return 'pending';
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      return 'pending';
+    }
+  };
+
+  const startPaymentStatusPolling = (paymentReferenceId: string, paymentVendor: string) => {
+    // Clear existing polling
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+    }
+
+    pollingRef.current = setInterval(async () => {
+      const status = await checkPaymentStatus(paymentReferenceId, paymentVendor);
+
+      if (status === 'success' || status === 'completed' || status === 'paid') {
+        setPaymentStatus('success');
+        setShowPendingButton(false);
+        if (pollingRef.current) {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+        toast.success('Payment completed successfully!');
+        onSuccess();
+        handleClose();
+      } else if (status === 'failed' || status === 'cancelled') {
+        setPaymentStatus('failed');
+        setShowPendingButton(true);
+        if (pollingRef.current) {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+        toast.error('Payment failed. You can retry the payment.');
+      }
+    }, 3000); // Poll every 3 seconds
+  };
+
+  const createPayment = async () => {
+    try {
+      const response = await fetch(
+        `https://stagingv3.leapmile.com/payments/payments/create_payment/?payment_client_awbno=${encodeURIComponent(formData.awbNo)}&amount=${encodeURIComponent(formData.amount)}&payment_client_reference_id=${encodeURIComponent(formData.clientReferenceId)}&payment_vendor=${encodeURIComponent(formData.paymentMethod)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
         }
       );
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch pod info: ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
-      if (data.records && data.records.length > 0) {
-        const pod = data.records[0];
-        // Save location_id to local storage
-        localStorage.setItem('current_location_id', pod.location_id);
+      if (data.payment_url) {
+        setPaymentData({
+          payment_reference_id: data.payment_reference_id,
+          payment_vendor: data.payment_vendor,
+          payment_url: data.payment_url
+        });
 
-        return {
-          id: pod.id,
-          name: pod.pod_name,
-          location_id: pod.location_id,
-          status: pod.status || 'available'
-        };
+        // Set payment redirect flag in localStorage for return detection
+        localStorage.setItem('payment_redirect', 'true');
+        localStorage.setItem('payment_id', data.payment_reference_id);
+        localStorage.setItem('payment_vendor', data.payment_vendor);
+
+        // Use window.location.href for navigation (this will redirect the entire page)
+        window.location.href = data.payment_url;
+      } else {
+        throw new Error('No payment URL received from the server');
       }
-
-      throw new Error('Pod not found');
     } catch (error) {
-      console.error('Error fetching pod info:', error);
+      console.error('Error creating payment:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to create payment. Please try again.');
       throw error;
     }
-  },
+  };
 
-  async getLocationInfo(locationId: string): Promise<LocationInfo> {
-    try {
-      const authToken = localStorage.getItem('auth_token');
-      const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
+  // Check if we're returning from a payment gateway when component mounts
+  useEffect(() => {
+    const checkPaymentReturn = async () => {
+      const paymentRedirect = localStorage.getItem('payment_redirect');
+      const paymentId = localStorage.getItem('payment_id');
+      const paymentVendor = localStorage.getItem('payment_vendor');
 
-      const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/locations/?record_id=${locationId}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': authorization
+      if (paymentRedirect === 'true' && paymentId && paymentVendor) {
+        // We returned from a payment gateway, check the status
+        localStorage.removeItem('payment_redirect');
+        localStorage.removeItem('payment_id');
+        localStorage.removeItem('payment_vendor');
+
+        // Show loading status
+        setPaymentStatus('pending');
+
+        // Wait a moment for the backend to process the payment
+        setTimeout(async () => {
+          const status = await checkPaymentStatus(paymentId, paymentVendor);
+
+          if (status === 'success' || status === 'completed' || status === 'paid') {
+            setPaymentStatus('success');
+            toast.success('Payment completed successfully!');
+            onSuccess();
+            handleClose();
+          } else {
+            setPaymentStatus('failed');
+            setShowPendingButton(true);
+            toast.error('Payment failed or is still pending. Please check your payment status.');
           }
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch location info: ${response.statusText}`);
+        }, 2000);
       }
+    };
 
-      const data = await response.json();
+    checkPaymentReturn();
+  }, [onSuccess]);
 
-      if (data.records && data.records.length > 0) {
-        const location = data.records[0];
-        // Save location name to local storage
-        localStorage.setItem('current_location_name', location.location_name);
+  const handlePayNow = async () => {
+    if (!isFormValid()) return;
 
-        return {
-          id: location.id,
-          location_name: location.location_name,
-          address: location.location_address || '',
-          city: location.city || '',
-          state: location.state || '',
-          pincode: location.pincode || ''
-        };
-      }
+    setIsSubmitting(true);
+    setShowPendingButton(false);
 
-      throw new Error('Location not found');
-    } catch (error) {
-      console.error('Error fetching location info:', error);
-      throw error;
-    }
-  },
-
-  async addUserLocation(userId: number, locationId: string): Promise<void> {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/locations/`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        location_id: locationId
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to add user location');
-    }
-  },
-
-  async getReservations(phoneNum: string, locationId: string, status: string): Promise<Reservation[]> {
     try {
-      const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/reservations/?reservation_status=${status}&createdby_phone=${phoneNum}`,
-        {
-          method: 'GET',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkxMTYyMDE1OX0.RMEW55tHQ95GVap8ChrGdPRbuVxef4Shf0NRddNgGJo'
-          }
-        }
-      );
-
-      const data = await response.json();
-
-      // Handle 404 "Records not found" gracefully
-      if (response.status === 404 || (data.status === 'failure' && data.message === 'Records not found.')) {
-        return [];
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch reservations: ${response.statusText}`);
-      }
-
-      if (data.records) {
-        const currentLocationName = localStorage.getItem('current_location_name') || undefined
-        return data.records.map((record: any) => ({
-          id: String(record.id),
-          reservation_type: record.reservation_type,
-          reservation_status: record.reservation_status,
-          pod_name: record.pod_name,
-          created_at: record.created_at,
-          package_description: record.package_description,
-          drop_code: record.drop_code,
-          pickup_code: record.pickup_code,
-          // Additional fields requested for card content
-          created_by_name: record.created_by_name ?? record.created_by ?? undefined,
-          reservation_awbno: record.reservation_awbno ?? record.awb_number ?? undefined,
-          location_name: record.location_name ?? currentLocationName,
-        }));
-      }
-
-      return [];
+      await createPayment();
     } catch (error) {
-      console.error('Error fetching reservations:', error);
-      throw error;
+      console.error('Error in payment flow:', error);
+      setIsSubmitting(false);
     }
-  },
+  };
 
-  async registerUser(userData: {
-    user_phone: string;
-    user_name: string;
-    user_email: string;
-    user_flatno: string;
-    user_address: string;
-  }): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/users/`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkxMTYyMDE1OX0.RMEW55tHQ95GVap8ChrGdPRbuVxef4Shf0NRddNgGJo',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...userData,
-        user_type: 'customer'
-      }),
-    });
+  const handleRetryPayment = async () => {
+    if (paymentData.payment_url) {
+      setIsSubmitting(true);
+      try {
+        // Set payment redirect flag in localStorage for return detection
+        localStorage.setItem('payment_redirect', 'true');
+        localStorage.setItem('payment_id', paymentData.payment_reference_id || '');
+        localStorage.setItem('payment_vendor', paymentData.payment_vendor || '');
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Failed to register user');
+        // Use window.location.href for navigation
+        window.location.href = paymentData.payment_url;
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to retry payment.');
+        setIsSubmitting(false);
+      }
     }
+  };
 
-    return response.json();
-  },
-
-  // Check for available doors at a location
-  checkFreeDoor: async (locationId: string): Promise<boolean> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/doors/free_door/?location_id=${locationId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
+  const resetForm = () => {
+    setFormData({
+      clientReferenceId: '',
+      awbNo: '',
+      amount: '',
+      paymentMethod: '',
     });
+    setPaymentStatus('idle');
+    setPaymentData({});
+    setShowPendingButton(false);
 
-    if (!response.ok) {
-      return false;
+    // Clear polling
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
     }
+  };
 
-    const data = await response.json();
-    return data.statusbool || false;
-  },
-
-  // Create a new reservation
-  createReservation: async (reservationData: {
-    created_by_phone: string;
-    drop_by_phone: string;
-    pickup_by_phone: string;
-    pod_id: string;
-    reservation_awbno: string;
-  }): Promise<{ reservation_id: string }> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/reservations/create`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reservationData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create reservation');
+  const handleClose = () => {
+    if (!isSubmitting) {
+      resetForm();
+      onClose();
     }
+  };
 
-    const data = await response.json();
-    return { reservation_id: data.reservation_id || data.id };
-  },
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md animate-scale-in">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+            Create New Payment
+          </DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Fill in the details below to create a new payment request
+          </p>
+        </DialogHeader>
 
-  // Get reservation details by ID
-  getReservationDetails: async (reservationId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
+        <div className="space-y-6 mt-6">
+          <div className="space-y-2">
+            <Label htmlFor="clientReferenceId" className="text-sm font-medium flex items-center gap-2">
+              <Hash className="h-4 w-4 text-primary" />
+              Client Reference ID
+            </Label>
+            <Input
+              id="clientReferenceId"
+              placeholder="Enter Client Reference ID"
+              value={formData.clientReferenceId}
+              onChange={(e) => handleInputChange('clientReferenceId', e.target.value)}
+              className="bg-background border-border focus:border-primary transition-colors"
+              disabled={isSubmitting}
+            />
+          </div>
 
-    const response = await fetch(`${API_BASE_URL}/reservations/?record_id=${reservationId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
+          <div className="space-y-2">
+            <Label htmlFor="awbNo" className="text-sm font-medium flex items-center gap-2">
+              <Package className="h-4 w-4 text-primary" />
+              AWB No
+            </Label>
+            <Input
+              id="awbNo"
+              placeholder="Enter AWB No"
+              value={formData.awbNo}
+              onChange={(e) => handleInputChange('awbNo', e.target.value)}
+              className="bg-background border-border focus:border-primary transition-colors"
+              disabled={isSubmitting}
+            />
+          </div>
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch reservation details');
-    }
+          <div className="space-y-2">
+            <Label htmlFor="amount" className="text-sm font-medium flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-primary" />
+              Amount
+            </Label>
+            <Input
+              id="amount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              placeholder="Enter Amount"
+              value={formData.amount}
+              onChange={(e) => handleInputChange('amount', e.target.value)}
+              className="bg-background border-border focus:border-primary transition-colors"
+              disabled={isSubmitting}
+            />
+            {formData.amount && parseFloat(formData.amount) > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Amount: ₹{parseFloat(formData.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              </p>
+            )}
+          </div>
 
-    const data = await response.json();
-    return data.records?.[0] || data;
-  },
+          <div className="space-y-2">
+            <Label htmlFor="paymentMethod" className="text-sm font-medium flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-primary" />
+              Payment Method
+            </Label>
+            <Select
+              value={formData.paymentMethod}
+              onValueChange={(value) => handleInputChange('paymentMethod', value)}
+              disabled={isSubmitting}
+            >
+              <SelectTrigger className="bg-background border-border focus:border-primary">
+                <SelectValue placeholder="Select payment method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="paytm">
+                  <div className="flex items-center gap-2">
+                    <img src={paymentLogos.paytm} alt="Paytm" className="w-6 h-6 object-contain" />
+                    Paytm
+                  </div>
+                </SelectItem>
+                <SelectItem value="razorpay">
+                  <div className="flex items-center gap-2">
+                    <img src={paymentLogos.razorpay} alt="Razorpay" className="w-6 h-6 object-contain" />
+                    Razorpay
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-  // Re-send Drop OTP
-  resendDropOTP: async (reservationId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
+          {/* Payment Status Indicator */}
+          {paymentStatus !== 'idle' && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+              {paymentStatus === 'pending' && (
+                <>
+                  <Clock className="h-4 w-4 text-yellow-600 animate-pulse" />
+                  <span className="text-sm text-muted-foreground">Payment in progress...</span>
+                </>
+              )}
+              {paymentStatus === 'success' && (
+                <>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-green-600">Payment completed successfully!</span>
+                </>
+              )}
+              {paymentStatus === 'failed' && (
+                <>
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm text-red-600">Payment failed. Please retry.</span>
+                </>
+              )}
+            </div>
+          )}
 
-    const response = await fetch(`${API_BASE_URL}/reservations/resend_otp/?reservation_id=${reservationId}&otp_type=drop_otp`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
+          <div className="flex flex-col gap-3 pt-6 border-t">
+            {/* Primary buttons row */}
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                onClick={handleClose}
+                disabled={isSubmitting}
+                className="hover:scale-105 transition-transform"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handlePayNow} 
+                disabled={!isFormValid() || isSubmitting}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    Processing...
+                  </div>
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Pay Now
+                  </>
+                )}
+              </Button>
+            </div>
 
-    if (!response.ok) {
-      throw new Error('Failed to resend drop OTP');
-    }
-
-    return response.json();
-  },
-
-  // Cancel Reservation
-  cancelReservation: async (reservationId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/reservations/cancel/${reservationId}`, {
-      method: 'PATCH',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to cancel reservation');
-    }
-
-    return response.json();
-  },
-
-  // Check if user exists at location
-  checkUserAtLocation: async (userId: number, locationId: string): Promise<boolean> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/locations/?user_id=${userId}&location_id=${locationId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      return false;
-    }
-
-    const data = await response.json();
-    return data.records && data.records.length > 0;
-  },
-
-  // Update user profile
-  updateUser: async (userId: number, userData: {
-    user_email?: string;
-    user_name?: string;
-    user_address?: string;
-    user_flatno?: string;
-  }): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  },
-
-  // Get users for a location (Site Admin)
-  getLocationUsers: async (locationId: string): Promise<any[]> => {
-    const token = localStorage.getItem('auth_token');
-    const response = await fetch(`${API_BASE_URL}/users/locations/?location_id=${locationId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await response.json();
-    return data.records || [];
-  },
-
-  // Get Pod Details with access code and door count
-  getPodDetails: async (podId: string, locationId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/pods/?record_id=${podId}&location_id=${locationId}&pod_mode=adhoc`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch pod details');
-    }
-
-    const data = await response.json();
-    return data.records?.[0] || null;
-  },
-
-  // Get Doors of Pod
-  getPodDoors: async (podId: string): Promise<any[]> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/pods/doors/${podId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch pod doors');
-    }
-
-    const data = await response.json();
-    return data.records || [];
-  },
-
-  // Get reservations for a location (Site Admin)
-  getLocationReservations: async (locationId: string, status: string): Promise<any[]> => {
-    const token = localStorage.getItem('auth_token');
-    const response = await fetch(`${API_BASE_URL}/reservations/?location_id=${locationId}&reservation_status=${status}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      return data.records || [];
-    }
-
-    throw new Error(data.detail || 'Failed to fetch reservations');
-  },
-
-  // Remove user (Site Admin)
-  removeUser: async (userId: number): Promise<void> => {
-    const token = localStorage.getItem('auth_token');
-    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.detail || 'Failed to remove user');
-    }
-  },
-
-  // Get user by ID (for profile viewing)
-  getUserById: async (userId: string): Promise<any> => {
-    const token = localStorage.getItem('auth_token');
-    const response = await fetch(`${API_BASE_URL}/users/?record_id=${userId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.detail || 'Failed to fetch user details');
-    }
-
-    const data = await response.json();
-    return data.records?.[0] || null;
-  },
-
-  // Get user-location mapping ID
-  getUserLocationMapping: async (userId: number, locationId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/locations/?user_id=${userId}&location_id=${locationId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.detail || 'Failed to fetch user-location mapping');
-    }
-
-    const data = await response.json();
-    return data.records?.[0] || null;
-  },
-
-  // Remove user from location using mapping ID
-  removeUserFromLocation: async (mappingId: number): Promise<void> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/users/locations/${mappingId}`, {
-      method: 'DELETE',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.detail || 'Failed to remove user from location');
-    }
-  },
-
-  // Get reservation details by door number and pod ID
-  getDoorReservationDetails: async (doorNumber: number, podId: string): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/adhoc/reservations/?door_number=${doorNumber}&pod_id=${podId}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch door reservation details');
-    }
-
-    const data = await response.json();
-    return data.records?.[0] || null;
-  },
-
-  // Get door access code by pod ID and door number
-  getDoorAccessCode: async (podId: string, doorNumber: number): Promise<any> => {
-    const authToken = localStorage.getItem('auth_token');
-    const authorization = authToken ? `Bearer ${authToken}` : AUTH_TOKEN;
-
-    const response = await fetch(`${API_BASE_URL}/doors/?pod_id=${podId}&door_no=${doorNumber}`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Authorization': authorization,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch door access code');
-    }
-
-    const data = await response.json();
-    return data;
-  }
+            {/* Pending payment retry button */}
+            {showPendingButton && (
+              <div className="flex justify-end">
+                <Button 
+                  onClick={handleRetryPayment}
+                  disabled={isSubmitting}
+                  variant="secondary"
+                  className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 border border-yellow-300 hover:scale-105 transition-transform disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                      Retrying...
+                    </div>
+                  ) : (
+                    <>
+                      <Clock className="h-4 w-4 mr-2" />
+                      Retry Pending Payment
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 };
+
+export default CreatePaymentPopup;
