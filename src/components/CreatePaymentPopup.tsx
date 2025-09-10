@@ -39,6 +39,12 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const paymentWindowRef = useRef<Window | null>(null);
 
+  // Payment vendor logos
+  const paymentLogos = {
+    paytm: 'https://pwebassets.paytm.com/commonwebassets/paytmweb/footer/images/paytmLogo.svg',
+    razorpay: 'https://app.qikpod.com/assets/assets/images/1545306239_rzp-glyph-positive_1.png'
+  };
+
   // Clear polling on component unmount or when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -51,7 +57,7 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
         paymentWindowRef.current = null;
       }
     }
-    
+
     return () => {
       if (pollingRef.current) {
         clearInterval(pollingRef.current);
@@ -68,9 +74,9 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
   };
 
   const isFormValid = () => {
-    return formData.clientReferenceId && 
-           formData.awbNo && 
-           formData.amount && 
+    return formData.clientReferenceId &&
+           formData.awbNo &&
+           formData.amount &&
            formData.paymentMethod &&
            parseFloat(formData.amount) > 0;
   };
@@ -119,7 +125,7 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       }
 
       const status = await checkPaymentStatus(paymentReferenceId, paymentVendor);
-      
+
       if (status === 'success' || status === 'completed' || status === 'paid') {
         setPaymentStatus('success');
         setShowPendingButton(false);
@@ -168,25 +174,28 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       }
 
       const data = await response.json();
-      
+
       if (data.payment_url) {
         setPaymentData({
           payment_reference_id: data.payment_reference_id,
           payment_vendor: data.payment_vendor,
           payment_url: data.payment_url
         });
-        
+
         // Open payment URL in new tab
-        paymentWindowRef.current = window.open(data.payment_url, '_blank', 'noopener,noreferrer');
-        
+        paymentWindowRef.current = window.open(data.payment_url, '_blank', 'noopener,noreferrer,width=600,height=700');
+
         if (!paymentWindowRef.current) {
           throw new Error('Failed to open payment window. Please check your popup blocker settings.');
         }
-        
+
+        // Focus on the new window
+        paymentWindowRef.current.focus();
+
         // Start polling for payment status
         startPaymentStatusPolling(data.payment_reference_id, data.payment_vendor);
         setPaymentStatus('pending');
-        
+
         toast.info('Payment window opened. Complete your payment in the new tab.');
       } else {
         throw new Error('No payment URL received from the server');
@@ -200,10 +209,10 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
 
   const handlePayNow = async () => {
     if (!isFormValid()) return;
-    
+
     setIsSubmitting(true);
     setShowPendingButton(false);
-    
+
     try {
       await createPayment();
     } catch (error) {
@@ -218,19 +227,22 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       setIsSubmitting(true);
       try {
         // Re-open payment URL
-        paymentWindowRef.current = window.open(paymentData.payment_url, '_blank', 'noopener,noreferrer');
-        
+        paymentWindowRef.current = window.open(paymentData.payment_url, '_blank', 'noopener,noreferrer,width=600,height=700');
+
         if (!paymentWindowRef.current) {
           throw new Error('Failed to open payment window. Please check your popup blocker settings.');
         }
-        
+
+        // Focus on the new window
+        paymentWindowRef.current.focus();
+
         // Restart polling
         if (paymentData.payment_reference_id && paymentData.payment_vendor) {
           startPaymentStatusPolling(paymentData.payment_reference_id, paymentData.payment_vendor);
         }
         setPaymentStatus('pending');
         setShowPendingButton(false);
-        
+
         toast.info('Payment window reopened. Complete your payment in the new tab.');
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to retry payment.');
@@ -250,7 +262,7 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
     setPaymentStatus('idle');
     setPaymentData({});
     setShowPendingButton(false);
-    
+
     // Clear polling
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
@@ -276,7 +288,7 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
             Fill in the details below to create a new payment request
           </p>
         </DialogHeader>
-        
+
         <div className="space-y-6 mt-6">
           <div className="space-y-2">
             <Label htmlFor="clientReferenceId" className="text-sm font-medium flex items-center gap-2">
@@ -336,8 +348,8 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
               <CreditCard className="h-4 w-4 text-primary" />
               Payment Method
             </Label>
-            <Select 
-              value={formData.paymentMethod} 
+            <Select
+              value={formData.paymentMethod}
               onValueChange={(value) => handleInputChange('paymentMethod', value)}
               disabled={isSubmitting}
             >
@@ -347,13 +359,13 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
               <SelectContent>
                 <SelectItem value="paytm">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                    <img src={paymentLogos.paytm} alt="Paytm" className="w-6 h-6 object-contain" />
                     Paytm
                   </div>
                 </SelectItem>
                 <SelectItem value="razorpay">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-primary rounded"></div>
+                    <img src={paymentLogos.razorpay} alt="Razorpay" className="w-6 h-6 object-contain" />
                     Razorpay
                   </div>
                 </SelectItem>
