@@ -112,18 +112,6 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
     }
 
     pollingRef.current = setInterval(async () => {
-      // Check if payment window is closed
-      if (paymentWindowRef.current && paymentWindowRef.current.closed) {
-        setPaymentStatus('pending');
-        setShowPendingButton(true);
-        if (pollingRef.current) {
-          clearInterval(pollingRef.current);
-          pollingRef.current = null;
-        }
-        toast.warning('Payment window was closed. Please complete the payment.');
-        return;
-      }
-
       const status = await checkPaymentStatus(paymentReferenceId, paymentVendor);
 
       if (status === 'success' || status === 'completed' || status === 'paid') {
@@ -132,10 +120,6 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
         if (pollingRef.current) {
           clearInterval(pollingRef.current);
           pollingRef.current = null;
-        }
-        if (paymentWindowRef.current) {
-          paymentWindowRef.current.close();
-          paymentWindowRef.current = null;
         }
         toast.success('Payment completed successfully!');
         onSuccess();
@@ -146,10 +130,6 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
         if (pollingRef.current) {
           clearInterval(pollingRef.current);
           pollingRef.current = null;
-        }
-        if (paymentWindowRef.current) {
-          paymentWindowRef.current.close();
-          paymentWindowRef.current = null;
         }
         toast.error('Payment failed. You can retry the payment.');
       }
@@ -182,10 +162,13 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
           payment_url: data.payment_url
         });
 
-        // Redirect to payment URL
+        // Set payment redirect flag in localStorage for return detection
+        localStorage.setItem('payment_redirect', 'true');
+        localStorage.setItem('payment_id', data.payment_reference_id);
+        localStorage.setItem('payment_vendor', data.payment_vendor);
+
+        // Use window.location.href for navigation (this will redirect the entire page)
         window.location.href = data.payment_url;
-        
-        toast.info('Redirecting to payment portal...');
       } else {
         throw new Error('No payment URL received from the server');
       }
@@ -195,6 +178,43 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       throw error;
     }
   };
+
+  // Check if we're returning from a payment gateway when component mounts
+  useEffect(() => {
+    const checkPaymentReturn = async () => {
+      const paymentRedirect = localStorage.getItem('payment_redirect');
+      const paymentId = localStorage.getItem('payment_id');
+      const paymentVendor = localStorage.getItem('payment_vendor');
+
+      if (paymentRedirect === 'true' && paymentId && paymentVendor) {
+        // We returned from a payment gateway, check the status
+        localStorage.removeItem('payment_redirect');
+        localStorage.removeItem('payment_id');
+        localStorage.removeItem('payment_vendor');
+
+        // Show loading status
+        setPaymentStatus('pending');
+
+        // Wait a moment for the backend to process the payment
+        setTimeout(async () => {
+          const status = await checkPaymentStatus(paymentId, paymentVendor);
+
+          if (status === 'success' || status === 'completed' || status === 'paid') {
+            setPaymentStatus('success');
+            toast.success('Payment completed successfully!');
+            onSuccess();
+            handleClose();
+          } else {
+            setPaymentStatus('failed');
+            setShowPendingButton(true);
+            toast.error('Payment failed or is still pending. Please check your payment status.');
+          }
+        }, 2000);
+      }
+    };
+
+    checkPaymentReturn();
+  }, [onSuccess]);
 
   const handlePayNow = async () => {
     if (!isFormValid()) return;
@@ -206,7 +226,6 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       await createPayment();
     } catch (error) {
       console.error('Error in payment flow:', error);
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -215,27 +234,15 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
     if (paymentData.payment_url) {
       setIsSubmitting(true);
       try {
-        // Re-open payment URL
-        paymentWindowRef.current = window.open(paymentData.payment_url, '_blank', 'noopener,noreferrer,width=600,height=700');
+        // Set payment redirect flag in localStorage for return detection
+        localStorage.setItem('payment_redirect', 'true');
+        localStorage.setItem('payment_id', paymentData.payment_reference_id || '');
+        localStorage.setItem('payment_vendor', paymentData.payment_vendor || '');
 
-        if (!paymentWindowRef.current) {
-          throw new Error('Failed to open payment window. Please check your popup blocker settings.');
-        }
-
-        // Focus on the new window
-        paymentWindowRef.current.focus();
-
-        // Restart polling
-        if (paymentData.payment_reference_id && paymentData.payment_vendor) {
-          startPaymentStatusPolling(paymentData.payment_reference_id, paymentData.payment_vendor);
-        }
-        setPaymentStatus('pending');
-        setShowPendingButton(false);
-
-        toast.info('Payment window reopened. Complete your payment in the new tab.');
+        // Use window.location.href for navigation
+        window.location.href = paymentData.payment_url;
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to retry payment.');
-      } finally {
         setIsSubmitting(false);
       }
     }
