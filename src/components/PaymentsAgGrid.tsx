@@ -12,7 +12,8 @@ import { ArrowLeft, RefreshCw, Plus, Search, Eye, Filter, Download } from 'lucid
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import CreatePaymentPopup from '@/components/CreatePaymentPopup';
+// Temporarily remove the import until the component is fixed
+// import CreatePaymentPopup from '@/components/CreatePaymentPopup';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -541,7 +542,7 @@ const PaymentsAgGrid = () => {
       </div>
 
       {/* Create Payment Modal */}
-      <CreatePaymentPopup isOpen={showCreatePayment} onClose={() => setShowCreatePayment(false)} onSuccess={fetchPayments} />
+      {/* <CreatePaymentPopup isOpen={showCreatePayment} onClose={() => setShowCreatePayment(false)} onSuccess={fetchPayments} /> */}
     </div>
   );
 };
