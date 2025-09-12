@@ -151,7 +151,7 @@ const LogsAgGrid = () => {
       field: 'log_type',
       sortable: true,
       filter: true,
-      flex: 1,
+      flex: 2,
       minWidth: 100,
       cellClass: 'text-muted-foreground'
     },
