@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef } from 'ag-grid-community';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
-import { Eye } from 'lucide-react';
+import { Eye, RefreshCw } from 'lucide-react';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 
 interface LocationReservationsTableProps {
@@ -15,10 +13,10 @@ interface LocationReservationsTableProps {
   onAdhocReservationClick?: (reservationId: number) => void;
 }
 
-const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({ 
+const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
   locationId,
   onStandardReservationClick,
-  onAdhocReservationClick 
+  onAdhocReservationClick
 }) => {
   const { accessToken } = useAuth();
   const [isStandardMode, setIsStandardMode] = useState(true);
@@ -60,306 +58,140 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
     }
   }, [isStandardMode, accessToken, locationId]);
 
-  const ActionCellRenderer = ({ data, isStandard }: { data: any; isStandard: boolean }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => {
-        if (isStandard && onStandardReservationClick) {
-          onStandardReservationClick(data.id);
-        } else if (!isStandard && onAdhocReservationClick) {
-          onAdhocReservationClick(data.id);
-        }
-      }}
-      className="h-8 px-2"
-    >
-      <Eye className="h-4 w-4" />
-    </Button>
-  );
-
-  const standardColumnDefs: ColDef[] = [
-    { 
-      headerName: 'ID', 
-      field: 'id',
-      width: 80,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'USER NAME', 
-      field: 'drop_by_name',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'LOCATION NAME', 
-      field: 'location_name',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'CREATED BY', 
-      field: 'created_by_name',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'STATUS', 
-      field: 'status',
-      width: 120,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'CREATED AT', 
-      field: 'created_at',
-      width: 150,
-      cellClass: 'vertical-center',
-      filter: 'agDateColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
-      cellClass: 'vertical-center',
-      filter: false,
-      sortable: false,
+  const refreshData = () => {
+    if (isStandardMode) {
+      fetchStandardReservations();
+    } else {
+      fetchAdhocReservations();
     }
-  ];
-
-  const adhocColumnDefs: ColDef[] = [
-    { 
-      headerName: 'ID', 
-      field: 'id',
-      width: 80,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'POD ID', 
-      field: 'pod_name',
-      width: 120,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'USER PHONE', 
-      field: 'user_phone',
-      width: 130,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'DROP TIME', 
-      field: 'drop_time',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agDateColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'PICKUP TIME', 
-      field: 'pickup_time',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agDateColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'RTO PICKUP TIME', 
-      field: 'rto_picktime',
-      flex: 1,
-      cellClass: 'vertical-center',
-      filter: 'agDateColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    { 
-      headerName: 'STATUS', 
-      field: 'reservation_status',
-      width: 120,
-      cellClass: 'vertical-center',
-      filter: 'agTextColumnFilter',
-      filterParams: {
-        suppressAndOrCondition: true,
-        suppressFilterButton: true,
-      },
-    },
-    {
-      headerName: 'ACTION',
-      width: 100,
-      cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
-      cellClass: 'vertical-center',
-      filter: false,
-      sortable: false,
-    }
-  ];
-
-  const defaultColDef = {
-    sortable: true,
-    filter: true,
-    resizable: true,
   };
 
   const currentData = isStandardMode ? standardReservations : adhocReservations;
   const hasData = currentData && currentData.length > 0;
 
   return (
-    <Card className="bg-white shadow-sm rounded-xl border-gray-200">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 pt-8 px-8">
-        <CardTitle className="text-xl font-semibold text-gray-900">
-          Reservations
-        </CardTitle>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <span className={`text-sm font-medium ${isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
-              Standard
-            </span>
-            <Switch
-              checked={!isStandardMode}
-              onCheckedChange={(checked) => setIsStandardMode(!checked)}
-              className="data-[state=checked]:bg-accent"
-            />
-            <span className={`text-sm font-medium ${!isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
-              Adhoc
-            </span>
+    <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Header Section */}
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        <div className="p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Title */}
+            <h2 className="text-lg font-semibold text-gray-900">Reservations</h2>
+
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+              {/* Mode Toggle */}
+              <div className="flex items-center space-x-2">
+                <span className={`text-sm font-medium ${isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
+                  Standard
+                </span>
+                <Switch
+                  checked={!isStandardMode}
+                  onCheckedChange={(checked) => setIsStandardMode(!checked)}
+                  className="data-[state=checked]:bg-accent"
+                />
+                <span className={`text-sm font-medium ${!isStandardMode ? 'text-gray-900' : 'text-gray-500'}`}>
+                  Adhoc
+                </span>
+              </div>
+
+              {/* Refresh Button */}
+              <Button variant="outline" size="sm" onClick={refreshData} disabled={loading}>
+                <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
+            </div>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="pb-8 px-8">
-        {hasData ? (
-          <div className="space-y-3">
+      </div>
+
+      {/* Content Section */}
+      <div className="flex-1 w-full">
+        {loading ? (
+          <div className="flex items-center justify-center h-[200px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        ) : hasData ? (
+          <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
             {currentData.map((reservation) => (
-              <Card key={reservation.id} className="border border-gray-200 hover:shadow-md transition-shadow p-0">
-                <CardContent className="p-4 relative">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => isStandardMode ? onStandardReservationClick?.(reservation.id) : onAdhocReservationClick?.(reservation.id)}
-                    className="absolute top-3 right-3 h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
+              <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-900">ID: {reservation.id}</div>
+                      {isStandardMode ? (
+                        <div className="text-lg font-semibold mt-1">
+                          {reservation.drop_by_name || 'N/A'}
+                        </div>
+                      ) : (
+                        <div className="text-lg font-semibold mt-1">
+                          {reservation.pod_name || 'N/A'}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => isStandardMode ? onStandardReservationClick?.(reservation.id) : onAdhocReservationClick?.(reservation.id)}
+                      className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
 
                   {isStandardMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pr-12">
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">ID</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Location:</span> {reservation.location_name || 'N/A'}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Created By:</span> {reservation.created_by_name || 'N/A'}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">User</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.drop_by_name || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Location</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.location_name || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Created By</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.created_by_name || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Status</span>
-                        <p className="text-sm font-medium text-gray-900">
-                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Status:</span>
+                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ml-2 ${
                             reservation.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
                             reservation.status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {reservation.status || 'N/A'}
                           </span>
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Created</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.created_at || 'N/A'}</p>
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Created:</span> {reservation.created_at || 'N/A'}
+                        </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pr-12">
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">ID</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Phone:</span> {reservation.user_phone || 'N/A'}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Drop Time:</span> {reservation.drop_time || 'N/A'}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Pod</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.pod_name || 'N/A'}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Pickup Time:</span> {reservation.pickup_time || 'N/A'}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">RTO Pickup:</span> {reservation.rto_picktime || 'N/A'}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Phone</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.user_phone || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Drop Time</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.drop_time || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Pickup</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.pickup_time || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">RTO</span>
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.rto_picktime || 'N/A'}</p>
-                      </div>
-                      <div className="flex items-center justify-between md:block">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Status</span>
-                        <p className="text-sm font-medium text-gray-900">
-                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
-                            reservation.reservation_status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                            reservation.reservation_status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {reservation.reservation_status || 'N/A'}
-                          </span>
-                        </p>
+                      <div className="text-sm">
+                        <span className="font-medium text-gray-700">Status:</span>
+                        <span className={`inline-flex px-2 py-1 text-xs rounded-full ml-2 ${
+                          reservation.reservation_status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                          reservation.reservation_status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {reservation.reservation_status || 'N/A'}
+                        </span>
                       </div>
                     </div>
                   )}
@@ -374,8 +206,8 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
             icon="inbox"
           />
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
