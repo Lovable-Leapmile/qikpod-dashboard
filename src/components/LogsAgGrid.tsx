@@ -107,14 +107,11 @@ const LogsAgGrid = () => {
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
-        <div className="text-muted-foreground">
-          {date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          })}
-        </div>
+        {date.toLocaleDateString('en-IN')} {date.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })}
       </div>
     );
   };
@@ -348,9 +345,7 @@ const LogsAgGrid = () => {
                         <div className="text-sm flex items-center">
                           <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
                           <div>
-                            {new Date(log.log_eventtime).toLocaleDateString('en-IN')}
-                            <span className="text-muted-foreground mx-1">•</span>
-                            {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
+                            {new Date(log.log_eventtime).toLocaleDateString('en-IN')} {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
                               hour: '2-digit',
                               minute: '2-digit',
                               second: '2-digit'
