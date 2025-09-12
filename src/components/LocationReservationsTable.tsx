@@ -278,9 +278,18 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
           <div className="space-y-4">
             {currentData.map((reservation, index) => (
               <Card key={reservation.id} className="border border-gray-200 hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
+                <CardContent className="p-4 relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => isStandardMode ? onStandardReservationClick?.(reservation.id) : onAdhocReservationClick?.(reservation.id)}
+                    className="absolute top-3 right-3 h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  
                   {isStandardMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 pr-12">
                       <div>
                         <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
                         <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
@@ -313,20 +322,9 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
                         <span className="text-xs text-gray-500 uppercase tracking-wide">Created At</span>
                         <p className="text-sm font-medium text-gray-900">{reservation.created_at || 'N/A'}</p>
                       </div>
-                      <div className="flex items-end">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onStandardReservationClick?.(reservation.id)}
-                          className="h-8 px-3 text-blue-600 hover:text-blue-800"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
-                      </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 pr-12">
                       <div>
                         <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
                         <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
@@ -362,17 +360,6 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
                             {reservation.reservation_status || 'N/A'}
                           </span>
                         </p>
-                      </div>
-                      <div className="flex items-end">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onAdhocReservationClick?.(reservation.id)}
-                          className="h-8 px-3 text-blue-600 hover:text-blue-800"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
                       </div>
                     </div>
                   )}
