@@ -126,39 +126,54 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                 Location Details: {locationDetail.location_name}
               </CardTitle>
 
-              {/* Details Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 text-sm">
-                <div>
-                  <span className="text-gray-600 font-medium">PRIMARY NAME:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.primary_name)}</span>
+              {/* Details Grid - Updated layout as requested */}
+              <div className="space-y-4 text-sm">
+                {/* Primary Name and Contact in one line */}
+                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
+                  <div>
+                    <span className="text-gray-600 font-medium">PRIMARY NAME:</span>
+                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_name)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 font-medium">CONTACT:</span>
+                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-gray-600 font-medium">RESERVATIONS:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">338</span>
+
+                {/* Pincode and Reservations in one line */}
+                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
+                  <div>
+                    <span className="text-gray-600 font-medium">PINCODE:</span>
+                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 font-medium">RESERVATIONS:</span>
+                    <span className="ml-2 text-gray-900">338</span>
+                  </div>
                 </div>
+
+                {/* Pods and Users in one line */}
+                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
+                  <div>
+                    <span className="text-gray-600 font-medium">PODS:</span>
+                    <span className="ml-2 text-gray-900">0</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 font-medium">USERS:</span>
+                    <span className="ml-2 text-gray-900">114</span>
+                  </div>
+                </div>
+
+                {/* Payment Mode on separate line */}
                 <div>
                   <span className="text-gray-600 font-medium">PAYMENT MODE:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
+                  <span className="ml-2 text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
                 </div>
+
+                {/* Address on separate line */}
                 <div>
-                  <span className="text-gray-600 font-medium">CONTACT:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 font-medium">PODS:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">0</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 font-medium">USERS:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">114</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 font-medium">PINCODE:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
-                </div>
-                <div className="sm:col-span-2 lg:col-span-3">
                   <span className="text-gray-600 font-medium">ADDRESS:</span>
-                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.location_address)}</span>
+                  <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_address)}</span>
                 </div>
               </div>
             </div>

@@ -275,25 +275,110 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
       </CardHeader>
       <CardContent className="pb-8 px-8">
         {hasData ? (
-          <div 
-            className="ag-theme-alpine rounded-xl overflow-hidden border border-gray-200" 
-            style={{ height: '400px', width: '100%' }}
-          >
-            <AgGridReact
-              rowData={currentData}
-              columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              paginationPageSize={20}
-              domLayout="normal"
-              loading={loading}
-              suppressRowClickSelection={true}
-              rowSelection="single"
-              suppressMenuHide={true}
-              suppressColumnVirtualisation={true}
-              headerHeight={60}
-              rowHeight={55}
-            />
+          <div className="space-y-4">
+            {currentData.map((reservation, index) => (
+              <Card key={reservation.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  {isStandardMode ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">User Name</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.drop_by_name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Location</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.location_name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Created By</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.created_by_name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Status</span>
+                        <p className="text-sm font-medium text-gray-900">
+                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            reservation.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                            reservation.status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {reservation.status || 'N/A'}
+                          </span>
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Created At</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.created_at || 'N/A'}</p>
+                      </div>
+                      <div className="flex items-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onStandardReservationClick?.(reservation.id)}
+                          className="h-8 px-3 text-blue-600 hover:text-blue-800"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Pod ID</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.pod_name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">User Phone</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.user_phone || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Drop Time</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.drop_time || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Pickup Time</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.pickup_time || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">RTO Pickup</span>
+                        <p className="text-sm font-medium text-gray-900">{reservation.rto_picktime || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-500 uppercase tracking-wide">Status</span>
+                        <p className="text-sm font-medium text-gray-900">
+                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            reservation.reservation_status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                            reservation.reservation_status === 'COMPLETED' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {reservation.reservation_status || 'N/A'}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex items-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onAdhocReservationClick?.(reservation.id)}
+                          className="h-8 px-3 text-blue-600 hover:text-blue-800"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         ) : (
           <NoDataIllustration
