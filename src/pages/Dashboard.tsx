@@ -79,7 +79,7 @@ const DashboardPage: React.FC = () => {
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
-        <main className="w-full lg:flex-1 py-6 px-0">
+        <main className="w-full lg:flex-1 px-0 py-[16px]">
           <div className="space-y-10 w-full">
             <div className="w-full">
               <LocationsTable onLocationClick={handleLocationClick} />
