@@ -75,7 +75,7 @@ const DashboardPage: React.FC = () => {
   }
   return <Layout title="Dashboard" breadcrumb="">
       <div className="flex flex-col lg:flex-row min-h-screen bg-[#f9fafb]">
-        <aside className="w-full lg:w-1/5 flex-shrink-0 py-6 lg:h-[calc(100vh-64px)] px-[8px]">
+        <aside className="w-full lg:w-1/5 flex-shrink-0 lg:h-[calc(100vh-64px)] px-[8px] py-[16px]">
           <DashboardStats dashboardStats={dashboardStats} statsLoading={statsLoading} />
         </aside>
 
