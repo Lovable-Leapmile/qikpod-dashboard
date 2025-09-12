@@ -107,7 +107,7 @@ const LogsAgGrid = () => {
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        {date.toLocaleDateString('en-IN')} {date.toLocaleTimeString('en-IN', {
+        {date.toLocaleDateString('en-IN')}•{date.toLocaleTimeString('en-IN', {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit'
