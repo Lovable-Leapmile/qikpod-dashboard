@@ -138,8 +138,8 @@ const PaymentsAgGrid = () => {
     field: 'payment_client_reference_id',
     sortable: true,
     filter: true,
-    flex: 3,
-    minWidth: 400,
+    flex: 2.5,
+    minWidth: 350,
     cellClass: 'font-medium'
   }, {
     headerName: 'User ID',
