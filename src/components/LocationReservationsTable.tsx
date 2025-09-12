@@ -275,9 +275,9 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
       </CardHeader>
       <CardContent className="pb-8 px-8">
         {hasData ? (
-          <div className="space-y-4">
-            {currentData.map((reservation, index) => (
-              <Card key={reservation.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="space-y-3">
+            {currentData.map((reservation) => (
+              <Card key={reservation.id} className="border border-gray-200 hover:shadow-md transition-shadow p-0">
                 <CardContent className="p-4 relative">
                   <Button
                     variant="ghost"
@@ -287,27 +287,27 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  
+
                   {isStandardMode ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 pr-12">
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pr-12">
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">ID</span>
                         <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">User Name</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.drop_by_name || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">User</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.drop_by_name || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Location</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.location_name || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Location</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.location_name || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Created By</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.created_by_name || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Created By</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.created_by_name || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Status</span>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Status</span>
                         <p className="text-sm font-medium text-gray-900">
                           <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                             reservation.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
@@ -318,39 +318,39 @@ const LocationReservationsTable: React.FC<LocationReservationsTableProps> = ({
                           </span>
                         </p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Created At</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.created_at || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Created</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.created_at || 'N/A'}</p>
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 pr-12">
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">ID</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pr-12">
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">ID</span>
                         <p className="text-sm font-medium text-gray-900">{reservation.id}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Pod ID</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.pod_name || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Pod</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.pod_name || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">User Phone</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.user_phone || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Phone</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.user_phone || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Drop Time</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.drop_time || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Drop Time</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.drop_time || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Pickup Time</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.pickup_time || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Pickup</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.pickup_time || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">RTO Pickup</span>
-                        <p className="text-sm font-medium text-gray-900">{reservation.rto_picktime || 'N/A'}</p>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">RTO</span>
+                        <p className="text-sm font-medium text-gray-900 truncate max-w-[120px]">{reservation.rto_picktime || 'N/A'}</p>
                       </div>
-                      <div>
-                        <span className="text-xs text-gray-500 uppercase tracking-wide">Status</span>
+                      <div className="flex items-center justify-between md:block">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide md:block">Status</span>
                         <p className="text-sm font-medium text-gray-900">
                           <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                             reservation.reservation_status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
