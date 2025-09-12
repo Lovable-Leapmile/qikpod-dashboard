@@ -102,6 +102,12 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to Locations</span>
         </Button>
+        {isMobile && (
+          <div className="flex items-center text-sm text-gray-500 ml-auto">
+            <Smartphone className="w-4 h-4 mr-1" />
+            Mobile View
+          </div>
+        )}
       </div>
 
       {/* Location Details Card */}
@@ -120,50 +126,39 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                 Location Details: {locationDetail.location_name}
               </CardTitle>
 
-              {/* Details Grid - Updated layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 text-sm">
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">PRIMARY NAME:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_name)}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">CONTACT:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
-                  </div>
+              {/* Details Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 text-sm">
+                <div>
+                  <span className="text-gray-600 font-medium">PRIMARY NAME:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.primary_name)}</span>
                 </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">PINCODE:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">RESERVATIONS:</span>
-                    <span className="ml-2 text-gray-900">338</span>
-                  </div>
+                <div>
+                  <span className="text-gray-600 font-medium">RESERVATIONS:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">338</span>
                 </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">PODS:</span>
-                    <span className="ml-2 text-gray-900">0</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-600 font-medium min-w-[120px]">USERS:</span>
-                    <span className="ml-2 text-gray-900">114</span>
-                  </div>
+                <div>
+                  <span className="text-gray-600 font-medium">PAYMENT MODE:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
                 </div>
-
-                <div className="md:col-span-2 lg:col-span-3">
-                  <div className="flex items-start mt-4">
-                    <span className="text-gray-600 font-medium min-w-[120px]">ADDRESS:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_address)}</span>
-                  </div>
-                  <div className="flex items-center mt-4">
-                    <span className="text-gray-600 font-medium min-w-[120px]">PAYMENT MODE:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
-                  </div>
+                <div>
+                  <span className="text-gray-600 font-medium">CONTACT:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">PODS:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">0</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">USERS:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">114</span>
+                </div>
+                <div>
+                  <span className="text-gray-600 font-medium">PINCODE:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
+                </div>
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <span className="text-gray-600 font-medium">ADDRESS:</span>
+                  <span className="ml-2 md:ml-4 block md:inline text-gray-900">{formatValue(locationDetail.location_address)}</span>
                 </div>
               </div>
             </div>
@@ -200,60 +195,60 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
           {/* Additional Details (Hidden by default) */}
           {showHiddenSection && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 text-sm border-t pt-6">
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">STATUS:</span>
+              <div>
+                <span className="text-gray-600 font-medium">STATUS:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.status)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">PRIMARY FE:</span>
+              <div>
+                <span className="text-gray-600 font-medium">PRIMARY FE:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_fe)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">PRIMARY BD:</span>
+              <div>
+                <span className="text-gray-600 font-medium">PRIMARY BD:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_bd)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">SECONDARY NAME:</span>
+              <div>
+                <span className="text-gray-600 font-medium">SECONDARY NAME:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_name)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">SECONDARY FE:</span>
+              <div>
+                <span className="text-gray-600 font-medium">SECONDARY FE:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_fe)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">SECONDARY CONTACT:</span>
+              <div>
+                <span className="text-gray-600 font-medium">SECONDARY CONTACT:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_contact)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">LATITUDE:</span>
+              <div>
+                <span className="text-gray-600 font-medium">LATITUDE:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.map_latitude)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">LONGITUDE:</span>
+              <div>
+                <span className="text-gray-600 font-medium">LONGITUDE:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.map_longitude)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">STATE:</span>
+              <div>
+                <span className="text-gray-600 font-medium">STATE:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_state)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">DOCS STATUS:</span>
+              <div>
+                <span className="text-gray-600 font-medium">DOCS STATUS:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.docs_status)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">BD TAG:</span>
+              <div>
+                <span className="text-gray-600 font-medium">BD TAG:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.bd_tag)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">BD DETAILS:</span>
+              <div>
+                <span className="text-gray-600 font-medium">BD DETAILS:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.bd_details)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">CREATED AT:</span>
+              <div>
+                <span className="text-gray-600 font-medium">CREATED AT:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.created_at)}</span>
               </div>
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium min-w-[120px]">UPDATED AT:</span>
+              <div>
+                <span className="text-gray-600 font-medium">UPDATED AT:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.updated_at)}</span>
               </div>
             </div>
@@ -261,20 +256,12 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         </CardContent>
       </Card>
 
-      {/* Reservations Card */}
-      <Card className="bg-white shadow-sm rounded-xl border-gray-200">
-        <CardHeader>
-          <CardTitle>Reservations</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LocationReservationsTable
-            locationId={locationId}
-            isMobile={isMobile}
-            onStandardReservationClick={onStandardReservationClick}
-            onAdhocReservationClick={onAdhocReservationClick}
-          />
-        </CardContent>
-      </Card>
+      {/* Reservations Tables */}
+      <LocationReservationsTable
+        locationId={locationId}
+        onStandardReservationClick={onStandardReservationClick}
+        onAdhocReservationClick={onAdhocReservationClick}
+      />
 
       {/* Popups */}
       <AssignFeBdPopup
