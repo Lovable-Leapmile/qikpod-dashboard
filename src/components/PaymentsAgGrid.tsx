@@ -171,7 +171,7 @@ const PaymentsAgGrid = () => {
     sortable: true,
     filter: true,
     flex: 0.8,
-    minWidth: 40,
+    width: 40,
     cellRenderer: StatusRenderer
   }, {
     headerName: 'Action',
