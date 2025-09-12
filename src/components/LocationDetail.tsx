@@ -10,21 +10,21 @@ import CreateUserPopup from './CreateUserPopup';
 import PaymentModePopup from './PaymentModePopup';
 import EditLocationPopup from './EditLocationPopup';
 import { useMediaQuery } from '@/hooks/use-media-query';
-
 interface LocationDetailProps {
   locationId: number;
   onBack: () => void;
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
-
 const LocationDetail: React.FC<LocationDetailProps> = ({
   locationId,
   onBack,
   onStandardReservationClick,
   onAdhocReservationClick
 }) => {
-  const { accessToken } = useAuth();
+  const {
+    accessToken
+  } = useAuth();
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHiddenSection, setShowHiddenSection] = useState(false);
@@ -33,7 +33,6 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   const [showPaymentModePopup, setShowPaymentModePopup] = useState(false);
   const [showEditLocationPopup, setShowEditLocationPopup] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
-
   const fetchLocationDetail = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -46,25 +45,20 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchLocationDetail();
   }, [locationId, accessToken]);
-
   const formatValue = (value: any): string => {
     if (value === null || value === undefined || value === 'null' || value === '') {
       return 'N/A';
     }
     return String(value);
   };
-
   const handlePopupSuccess = () => {
     fetchLocationDetail();
   };
-
   if (loading) {
-    return (
-      <div className="space-y-6 p-4 md:p-6">
+    return <div className="space-y-6 p-4 md:p-6">
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
@@ -74,13 +68,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Loading location details...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!locationDetail) {
-    return (
-      <div className="space-y-6 p-4 md:p-6">
+    return <div className="space-y-6 p-4 md:p-6">
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
@@ -90,24 +81,16 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Location not found</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6 p-4 md:p-6">
+  return <div className="space-y-6 p-4 md:p-6">
       {/* Navigation */}
       <div className="flex items-center space-x-4">
         <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to Locations</span>
         </Button>
-        {isMobile && (
-          <div className="flex items-center text-sm text-gray-500 ml-auto">
-            <Smartphone className="w-4 h-4 mr-1" />
-            Mobile View
-          </div>
-        )}
+        {isMobile}
       </div>
 
       {/* Location Details Card */}
@@ -115,11 +98,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <CardHeader className="pb-6 pt-8">
           <div className="flex flex-col md:flex-row md:items-start space-y-4 md:space-y-0 md:space-x-4">
             <div className="w-full md:w-32 h-32 md:h-40 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
-              <img
-                alt="Qikpod Logo"
-                src="/lovable-uploads/cb0256d6-2513-4ed8-af3c-637c2631975d.png"
-                className="w-10 h-auto object-fill"
-              />
+              <img alt="Qikpod Logo" src="/lovable-uploads/cb0256d6-2513-4ed8-af3c-637c2631975d.png" className="w-10 h-auto object-fill" />
             </div>
             <div className="flex-1">
               <CardTitle className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
@@ -208,8 +187,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
           </div>
 
           {/* Additional Details (Hidden by default) */}
-          {showHiddenSection && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 text-sm border-t pt-6">
+          {showHiddenSection && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 text-sm border-t pt-6">
               <div>
                 <span className="text-gray-600 font-medium">STATUS:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.status)}</span>
@@ -266,54 +244,25 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
                 <span className="text-gray-600 font-medium">UPDATED AT:</span>
                 <span className="ml-2 text-gray-900">{formatValue(locationDetail.updated_at)}</span>
               </div>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
 
       {/* Reservations Tables */}
-      <LocationReservationsTable
-        locationId={locationId}
-        onStandardReservationClick={onStandardReservationClick}
-        onAdhocReservationClick={onAdhocReservationClick}
-      />
+      <LocationReservationsTable locationId={locationId} onStandardReservationClick={onStandardReservationClick} onAdhocReservationClick={onAdhocReservationClick} />
 
       {/* Popups */}
-      <AssignFeBdPopup
-        open={showAssignFeBdPopup}
-        onOpenChange={setShowAssignFeBdPopup}
-        locationId={locationId}
-        initialValues={{
-          primary_fe: locationDetail.primary_fe,
-          secondary_fe: locationDetail.secondary_fe,
-          primary_bd: locationDetail.primary_bd
-        }}
-        onSuccess={handlePopupSuccess}
-      />
+      <AssignFeBdPopup open={showAssignFeBdPopup} onOpenChange={setShowAssignFeBdPopup} locationId={locationId} initialValues={{
+      primary_fe: locationDetail.primary_fe,
+      secondary_fe: locationDetail.secondary_fe,
+      primary_bd: locationDetail.primary_bd
+    }} onSuccess={handlePopupSuccess} />
 
-      <CreateUserPopup
-        open={showCreateUserPopup}
-        onOpenChange={setShowCreateUserPopup}
-        locationId={locationId}
-        onSuccess={handlePopupSuccess}
-      />
+      <CreateUserPopup open={showCreateUserPopup} onOpenChange={setShowCreateUserPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
 
-      <PaymentModePopup
-        open={showPaymentModePopup}
-        onOpenChange={setShowPaymentModePopup}
-        locationId={locationId}
-        initialValue={locationDetail.payment_mode}
-        onSuccess={handlePopupSuccess}
-      />
+      <PaymentModePopup open={showPaymentModePopup} onOpenChange={setShowPaymentModePopup} locationId={locationId} initialValue={locationDetail.payment_mode} onSuccess={handlePopupSuccess} />
 
-      <EditLocationPopup
-        open={showEditLocationPopup}
-        onOpenChange={setShowEditLocationPopup}
-        locationId={locationId}
-        onSuccess={handlePopupSuccess}
-      />
-    </div>
-  );
+      <EditLocationPopup open={showEditLocationPopup} onOpenChange={setShowEditLocationPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
+    </div>;
 };
-
 export default LocationDetail;
