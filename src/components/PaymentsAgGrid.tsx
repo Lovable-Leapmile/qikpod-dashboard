@@ -176,7 +176,7 @@ const PaymentsAgGrid = () => {
   }, {
     headerName: 'Action',
     field: 'action',
-    width: 80,
+    width: 120,
     cellRenderer: ActionRenderer,
     sortable: false,
     filter: false,
