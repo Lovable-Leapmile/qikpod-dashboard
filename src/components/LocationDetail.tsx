@@ -261,7 +261,6 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         locationId={locationId}
         onStandardReservationClick={onStandardReservationClick}
         onAdhocReservationClick={onAdhocReservationClick}
-        isMobile={isMobile}
       />
 
       {/* Popups */}
