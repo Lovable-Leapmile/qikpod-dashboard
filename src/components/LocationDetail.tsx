@@ -10,21 +10,21 @@ import CreateUserPopup from './CreateUserPopup';
 import PaymentModePopup from './PaymentModePopup';
 import EditLocationPopup from './EditLocationPopup';
 import { useMediaQuery } from '@/hooks/use-media-query';
+
 interface LocationDetailProps {
   locationId: number;
   onBack: () => void;
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
 }
+
 const LocationDetail: React.FC<LocationDetailProps> = ({
   locationId,
   onBack,
   onStandardReservationClick,
   onAdhocReservationClick
 }) => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHiddenSection, setShowHiddenSection] = useState(false);
@@ -33,6 +33,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   const [showPaymentModePopup, setShowPaymentModePopup] = useState(false);
   const [showEditLocationPopup, setShowEditLocationPopup] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
+
   const fetchLocationDetail = async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -45,20 +46,25 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchLocationDetail();
   }, [locationId, accessToken]);
+
   const formatValue = (value: any): string => {
     if (value === null || value === undefined || value === 'null' || value === '') {
       return 'N/A';
     }
     return String(value);
   };
+
   const handlePopupSuccess = () => {
     fetchLocationDetail();
   };
+
   if (loading) {
-    return <div className="space-y-6 p-4 md:p-6">
+    return (
+      <div className="space-y-6 p-4 md:p-6">
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
@@ -68,10 +74,13 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Loading location details...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
+
   if (!locationDetail) {
-    return <div className="space-y-6 p-4 md:p-6">
+    return (
+      <div className="space-y-6 p-4 md:p-6">
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
             <ArrowLeft className="w-4 h-4" />
@@ -81,188 +90,207 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         <div className="text-center py-12">
           <p className="text-gray-500">Location not found</p>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="space-y-6 p-4 md:p-6">
+
+  return (
+    <div className="space-y-6 p-4 md:p-6">
       {/* Navigation */}
       <div className="flex items-center space-x-4">
         <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to Locations</span>
         </Button>
-        {isMobile}
       </div>
 
-      {/* Location Details Card */}
+      {/* Location Details Card - Made more compact */}
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
-        <CardHeader className="pb-6 pt-8">
-          <div className="flex flex-col md:flex-row md:items-start space-y-4 md:space-y-0 md:space-x-4">
-            <div className="w-full md:w-32 h-32 md:h-40 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
-              <img alt="Qikpod Logo" src="/lovable-uploads/cb0256d6-2513-4ed8-af3c-637c2631975d.png" className="w-10 h-auto object-fill" />
+        <CardHeader className="pb-3 pt-4">
+          <CardTitle className="text-lg md:text-xl font-bold text-gray-900 mb-3">
+            Location Details: {locationDetail.location_name}
+          </CardTitle>
+
+          {/* Details Grid - More compact layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+            {/* Row 1 */}
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">PRIMARY NAME:</span>
+              <span className="ml-1 text-gray-900">{formatValue(locationDetail.primary_name)}</span>
             </div>
-            <div className="flex-1">
-              <CardTitle className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                Location Details: {locationDetail.location_name}
-              </CardTitle>
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">CONTACT:</span>
+              <span className="ml-1 text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
+            </div>
 
-              {/* Details Grid - Updated layout as requested */}
-              <div className="space-y-4 text-sm">
-                {/* Primary Name and Contact in one line */}
-                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
-                  <div>
-                    <span className="text-gray-600 font-medium">PRIMARY NAME:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_name)}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 font-medium">CONTACT:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_contact)}</span>
-                  </div>
-                </div>
+            {/* Row 2 */}
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">PINCODE:</span>
+              <span className="ml-1 text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
+            </div>
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">RESERVATIONS:</span>
+              <span className="ml-1 text-gray-900">338</span>
+            </div>
 
-                {/* Pincode and Reservations in one line */}
-                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
-                  <div>
-                    <span className="text-gray-600 font-medium">PINCODE:</span>
-                    <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 font-medium">RESERVATIONS:</span>
-                    <span className="ml-2 text-gray-900">338</span>
-                  </div>
-                </div>
+            {/* Row 3 */}
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">PODS:</span>
+              <span className="ml-1 text-gray-900">0</span>
+            </div>
+            <div className="truncate">
+              <span className="text-gray-600 font-medium">USERS:</span>
+              <span className="ml-1 text-gray-900">114</span>
+            </div>
 
-                {/* Pods and Users in one line */}
-                <div className="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0">
-                  <div>
-                    <span className="text-gray-600 font-medium">PODS:</span>
-                    <span className="ml-2 text-gray-900">0</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 font-medium">USERS:</span>
-                    <span className="ml-2 text-gray-900">114</span>
-                  </div>
-                </div>
+            {/* Row 4 */}
+            <div className="truncate md:col-span-2">
+              <span className="text-gray-600 font-medium">PAYMENT MODE:</span>
+              <span className="ml-1 text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
+            </div>
 
-                {/* Payment Mode on separate line */}
-                <div>
-                  <span className="text-gray-600 font-medium">PAYMENT MODE:</span>
-                  <span className="ml-2 text-gray-900">{formatValue(locationDetail.payment_mode)}</span>
-                </div>
-
-                {/* Address on separate line */}
-                <div>
-                  <span className="text-gray-600 font-medium">ADDRESS:</span>
-                  <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_address)}</span>
-                </div>
-              </div>
+            {/* Row 5 */}
+            <div className="truncate md:col-span-2">
+              <span className="text-gray-600 font-medium">ADDRESS:</span>
+              <span className="ml-1 text-gray-900 text-xs md:text-sm">{formatValue(locationDetail.location_address)}</span>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pb-8">
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2 md:gap-3 mb-6 justify-center md:justify-start">
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm" onClick={() => setShowAssignFeBdPopup(true)}>
+        <CardContent className="pb-4">
+          {/* Action Buttons - Made more compact */}
+          <div className="flex flex-wrap gap-2 md:gap-3 mb-3 justify-center md:justify-start">
+            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowAssignFeBdPopup(true)}>
               Assign FE/BD
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm" onClick={() => setShowCreateUserPopup(true)}>
+            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowCreateUserPopup(true)}>
               Create User
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm" onClick={() => setShowPaymentModePopup(true)}>
+            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowPaymentModePopup(true)}>
               Payment Mode
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm" onClick={() => setShowEditLocationPopup(true)}>
+            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowEditLocationPopup(true)}>
               Edit
             </Button>
-            <Button variant="destructive" className="rounded-lg text-xs md:text-sm">
+            <Button variant="destructive" className="rounded-lg text-xs md:text-sm h-8 px-2">
               Delete
             </Button>
           </div>
 
           {/* Hide/Show Toggle */}
-          <div className="mb-6 text-center md:text-left">
-            <Button variant="ghost" onClick={() => setShowHiddenSection(!showHiddenSection)} className="flex items-center space-x-2 text-gray-600 mx-auto md:mx-0">
-              {showHiddenSection ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          <div className="mb-3 text-center md:text-left">
+            <Button variant="ghost" onClick={() => setShowHiddenSection(!showHiddenSection)} className="flex items-center space-x-1 text-gray-600 mx-auto md:mx-0 h-8 text-xs">
+              {showHiddenSection ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
               <span>{showHiddenSection ? 'Hide' : 'Show More Details'}</span>
             </Button>
           </div>
 
-          {/* Additional Details (Hidden by default) */}
-          {showHiddenSection && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 text-sm border-t pt-6">
-              <div>
+          {/* Additional Details (Hidden by default) - Made more compact */}
+          {showHiddenSection && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 text-xs md:text-sm border-t pt-3">
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">STATUS:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.status)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.status)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">PRIMARY FE:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_fe)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.primary_fe)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">PRIMARY BD:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.primary_bd)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.primary_bd)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">SECONDARY NAME:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_name)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.secondary_name)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">SECONDARY FE:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_fe)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.secondary_fe)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">SECONDARY CONTACT:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.secondary_contact)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.secondary_contact)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">LATITUDE:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.map_latitude)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.map_latitude)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">LONGITUDE:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.map_longitude)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.map_longitude)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">STATE:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.location_state)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.location_state)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">DOCS STATUS:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.docs_status)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.docs_status)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">BD TAG:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.bd_tag)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.bd_tag)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">BD DETAILS:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.bd_details)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.bd_details)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">CREATED AT:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.created_at)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.created_at)}</span>
               </div>
-              <div>
+              <div className="truncate">
                 <span className="text-gray-600 font-medium">UPDATED AT:</span>
-                <span className="ml-2 text-gray-900">{formatValue(locationDetail.updated_at)}</span>
+                <span className="ml-1 text-gray-900">{formatValue(locationDetail.updated_at)}</span>
               </div>
-            </div>}
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Reservations Tables */}
-      <LocationReservationsTable locationId={locationId} onStandardReservationClick={onStandardReservationClick} onAdhocReservationClick={onAdhocReservationClick} />
+      <LocationReservationsTable
+        locationId={locationId}
+        onStandardReservationClick={onStandardReservationClick}
+        onAdhocReservationClick={onAdhocReservationClick}
+      />
 
       {/* Popups */}
-      <AssignFeBdPopup open={showAssignFeBdPopup} onOpenChange={setShowAssignFeBdPopup} locationId={locationId} initialValues={{
-      primary_fe: locationDetail.primary_fe,
-      secondary_fe: locationDetail.secondary_fe,
-      primary_bd: locationDetail.primary_bd
-    }} onSuccess={handlePopupSuccess} />
+      <AssignFeBdPopup
+        open={showAssignFeBdPopup}
+        onOpenChange={setShowAssignFeBdPopup}
+        locationId={locationId}
+        initialValues={{
+          primary_fe: locationDetail.primary_fe,
+          secondary_fe: locationDetail.secondary_fe,
+          primary_bd: locationDetail.primary_bd
+        }}
+        onSuccess={handlePopupSuccess}
+      />
 
-      <CreateUserPopup open={showCreateUserPopup} onOpenChange={setShowCreateUserPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
+      <CreateUserPopup
+        open={showCreateUserPopup}
+        onOpenChange={setShowCreateUserPopup}
+        locationId={locationId}
+        onSuccess={handlePopupSuccess}
+      />
 
-      <PaymentModePopup open={showPaymentModePopup} onOpenChange={setShowPaymentModePopup} locationId={locationId} initialValue={locationDetail.payment_mode} onSuccess={handlePopupSuccess} />
+      <PaymentModePopup
+        open={showPaymentModePopup}
+        onOpenChange={setShowPaymentModePopup}
+        locationId={locationId}
+        initialValue={locationDetail.payment_mode}
+        onSuccess={handlePopupSuccess}
+      />
 
-      <EditLocationPopup open={showEditLocationPopup} onOpenChange={setShowEditLocationPopup} locationId={locationId} onSuccess={handlePopupSuccess} />
-    </div>;
+      <EditLocationPopup
+        open={showEditLocationPopup}
+        onOpenChange={setShowEditLocationPopup}
+        locationId={locationId}
+        onSuccess={handlePopupSuccess}
+      />
+    </div>
+  );
 };
+
 export default LocationDetail;
