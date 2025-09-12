@@ -132,7 +132,7 @@ const LogsAgGrid = () => {
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium text-primary'
+      cellClass: 'font-medium text-black' // Changed from text-primary (yellow) to text-black
     },
     {
       headerName: 'Log Level',
@@ -321,7 +321,7 @@ const LogsAgGrid = () => {
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
-                          <div className="text-lg font-semibold mt-1">{log.log_id}</div>
+                          <div className="text-lg font-semibold text-black mt-1">{log.log_id}</div> {/* Changed to text-black */}
                         </div>
                         <span className={cn('px-2 py-1 rounded-full text-xs font-semibold self-start', {
                           'bg-blue-100 text-blue-800': log.log_level === 'INFO',
