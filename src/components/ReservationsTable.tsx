@@ -120,14 +120,11 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
-        <div className="text-muted-foreground">
-          {date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          })}
-        </div>
+        {date.toLocaleDateString('en-IN')} • {date.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })}
       </div>
     );
   };
@@ -374,7 +371,11 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                             <span className="font-medium text-gray-700">Status:</span> {reservation.status}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Created At:</span> {new Date(reservation.created_at).toLocaleString()}
+                            <span className="font-medium text-gray-700">Created At:</span> {new Date(reservation.created_at).toLocaleDateString('en-IN')} • {new Date(reservation.created_at).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
                           </div>
                         </div>
                       </CardContent>
@@ -403,13 +404,25 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                             <span className="font-medium text-gray-700">User Phone:</span> {reservation.user_phone}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Drop Time:</span> {new Date(reservation.drop_time).toLocaleString()}
+                            <span className="font-medium text-gray-700">Drop Time:</span> {new Date(reservation.drop_time).toLocaleDateString('en-IN')} • {new Date(reservation.drop_time).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Pickup Time:</span> {new Date(reservation.pickup_time).toLocaleString()}
+                            <span className="font-medium text-gray-700">Pickup Time:</span> {new Date(reservation.pickup_time).toLocaleDateString('en-IN')} • {new Date(reservation.pickup_time).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">RTO Pickup:</span> {new Date(reservation.rto_picktime).toLocaleString()}
+                            <span className="font-medium text-gray-700">RTO Pickup:</span> {new Date(reservation.rto_picktime).toLocaleDateString('en-IN')} • {new Date(reservation.rto_picktime).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
                           </div>
                           <div className="text-sm">
                             <span className="font-medium text-gray-700">Status:</span> {reservation.reservation_status}
