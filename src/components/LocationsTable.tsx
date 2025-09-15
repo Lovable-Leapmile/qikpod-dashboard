@@ -12,13 +12,15 @@ import { MapPin, Eye, RefreshCw, Search } from 'lucide-react';
 import { dashboardApi, Location } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
-
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
 }
-
-const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
-  const { accessToken } = useAuth();
+const LocationsTable: React.FC<LocationsTableProps> = ({
+  onLocationClick
+}) => {
+  const {
+    accessToken
+  } = useAuth();
   const gridRef = useRef<AgGridReact>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
   const [pageSize, setPageSize] = useState(25);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
     setLoading(true);
@@ -40,11 +41,9 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       setLoading(false);
     }
   }, [accessToken, pageSize]);
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
   useEffect(() => {
     if (autoRefresh) {
       intervalRef.current = setInterval(fetchData, 2 * 60 * 1000);
@@ -60,95 +59,78 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       }
     };
   }, [autoRefresh, fetchData]);
-
-  const ActionRenderer = ({ data }: { data: Location }) => {
-    return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onLocationClick(data.id);
-        }}
-        className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-        title="View Location Details"
-      >
+  const ActionRenderer = ({
+    data
+  }: {
+    data: Location;
+  }) => {
+    return <Button variant="ghost" size="sm" onClick={e => {
+      e.stopPropagation();
+      onLocationClick(data.id);
+    }} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black" title="View Location Details">
         <Eye className="h-4 w-4" />
-      </Button>
-    );
+      </Button>;
   };
-
-  const columnDefs: ColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      sortable: true,
-      filter: true,
-      width: 80,
-      cellClass: 'font-medium text-center'
-    },
-    {
-      field: 'primary_name',
-      headerName: 'Name',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'font-medium'
-    },
-    {
-      field: 'location_name',
-      headerName: 'Location',
-      sortable: true,
-      filter: true,
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    },
-    {
-      field: 'location_address',
-      headerName: 'Address',
-      sortable: true,
-      filter: true,
-      flex: 2,
-      minWidth: 200,
-      cellClass: 'text-muted-foreground',
-      tooltipField: 'location_address'
-    },
-    {
-      field: 'location_pincode',
-      headerName: 'Pincode',
-      sortable: true,
-      filter: true,
-      width: 120,
-      cellClass: 'text-muted-foreground text-center'
-    },
-    {
-      headerName: 'Action',
-      width: 100,
-      cellRenderer: ActionRenderer,
-      sortable: false,
-      filter: false,
-      resizable: false,
-      cellClass: ['flex', 'items-center', 'justify-center']
-    }
-  ];
-
+  const columnDefs: ColDef[] = [{
+    field: 'id',
+    headerName: 'ID',
+    sortable: true,
+    filter: true,
+    width: 80,
+    cellClass: 'font-medium text-center'
+  }, {
+    field: 'primary_name',
+    headerName: 'Name',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'font-medium'
+  }, {
+    field: 'location_name',
+    headerName: 'Location',
+    sortable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 150,
+    cellClass: 'text-muted-foreground'
+  }, {
+    field: 'location_address',
+    headerName: 'Address',
+    sortable: true,
+    filter: true,
+    flex: 2,
+    minWidth: 200,
+    cellClass: 'text-muted-foreground',
+    tooltipField: 'location_address'
+  }, {
+    field: 'location_pincode',
+    headerName: 'Pincode',
+    sortable: true,
+    filter: true,
+    width: 120,
+    cellClass: 'text-muted-foreground text-center'
+  }, {
+    headerName: 'Action',
+    width: 100,
+    cellRenderer: ActionRenderer,
+    sortable: false,
+    filter: false,
+    resizable: false,
+    cellClass: ['flex', 'items-center', 'justify-center']
+  }];
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
-
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
       gridRef.current.api.setGridOption('quickFilterText', value);
     }
   }, []);
-
   const refreshData = useCallback(() => {
     fetchData();
   }, [fetchData]);
-
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
@@ -156,11 +138,8 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
       });
     }
   };
-
   const hasData = locations.length > 0;
-
-  return (
-    <div className="w-full h-full flex flex-col animate-fade-in">
+  return <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
@@ -176,17 +155,12 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
               {/* Search */}
               <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search locations..."
-                  value={globalFilter}
-                  onChange={(e) => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
-                />
+                <Input placeholder="Search locations..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10" />
               </div>
 
               {/* Page Size Selector */}
               <div className="flex items-center space-x-2">
-                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
                   <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
@@ -209,64 +183,35 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
 
       {/* Content Section */}
       <div className="flex-1 w-full">
-        {loading ? (
-          <div className="flex items-center justify-center h-[200px]">
+        {loading ? <div className="flex items-center justify-center h-[200px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div>
-        ) : hasData ? (
-          <>
+          </div> : hasData ? <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact
-                  ref={gridRef}
-                  rowData={locations}
-                  columnDefs={columnDefs}
-                  defaultColDef={{
-                    resizable: true,
-                    sortable: true,
-                    filter: true,
-                    cellClass: 'flex items-center'
-                  }}
-                  pagination={true}
-                  paginationPageSize={pageSize}
-                  loading={loading}
-                  suppressRowHoverHighlight={false}
-                  suppressCellFocus={true}
-                  animateRows={true}
-                  rowBuffer={10}
-                  enableCellTextSelection={true}
-                  onGridReady={onGridReady}
-                  rowHeight={36}
-                  headerHeight={38}
-                  suppressColumnVirtualisation={true}
-                  rowSelection="single"
-                  suppressRowClickSelection={true}
-                  quickFilterText={globalFilter}
-                />
+                <AgGridReact ref={gridRef} rowData={locations} columnDefs={columnDefs} defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+              cellClass: 'flex items-center'
+            }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} quickFilterText={globalFilter} />
               </div>
             </div>
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {locations.map((location) => (
-                  <Card key={location.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                {locations.map(location => <Card key={location.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
                           <div className="text-lg font-semibold mt-1">{location.primary_name}</div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onLocationClick(location.id);
-                          }}
-                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-                        >
+                        <Button variant="ghost" size="sm" onClick={e => {
+                    e.stopPropagation();
+                    onLocationClick(location.id);
+                  }} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
@@ -282,21 +227,11 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick }) => {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
             </div>
-          </>
-        ) : (
-          <NoDataIllustration
-            title="No locations found"
-            description={locations.length === 0 ? "No locations data available." : "No matching locations found."}
-            icon="map-pin"
-          />
-        )}
+          </> : <NoDataIllustration title="No locations found" description={locations.length === 0 ? "No locations data available." : "No matching locations found."} icon="map-pin" />}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LocationsTable;
