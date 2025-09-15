@@ -43,9 +43,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        setAccessToken(token);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
+
+        // Check if stored user is not a customer
+        if (parsedUser.user_type && parsedUser.user_type.toLowerCase() === 'customer') {
+          // Clear customer data from storage
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user_data');
+          toast.error('Customer accounts are not allowed to access this application');
+        } else {
+          setAccessToken(token);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        }
       } catch (error) {
         // Clear invalid data
         localStorage.removeItem('access_token');
@@ -56,6 +65,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = (token: string, userData: User) => {
+    // Double-check that user is not a customer before allowing login
+    if (userData.user_type && userData.user_type.toLowerCase() === 'customer') {
+      toast.error('Customer accounts are not allowed to access this application');
+      return;
+    }
+
     localStorage.setItem('access_token', token);
     localStorage.setItem('user_data', JSON.stringify(userData));
     setAccessToken(token);
@@ -87,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
 
       const data = await response.json();
-      
+
       if (response.ok) {
         toast.success('OTP sent successfully!');
         return true;
@@ -116,7 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
 
       const data = await response.json();
-      
+
       if (response.ok && data.access_token) {
         // Use the dynamic auth token to check user type
         try {
@@ -132,22 +147,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           );
 
           const userCheckData = await userCheckResponse.json();
-          
+
           if (userCheckResponse.ok && userCheckData.records && userCheckData.records[0]) {
             const userType = userCheckData.records[0].user_type;
-            
+            const userName = userCheckData.records[0].user_name;
+
             // Block customers from accessing the dashboard
-            if (userType === 'customer') {
+            if (userType && userType.toLowerCase() === 'customer') {
               toast.error('Customer accounts are not allowed to access this application');
               return { success: false };
             }
+
+            // Add user data to the response for login
+            data.records = userCheckData.records;
+          } else {
+            toast.error('Failed to retrieve user information');
+            return { success: false };
           }
         } catch (userCheckError) {
           console.error('User type check error:', userCheckError);
           toast.error('Failed to verify user permissions');
           return { success: false };
         }
-        
+
         return { success: true, data };
       } else {
         toast.error(data.message || 'Invalid OTP');
