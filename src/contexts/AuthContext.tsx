@@ -117,10 +117,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const data = await response.json();
       
-      if (response.ok) {
-        // Check if user_type is customer and prevent login
-        if (data.records && data.records[0] && data.records[0].user_type === 'customer') {
-          toast.error('Customer accounts are not allowed to access this application');
+      if (response.ok && data.access_token) {
+        // Use the dynamic auth token to check user type
+        try {
+          const userCheckResponse = await fetch(
+            `https://stagingv3.leapmile.com/podcore/users/?user_phone=${mobile}`,
+            {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${data.access_token}`,
+              },
+            }
+          );
+
+          const userCheckData = await userCheckResponse.json();
+          
+          if (userCheckResponse.ok && userCheckData.records && userCheckData.records[0]) {
+            const userType = userCheckData.records[0].user_type;
+            
+            // Block customers from accessing the dashboard
+            if (userType === 'customer') {
+              toast.error('Customer accounts are not allowed to access this application');
+              return { success: false };
+            }
+          }
+        } catch (userCheckError) {
+          console.error('User type check error:', userCheckError);
+          toast.error('Failed to verify user permissions');
           return { success: false };
         }
         

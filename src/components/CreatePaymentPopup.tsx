@@ -62,11 +62,14 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
       }
 
       const data = await response.json();
+      console.log('Payment API Response:', data);
       
       if (data.payment_url) {
+        toast.success('Payment request created successfully! Redirecting to payment gateway...');
         // Navigate directly to the payment URL
         window.location.href = data.payment_url;
       } else {
+        console.error('Payment response missing payment_url:', data);
         throw new Error('No payment URL received from the server');
       }
     } catch (error) {
