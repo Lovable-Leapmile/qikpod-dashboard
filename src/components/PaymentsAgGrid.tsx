@@ -227,9 +227,13 @@ const PaymentsAgGrid = () => {
           <span>Back</span>
         </Button>
 
-        <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black h-9 px-3">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Payment
+        <Button
+          onClick={() => setShowCreatePayment(true)}
+          className="flex items-center gap-2 h-8 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
+          size="sm"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Create Payment</span>
         </Button>
       </div>
 
@@ -464,7 +468,7 @@ const PaymentsAgGrid = () => {
                   pagination={true}
                   paginationPageSize={pageSize}
                   loading={loading}
-                  suppressRowHoverHighlight={false}
+                  suppressRowHoverHighlight=false
                   suppressCellFocus={true}
                   animateRows={true}
                   rowBuffer={10}
