@@ -18,9 +18,7 @@ const UsersPage: React.FC = () => {
 
   return (
     <Layout title="Users Management" breadcrumb="Users & Network / Users Management">
-      <div className="px-[4px]">
-        <UsersNetworkSection onBack={() => window.history.back()} />
-      </div>
+      <UsersNetworkSection onBack={() => window.history.back()} />
     </Layout>
   );
 };
