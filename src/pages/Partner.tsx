@@ -18,7 +18,9 @@ const PartnerPage: React.FC = () => {
 
   return (
     <Layout title="Partner Management" breadcrumb="Users & Network / Partner Management">
-      <Partner onBack={() => window.history.back()} />
+      <div className="px-[4px]">
+        <Partner onBack={() => window.history.back()} />
+      </div>
     </Layout>
   );
 };

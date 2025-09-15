@@ -53,11 +53,13 @@ const ReservationsPage: React.FC = () => {
 
   return (
     <Layout title="Reservations Management" breadcrumb="Operations / Reservations Management">
-      <Reservations 
-        onStandardReservationClick={handleStandardReservationClick}
-        onAdhocReservationClick={handleAdhocReservationClick}
-        onBack={() => window.history.back()}
-      />
+      <div className="px-[4px]">
+        <Reservations 
+          onStandardReservationClick={handleStandardReservationClick}
+          onAdhocReservationClick={handleAdhocReservationClick}
+          onBack={() => window.history.back()}
+        />
+      </div>
     </Layout>
   );
 };

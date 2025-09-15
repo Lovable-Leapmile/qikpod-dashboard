@@ -142,13 +142,13 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
       {/* Top Navigation Row */}
       <div className="flex flex-row items-center justify-between gap-4 w-full mb-4 sm:mb-6">
-        <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
+        <Button onClick={onBack} variant="outline" className="flex items-center space-x-2 h-8" size="sm">
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back</span>
           <span className="sm:hidden">Back</span>
         </Button>
 
-        <Button onClick={() => setShowAddUserPopup(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2">
+        <Button onClick={() => setShowAddUserPopup(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2 h-9 px-3">
           <Plus className="w-4 h-4" />
           <span className="hidden sm:inline">Add User</span>
           <span className="sm:hidden">Add</span>

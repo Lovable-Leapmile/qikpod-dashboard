@@ -39,7 +39,9 @@ const PodsPage: React.FC = () => {
 
   return (
     <Layout title="Pods Management" breadcrumb="Operations / Pods Management">
-      <PodsTable onPodClick={handlePodClick} />
+      <div className="px-[4px]">
+        <PodsTable onPodClick={handlePodClick} />
+      </div>
     </Layout>
   );
 };

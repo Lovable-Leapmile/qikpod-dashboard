@@ -5,7 +5,9 @@ import LogsAgGrid from '@/components/LogsAgGrid';
 const LogsPage = () => {
   return (
     <Layout title="Logs" breadcrumb="Logs">
-      <LogsAgGrid />
+      <div className="px-[4px]">
+        <LogsAgGrid />
+      </div>
     </Layout>
   );
 };

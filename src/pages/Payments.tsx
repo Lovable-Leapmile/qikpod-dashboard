@@ -5,7 +5,9 @@ import PaymentsAgGrid from '@/components/PaymentsAgGrid';
 const PaymentsPage = () => {
   return (
     <Layout title="Payments" breadcrumb="Payments">
-      <PaymentsAgGrid />
+      <div className="px-[4px]">
+        <PaymentsAgGrid />
+      </div>
     </Layout>
   );
 };

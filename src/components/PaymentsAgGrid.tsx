@@ -220,14 +220,14 @@ const PaymentsAgGrid = () => {
         <Button
           variant="outline"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 h-8"
           size="sm"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back</span>
         </Button>
 
-        <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+        <Button onClick={() => setShowCreatePayment(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black h-9 px-3">
           <Plus className="h-4 w-4 mr-2" />
           Create Payment
         </Button>

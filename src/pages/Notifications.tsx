@@ -323,7 +323,7 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <Layout title="Notification Centre" breadcrumb="Notifications">
-      <div className="space-y-6">
+      <div className="space-y-6 px-[4px]">
         {/* Back Button at the top */}
         <div className="mb-2">
           <Button onClick={() => navigate(-1)} variant="outline" size="sm" className="flex items-center gap-2 h-8">
