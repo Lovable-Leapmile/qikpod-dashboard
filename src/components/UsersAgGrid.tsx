@@ -139,7 +139,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
     const searchTerm = globalFilter.toLowerCase();
     return users.filter(user => user.user_name?.toLowerCase().includes(searchTerm) || user.user_type?.toLowerCase().includes(searchTerm) || user.user_phone?.toLowerCase().includes(searchTerm) || user.user_email?.toLowerCase().includes(searchTerm) || user.user_flatno?.toLowerCase().includes(searchTerm) || user.id?.toString().includes(searchTerm));
   }, [users, globalFilter]);
-  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-[4px]">
+  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
       {/* Top Navigation Row */}
       <div className="flex flex-row items-center justify-between gap-4 w-full mb-4 sm:mb-6">
         <Button onClick={onBack} variant="outline" className="flex items-center space-x-2">
