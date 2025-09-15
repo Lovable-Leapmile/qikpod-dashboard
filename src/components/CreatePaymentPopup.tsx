@@ -225,13 +225,21 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
               <SelectContent>
                 <SelectItem value="paytm">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                    <img
+                      src="https://pwebassets.paytm.com/commonwebassets/paytmweb/footer/images/paytmLogo.svg"
+                      alt="Paytm"
+                      className="w-4 h-4 object-contain"
+                    />
                     Paytm
                   </div>
                 </SelectItem>
                 <SelectItem value="razorpay">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-primary rounded"></div>
+                    <img
+                      src="https://app.qikpod.com/assets/assets/images/1545306239_rzp-glyph-positive_1.png"
+                      alt="Razorpay"
+                      className="w-4 h-4 object-contain"
+                    />
                     Razorpay
                   </div>
                 </SelectItem>
