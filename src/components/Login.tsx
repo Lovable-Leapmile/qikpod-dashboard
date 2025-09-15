@@ -99,7 +99,7 @@ const Login = () => {
                       const value = e.target.value.replace(/\D/g, '');
                       setMobile(value);
                     }}
-                    className="pl-10 h-12 border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
+                    className="pl-10 h-12 text-center text-lg border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
                     disabled={isLoading}
                   />
                 </div>
