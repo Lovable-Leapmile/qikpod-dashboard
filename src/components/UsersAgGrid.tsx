@@ -13,6 +13,7 @@ import NoDataIllustration from '@/components/ui/no-data-illustration';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import '@/styles/ag-grid.css';
+
 interface UsersAgGridProps {
   users: User[];
   loading: boolean;
@@ -20,6 +21,7 @@ interface UsersAgGridProps {
   onUserClick: (userId: number) => void;
   onRefreshUsers: () => void;
 }
+
 const ActionCellRenderer: React.FC<{
   data: User;
   onUserClick: (userId: number) => void;
@@ -34,6 +36,7 @@ const ActionCellRenderer: React.FC<{
       <Eye className="h-4 w-4" />
     </Button>
   </div>;
+
 const DateCellRenderer: React.FC<{
   value: string;
 }> = ({
@@ -45,6 +48,7 @@ const DateCellRenderer: React.FC<{
   };
   return <span>{formatDate(value)}</span>;
 };
+
 const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   users,
   loading,
@@ -56,6 +60,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(25);
   const [showAddUserPopup, setShowAddUserPopup] = useState(false);
+
   const columnDefs: ColDef[] = [{
     field: 'id',
     headerName: 'ID',
@@ -115,31 +120,45 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
     resizable: false,
     cellClass: ['flex', 'items-center', 'justify-center']
   }];
+
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
+
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
       gridRef.current.api.setGridOption('quickFilterText', value);
     }
   }, []);
+
   const refreshData = useCallback(() => {
     onRefreshUsers();
   }, [onRefreshUsers]);
+
   const handleAddUserSuccess = () => {
     onRefreshUsers();
     setShowAddUserPopup(false);
   };
+
   const hasData = users.length > 0;
 
   // Filter users based on search query for mobile view
   const filteredUsers = useMemo(() => {
     if (!globalFilter) return users;
     const searchTerm = globalFilter.toLowerCase();
-    return users.filter(user => user.user_name?.toLowerCase().includes(searchTerm) || user.user_type?.toLowerCase().includes(searchTerm) || user.user_phone?.toLowerCase().includes(searchTerm) || user.user_email?.toLowerCase().includes(searchTerm) || user.user_flatno?.toLowerCase().includes(searchTerm) || user.id?.toString().includes(searchTerm));
+    return users.filter(user =>
+      user.user_name?.toLowerCase().includes(searchTerm) ||
+      user.user_type?.toLowerCase().includes(searchTerm) ||
+      user.user_phone?.toLowerCase().includes(searchTerm) ||
+      user.user_email?.toLowerCase().includes(searchTerm) ||
+      user.user_flatno?.toLowerCase().includes(searchTerm) ||
+      user.id?.toString().includes(searchTerm)
+    );
   }, [users, globalFilter]);
-  return <div className="w-full h-full flex flex-col animate-fade-in sm:px-4 lg:px-6 px-0">
+
+  return (
+    <div className="w-full h-full flex flex-col animate-fade-in px-4">
       {/* Top Navigation Row */}
       <div className="flex flex-row items-center justify-between gap-4 w-full mb-4 sm:mb-6">
         <Button onClick={onBack} variant="outline" className="flex items-center space-x-2 h-8" size="sm">
@@ -168,7 +187,12 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
               {/* Search */}
               <div className="relative w-full sm:min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
-                <Input placeholder="Search..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10 text-xs h-8 w-full px-[32px]" />
+                <Input
+                  placeholder="Search..."
+                  value={globalFilter}
+                  onChange={e => handleGlobalFilter(e.target.value)}
+                  className="pl-10 text-xs h-8 w-full px-[32px]"
+                />
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
@@ -201,25 +225,49 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
 
       {/* Content Section */}
       <div className="flex-1 w-full">
-        {loading ? <div className="flex items-center justify-center h-[200px]">
+        {loading ? (
+          <div className="flex items-center justify-center h-[200px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div> : hasData ? <>
+          </div>
+        ) : hasData ? (
+          <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-200px)] sm:h-[calc(100vh-280px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact ref={gridRef} rowData={users} columnDefs={columnDefs} defaultColDef={{
-              resizable: true,
-              sortable: true,
-              filter: true,
-              cellClass: 'flex items-center'
-            }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} quickFilterText={globalFilter} />
+                <AgGridReact
+                  ref={gridRef}
+                  rowData={users}
+                  columnDefs={columnDefs}
+                  defaultColDef={{
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                    cellClass: 'flex items-center'
+                  }}
+                  pagination={true}
+                  paginationPageSize={pageSize}
+                  loading={loading}
+                  suppressRowHoverHighlight={false}
+                  suppressCellFocus={true}
+                  animateRows={true}
+                  rowBuffer={10}
+                  enableCellTextSelection={true}
+                  onGridReady={onGridReady}
+                  rowHeight={36}
+                  headerHeight={38}
+                  suppressColumnVirtualisation={true}
+                  rowSelection="single"
+                  suppressRowClickSelection={true}
+                  quickFilterText={globalFilter}
+                />
               </div>
             </div>
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pb-4">
-                {filteredUsers.map(user => <Card key={user.id} className="bg-white shadow-sm rounded-lg border-gray-200">
+                {filteredUsers.map(user => (
+                  <Card key={user.id} className="bg-white shadow-sm rounded-lg border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
@@ -228,9 +276,9 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
                           <div className="text-sm text-muted-foreground mt-1">{user.user_type}</div>
                         </div>
                         <Button variant="ghost" size="sm" onClick={e => {
-                    e.stopPropagation();
-                    onUserClick(user.id);
-                  }} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
+                          e.stopPropagation();
+                          onUserClick(user.id);
+                        }} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
@@ -246,14 +294,24 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
                         </div>
                       </div>
                     </CardContent>
-                  </Card>)}
+                  </Card>
+                ))}
               </div>
             </div>
-          </> : <NoDataIllustration title="No users found" description={users.length === 0 ? "No users data available." : "No matching users found."} icon="inbox" />}
+          </>
+        ) : (
+          <NoDataIllustration
+            title="No users found"
+            description={users.length === 0 ? "No users data available." : "No matching users found."}
+            icon="inbox"
+          />
+        )}
       </div>
 
       {/* Add User Popup */}
       <AddUserPopup open={showAddUserPopup} onOpenChange={setShowAddUserPopup} onSuccess={handleAddUserSuccess} />
-    </div>;
+    </div>
+  );
 };
+
 export default UsersAgGrid;

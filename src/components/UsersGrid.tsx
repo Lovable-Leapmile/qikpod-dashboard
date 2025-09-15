@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -87,13 +86,13 @@ const UsersGrid: React.FC<UsersGridProps> = ({
   }
 
   return (
-    <div className="mx-6 my-6 space-y-4">
+    <div className="space-y-4">
       <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50 hover:bg-gray-50">
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('user_name')}
               >
                 NAME
@@ -104,7 +103,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                 )}
               </TableHead>
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('user_type')}
               >
                 TYPE
@@ -115,7 +114,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                 )}
               </TableHead>
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('user_phone')}
               >
                 PHONE
@@ -126,7 +125,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                 )}
               </TableHead>
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('user_email')}
               >
                 EMAIL
@@ -137,7 +136,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                 )}
               </TableHead>
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('user_flatno')}
               >
                 FLAT NO
@@ -148,7 +147,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                 )}
               </TableHead>
               <TableHead 
-                className="px-6 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
+                className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
                 onClick={() => handleSort('created_at')}
               >
                 CREATED DATE
@@ -158,7 +157,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                   </span>
                 )}
               </TableHead>
-              <TableHead className="px-6 py-5 text-left text-sm font-semibold text-gray-600">
+              <TableHead className="px-4 py-5 text-left text-sm font-semibold text-gray-600">
                 ACTION
               </TableHead>
             </TableRow>
@@ -172,25 +171,25 @@ const UsersGrid: React.FC<UsersGridProps> = ({
                   hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-b-0
                 `}
               >
-                <TableCell className="px-6 py-5 text-sm text-gray-900 font-medium">
+                <TableCell className="px-4 py-5 text-sm text-gray-900 font-medium">
                   {user.user_name}
                 </TableCell>
-                <TableCell className="px-6 py-5 text-sm text-gray-700">
+                <TableCell className="px-4 py-5 text-sm text-gray-700">
                   {user.user_type}
                 </TableCell>
-                <TableCell className="px-6 py-5 text-sm text-gray-700">
+                <TableCell className="px-4 py-5 text-sm text-gray-700">
                   {user.user_phone}
                 </TableCell>
-                <TableCell className="px-6 py-5 text-sm text-gray-700">
+                <TableCell className="px-4 py-5 text-sm text-gray-700">
                   {user.user_email}
                 </TableCell>
-                <TableCell className="px-6 py-5 text-sm text-gray-700">
+                <TableCell className="px-4 py-5 text-sm text-gray-700">
                   {user.user_flatno}
                 </TableCell>
-                <TableCell className="px-6 py-5 text-sm text-gray-700">
+                <TableCell className="px-4 py-5 text-sm text-gray-700">
                   {formatDate(user.created_at)}
                 </TableCell>
-                <TableCell className="px-6 py-5">
+                <TableCell className="px-4 py-5">
                   <Button
                     variant="ghost"
                     size="sm"
