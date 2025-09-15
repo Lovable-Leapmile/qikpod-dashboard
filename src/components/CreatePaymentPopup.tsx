@@ -14,6 +14,36 @@ interface CreatePaymentPopupProps {
   onSuccess: () => void;
 }
 
+interface PaymentResponse {
+  status: string;
+  status_code: number;
+  message: string;
+  timestamp: string;
+  count: number;
+  rowcount: number;
+  records: Array<{
+    id: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    payment_reference_id: string;
+    payment_mode: string;
+    payment_type: string | null;
+    payment_amount: string;
+    payment_status: string;
+    payment_url: string;
+    payment_vendor: string;
+    payment_client_awbno: string;
+    payment_paid_id: string | null;
+    user_credits: string | null;
+    user_id: string | null;
+    payment_client_reference_id: string;
+  }>;
+  statusbool: boolean;
+  ok: boolean;
+  api_processing_time: number;
+}
+
 const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
   isOpen,
   onClose,
@@ -37,14 +67,14 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
   };
 
   const isFormValid = () => {
-    return formData.clientReferenceId && 
-           formData.awbNo && 
-           formData.amount && 
+    return formData.clientReferenceId &&
+           formData.awbNo &&
+           formData.amount &&
            formData.paymentMethod &&
            parseFloat(formData.amount) > 0;
   };
 
-  const createPayment = async () => {
+  const createPayment = async (): Promise<string | null> => {
     try {
       const response = await fetch(
         `https://stagingv3.leapmile.com/payments/payments/create_payment/?payment_client_awbno=${encodeURIComponent(formData.awbNo)}&amount=${encodeURIComponent(formData.amount)}&payment_client_reference_id=${encodeURIComponent(formData.clientReferenceId)}&payment_vendor=${encodeURIComponent(formData.paymentMethod)}`,
@@ -61,13 +91,11 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: PaymentResponse = await response.json();
       console.log('Payment API Response:', data);
-      
-      if (data.payment_url) {
-        toast.success('Payment request created successfully! Redirecting to payment gateway...');
-        // Navigate directly to the payment URL
-        window.location.href = data.payment_url;
+
+      if (data.records && data.records.length > 0 && data.records[0].payment_url) {
+        return data.records[0].payment_url;
       } else {
         console.error('Payment response missing payment_url:', data);
         throw new Error('No payment URL received from the server');
@@ -81,11 +109,17 @@ const CreatePaymentPopup: React.FC<CreatePaymentPopupProps> = ({
 
   const handlePayNow = async () => {
     if (!isFormValid()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      await createPayment();
+      const paymentUrl = await createPayment();
+
+      if (paymentUrl) {
+        toast.success('Payment request created successfully! Redirecting to payment gateway...');
+        // Navigate directly to the payment URL
+        window.location.href = paymentUrl;
+      }
     } catch (error) {
       console.error('Error in payment flow:', error);
     } finally {
