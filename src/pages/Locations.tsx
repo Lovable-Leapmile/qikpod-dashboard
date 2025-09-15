@@ -32,14 +32,18 @@ const LocationsPage: React.FC = () => {
   if (currentView === 'locationDetail' && selectedLocationId) {
     return (
       <Layout title="Location Details" breadcrumb="Operations / Locations Management / Location Details">
-        <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} />
+        <div className="px-1"> {/* Added 4px padding (px-1 = 4px) */}
+          <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} />
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout title="Locations Management" breadcrumb="Operations / Locations Management">
-      <LocationsTable onLocationClick={handleLocationClick} />
+      <div className="px-1"> {/* Added 4px padding (px-1 = 4px) */}
+        <LocationsTable onLocationClick={handleLocationClick} />
+      </div>
     </Layout>
   );
 };
