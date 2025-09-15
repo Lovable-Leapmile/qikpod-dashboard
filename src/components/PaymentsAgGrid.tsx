@@ -468,7 +468,7 @@ const PaymentsAgGrid = () => {
                   pagination={true}
                   paginationPageSize={pageSize}
                   loading={loading}
-                  suppressRowHoverHighlight=false
+                  suppressRowHoverHighlight={false}
                   suppressCellFocus={true}
                   animateRows={true}
                   rowBuffer={10}
