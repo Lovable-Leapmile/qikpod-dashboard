@@ -312,7 +312,7 @@ const NotificationsPage: React.FC = () => {
                 <div className="flex items-center gap-3 flex-wrap">
                   {/* Auto Refresh */}
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="auto-refresh" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked as boolean)} className="h-4 w-4 text-gray-300" />
+                    <Checkbox id="auto-refresh" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked as boolean)} className="h-4 w-4 text-gray-300 [&>span]:border-d1d5db" />
                     <Label htmlFor="auto-refresh" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
                       Auto Refresh
                     </Label>
