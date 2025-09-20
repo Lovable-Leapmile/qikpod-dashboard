@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, MapPin, Eye, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Eye, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, UserDetail as UserDetailType, UserLocation, UserReservation } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
@@ -143,9 +142,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
             {/* User Avatar/Icon */}
             <div className="flex-shrink-0">
               <div className="w-24 h-24 bg-[#FDDC4E] rounded-lg flex items-center justify-center">
-                <div className="w-12 h-12 bg-white rounded-md flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-gray-600" />
-                </div>
+                <User className="w-12 h-12 text-gray-600" />
               </div>
             </div>
 
