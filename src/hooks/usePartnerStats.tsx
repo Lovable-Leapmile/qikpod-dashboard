@@ -26,30 +26,33 @@ export const usePartnerStats = () => {
     
     setLoading(true);
     try {
-      const promises = stats.map(async (stat) => {
-        const response = await fetch(
-          `https://stagingv3.leapmile.com/podcore/partner_reservation/reservation_status/?reservation_status=${stat.status}&order_by_field=updated_at&order_by_type=DESC`,
-          {
-            headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${accessToken}`
-            }
+      const response = await fetch(
+        'https://stagingv3.leapmile.com/podcore/pod_monitor/?pod_type=reservation_details',
+        {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
           }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${stat.title}`);
         }
+      );
 
-        const data = await response.json();
-        return {
-          ...stat,
-          value: data.count || 0
-        };
-      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch partner statistics');
+      }
 
-      const updatedStats = await Promise.all(promises);
-      setStats(updatedStats);
+      const data = await response.json();
+      const record = data.records?.[0];
+
+      if (record) {
+        const updatedStats = [
+          { title: 'Pickup Pending', value: record.pickuppending || 0, color: 'text-orange-600', status: 'PickupPending' },
+          { title: 'Pickup Completed', value: record.pickupcompleted || 0, color: 'text-green-600', status: 'PickupCompleted' },
+          { title: 'RTO Pending', value: record.rtopending || 0, color: 'text-orange-600', status: 'RTOPending' },
+          { title: 'RTO Completed', value: record.rtocompleted || 0, color: 'text-green-600', status: 'RTOCompleted' },
+          { title: 'Drop Pending', value: record.droppending || 0, color: 'text-orange-600', status: 'DropPending' }
+        ];
+        setStats(updatedStats);
+      }
     } catch (error) {
       console.error('Error fetching partner stats:', error);
       toast({
