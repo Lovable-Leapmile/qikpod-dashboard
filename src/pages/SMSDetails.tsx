@@ -14,7 +14,7 @@ interface SMSDetailRecord {
   sms_vendor: string;
   sms_to_phone_number: string;
   updated_at: string;
-  status: string;
+  sms_delivery_status: string;
   sms_num_retries: number;
   sms_balance: number;
 }
@@ -139,7 +139,7 @@ const SMSDetailsPage: React.FC = () => {
     },
     {
       headerName: 'Status',
-      field: 'status',
+      field: 'sms_delivery_status',
       flex: 1,
       sortable: true,
       filter: true,
@@ -257,11 +257,11 @@ const SMSDetailsPage: React.FC = () => {
           <div className="text-sm font-medium text-gray-500">Status</div>
           <div className="text-sm">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              record.status === 'delivered' || record.status === 'success' ? 'bg-green-100 text-green-800' :
-              record.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+              record.sms_delivery_status === 'delivered' || record.sms_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
+              record.sms_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
               'bg-red-100 text-red-800'
             }`}>
-              {record.status}
+              {record.sms_delivery_status}
             </span>
           </div>
 

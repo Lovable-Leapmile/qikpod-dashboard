@@ -11,14 +11,16 @@ import Layout from '@/components/Layout';
 
 interface EmailDetailRecord {
   id: number;
-  vendor_name: string;
-  email: string;
-  notification_id: string;
-  app_id: string;
-  last_updated: string;
-  status: string;
-  no_of_tries: number;
-  balance_left: number;
+  email_vendor: string | null;
+  email_to_address: string;
+  email_reference_id: string | null;
+  email_delivery_status: string;
+  email_num_retries: number;
+  email_max_retries: number;
+  updated_at: string;
+  created_at: string;
+  email_from_address: string;
+  email_subject: string;
 }
 
 const EmailDetailsPage: React.FC = () => {
@@ -79,51 +81,67 @@ const EmailDetailsPage: React.FC = () => {
     }
   };
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    } catch {
+      return '-';
+    }
+  };
+
   const emailDetailColumnDefs: ColDef[] = [
     {
       headerName: 'Vendor Name',
-      field: 'vendor_name',
+      field: 'email_vendor',
       flex: 1,
       sortable: true,
       filter: true,
+      cellRenderer: (params: any) => params.value || '-',
     },
     {
       headerName: 'E-Mail',
-      field: 'email',
+      field: 'email_to_address',
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Notification ID',
-      field: 'notification_id',
+      field: 'email_reference_id',
       flex: 1,
       sortable: true,
       filter: true,
+      cellRenderer: (params: any) => params.value || '-',
     },
     {
       headerName: 'App ID',
-      field: 'app_id',
+      field: 'id',
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Last Updated',
-      field: 'last_updated',
+      field: 'updated_at',
       flex: 1,
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => {
-        if (params.value) {
-          return new Date(params.value).toLocaleString();
-        }
-        return '';
-      },
+      cellRenderer: (params: any) => formatDate(params.value),
     },
     {
       headerName: 'Status',
-      field: 'status',
+      field: 'email_delivery_status',
       flex: 1,
       sortable: true,
       filter: true,
@@ -133,23 +151,27 @@ const EmailDetailsPage: React.FC = () => {
           params.value === 'pending' ? 'bg-yellow-100 text-yellow-800' :
           'bg-red-100 text-red-800'
         }`}>
-          {params.value}
+          {params.value || '-'}
         </span>
       ),
     },
     {
       headerName: 'No of Tries',
-      field: 'no_of_tries',
+      field: 'email_num_retries',
       width: 120,
       sortable: true,
       filter: true,
     },
     {
       headerName: 'Balance Left',
-      field: 'balance_left',
       width: 120,
       sortable: true,
       filter: true,
+      cellRenderer: (params: any) => {
+        const maxRetries = params.data?.email_max_retries || 0;
+        const numRetries = params.data?.email_num_retries || 0;
+        return maxRetries - numRetries;
+      },
     },
   ];
 
@@ -181,39 +203,81 @@ const EmailDetailsPage: React.FC = () => {
       <div key={record.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
         <div className="grid grid-cols-2 gap-2">
           <div className="text-sm font-medium text-gray-500">Vendor Name</div>
-          <div className="text-sm text-gray-900">{record.vendor_name}</div>
+          <div className="text-sm text-gray-900">{record.email_vendor || '-'}</div>
 
           <div className="text-sm font-medium text-gray-500">E-Mail</div>
-          <div className="text-sm text-gray-900">{record.email}</div>
+          <div className="text-sm text-gray-900">{record.email_to_address}</div>
 
           <div className="text-sm font-medium text-gray-500">Notification ID</div>
-          <div className="text-sm text-gray-900">{record.notification_id}</div>
+          <div className="text-sm text-gray-900">{record.email_reference_id || '-'}</div>
 
           <div className="text-sm font-medium text-gray-500">App ID</div>
-          <div className="text-sm text-gray-900">{record.app_id}</div>
+          <div className="text-sm text-gray-900">{record.id}</div>
 
           <div className="text-sm font-medium text-gray-500">Last Updated</div>
-          <div className="text-sm text-gray-900">{new Date(record.last_updated).toLocaleString()}</div>
+          <div className="text-sm text-gray-900">{formatDate(record.updated_at)}</div>
 
           <div className="text-sm font-medium text-gray-500">Status</div>
           <div className="text-sm">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              record.status === 'delivered' || record.status === 'success' ? 'bg-green-100 text-green-800' :
-              record.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+              record.email_delivery_status === 'delivered' || record.email_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
+              record.email_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
               'bg-red-100 text-red-800'
             }`}>
-              {record.status}
+              {record.email_delivery_status || '-'}
             </span>
           </div>
 
           <div className="text-sm font-medium text-gray-500">No of Tries</div>
-          <div className="text-sm text-gray-900">{record.no_of_tries}</div>
+          <div className="text-sm text-gray-900">{record.email_num_retries}</div>
 
           <div className="text-sm font-medium text-gray-500">Balance Left</div>
-          <div className="text-sm text-gray-900">{record.balance_left}</div>
+          <div className="text-sm text-gray-900">{(record.email_max_retries || 0) - (record.email_num_retries || 0)}</div>
         </div>
       </div>
     ));
+  };
+
+  // Summary info card for first email record
+  const renderSummaryCard = () => {
+    if (emailDetailData.length === 0) return null;
+    
+    const record = emailDetailData[0];
+    return (
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 mb-6">
+        <div className="p-3 border-b border-gray-200 bg-gray-50">
+          <h2 className="text-base font-semibold text-gray-900">Email Summary</h2>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="text-sm font-medium text-gray-500">Status</div>
+              <div className="text-sm text-gray-900 mt-1">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  record.email_delivery_status === 'delivered' || record.email_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
+                  record.email_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {record.email_delivery_status || '-'}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-500">To Address</div>
+              <div className="text-sm text-gray-900 mt-1">{record.email_to_address}</div>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-500">From Address</div>
+              <div className="text-sm text-gray-900 mt-1">{record.email_from_address}</div>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-500">Subject</div>
+              <div className="text-sm text-gray-900 mt-1">{record.email_subject}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -252,6 +316,9 @@ const EmailDetailsPage: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {/* Summary Card */}
+        {renderSummaryCard()}
 
         {/* Email Details Table - Desktop and Mobile Views */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
