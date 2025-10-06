@@ -27,7 +27,7 @@ export const usePartnerStats = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://stagingv3.leapmile.com/podcore/pod_monitor/?pod_type=reservation_details',
+        'http://productionv36.qikpod.com:8989/pod_monitor/?pod_type=reservation_details',
         {
           headers: {
             'accept': 'application/json',

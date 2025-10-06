@@ -63,7 +63,7 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
     setLoading(true);
     try {
       const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/pods/${podData.id}`,
+        `http://productionv36.qikpod.com:8989/pods/${podData.id}`,
         {
           method: 'PATCH',
           headers: {

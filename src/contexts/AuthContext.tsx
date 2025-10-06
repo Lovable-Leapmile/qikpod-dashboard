@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const generateOTP = async (mobile: string): Promise<boolean> => {
     try {
       const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/otp/generate_otp/?user_phone=${mobile}`,
+        `http://productionv36.qikpod.com:8989/otp/generate_otp/?user_phone=${mobile}`,
         {
           method: 'GET',
           headers: {
@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const validateOTP = async (mobile: string, otp: string): Promise<{ success: boolean; data?: any }> => {
     try {
       const response = await fetch(
-        `https://stagingv3.leapmile.com/podcore/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
+        `http://productionv36.qikpod.com:8989/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
         {
           method: 'GET',
           headers: {
@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Use the dynamic auth token to check user type
         try {
           const userCheckResponse = await fetch(
-            `https://stagingv3.leapmile.com/podcore/users/?user_phone=${mobile}`,
+            `http://productionv36.qikpod.com:8989/users/?user_phone=${mobile}`,
             {
               method: 'GET',
               headers: {

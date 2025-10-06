@@ -48,7 +48,7 @@ const EditLocationPopup: React.FC<EditLocationPopupProps> = ({
 
     setIsLoading(true);
     try {
-      const response = await fetch(`https://stagingv3.leapmile.com/podcore/locations/?record_id=${locationId}`, {
+      const response = await fetch(`http://productionv36.qikpod.com:8989/locations/?record_id=${locationId}`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Accept': 'application/json',
@@ -125,7 +125,7 @@ const EditLocationPopup: React.FC<EditLocationPopupProps> = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`https://stagingv3.leapmile.com/podcore/locations/${locationId}`, {
+      const response = await fetch(`http://productionv36.qikpod.com:8989/locations/${locationId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

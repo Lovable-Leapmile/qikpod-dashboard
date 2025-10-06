@@ -71,7 +71,7 @@ const Partner: React.FC<PartnerProps> = ({
     const formData = new FormData();
     formData.append('in_file', selectedFile);
     try {
-      const response = await fetch('https://stagingv3.leapmile.com/podcore/upload_csv/', {
+      const response = await fetch('http://productionv36.qikpod.com:8989/upload_csv/', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
