@@ -234,7 +234,7 @@ interface UserReservation {
 }
 
 const BASE_URL = "https://productionv36.qikpod.com/podcore";
-const LOGS_BASE_URL = "https://newproduction.qikpod.com:8988";
+const LOGS_BASE_URL = "https://productionv36.qikpod.com/logstore";
 
 const getAuthHeaders = (token: string) => ({
   Authorization: `Bearer ${token}`,
