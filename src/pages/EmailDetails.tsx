@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import { useAuth } from '@/contexts/AuthContext';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import Layout from '@/components/Layout';
+import React, { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, GridApi } from "ag-grid-community";
+import { useAuth } from "@/contexts/AuthContext";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import Layout from "@/components/Layout";
 
 interface EmailDetailRecord {
   id: number;
@@ -30,32 +30,32 @@ const EmailDetailsPage: React.FC = () => {
   const [emailDetailData, setEmailDetailData] = useState<EmailDetailRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [detailGridApi, setDetailGridApi] = useState<GridApi | null>(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const fetchEmailDetails = useCallback(async () => {
     if (!accessToken || !recordId) return;
-    
+
     try {
       setLoading(true);
       const response = await fetch(
-        `https://stagingv3.leapmile.com/notifications/notifications/email/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
+        `https://productionv36.qikpod.com/notifications/notifications/email/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
           },
-        }
+        },
       );
 
       if (response.ok) {
         const data = await response.json();
         setEmailDetailData(data.records || []);
       } else {
-        toast.error('Failed to fetch Email details');
+        toast.error("Failed to fetch Email details");
       }
     } catch (error) {
-      console.error('Email details fetch error:', error);
-      toast.error('Error fetching Email details');
+      console.error("Email details fetch error:", error);
+      toast.error("Error fetching Email details");
     } finally {
       setLoading(false);
     }
@@ -63,7 +63,7 @@ const EmailDetailsPage: React.FC = () => {
 
   const refreshData = useCallback(async () => {
     await fetchEmailDetails();
-    toast.success('Data refreshed successfully');
+    toast.success("Data refreshed successfully");
   }, [fetchEmailDetails]);
 
   useEffect(() => {
@@ -77,93 +77,97 @@ const EmailDetailsPage: React.FC = () => {
     setSearchText(value);
 
     if (detailGridApi) {
-      detailGridApi.setGridOption('quickFilterText', value);
+      detailGridApi.setGridOption("quickFilterText", value);
     }
   };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return '-';
+    if (!dateString) return "-";
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '-';
-      return date.toLocaleString('en-GB', {
-        day: '2-digit',
-        month: '2-digit', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
+      if (isNaN(date.getTime())) return "-";
+      return date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
       });
     } catch {
-      return '-';
+      return "-";
     }
   };
 
   const emailDetailColumnDefs: ColDef[] = [
     {
-      headerName: 'Vendor Name',
-      field: 'email_vendor',
+      headerName: "Vendor Name",
+      field: "email_vendor",
       flex: 1,
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => params.value || '-',
+      cellRenderer: (params: any) => params.value || "-",
     },
     {
-      headerName: 'E-Mail',
-      field: 'email_to_address',
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: 'Notification ID',
-      field: 'email_reference_id',
-      flex: 1,
-      sortable: true,
-      filter: true,
-      cellRenderer: (params: any) => params.value || '-',
-    },
-    {
-      headerName: 'App ID',
-      field: 'id',
+      headerName: "E-Mail",
+      field: "email_to_address",
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Last Updated',
-      field: 'updated_at',
+      headerName: "Notification ID",
+      field: "email_reference_id",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      cellRenderer: (params: any) => params.value || "-",
+    },
+    {
+      headerName: "App ID",
+      field: "id",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Last Updated",
+      field: "updated_at",
       flex: 1,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => formatDate(params.value),
     },
     {
-      headerName: 'Status',
-      field: 'email_delivery_status',
+      headerName: "Status",
+      field: "email_delivery_status",
       flex: 1,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          params.value === 'delivered' || params.value === 'success' ? 'bg-green-100 text-green-800' :
-          params.value === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-red-100 text-red-800'
-        }`}>
-          {params.value || '-'}
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            params.value === "delivered" || params.value === "success"
+              ? "bg-green-100 text-green-800"
+              : params.value === "pending"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
+          }`}
+        >
+          {params.value || "-"}
         </span>
       ),
     },
     {
-      headerName: 'No of Tries',
-      field: 'email_num_retries',
+      headerName: "No of Tries",
+      field: "email_num_retries",
       width: 120,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Balance Left',
+      headerName: "Balance Left",
       width: 120,
       sortable: true,
       filter: true,
@@ -185,12 +189,12 @@ const EmailDetailsPage: React.FC = () => {
     pagination: true,
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50],
-    domLayout: 'autoHeight' as const,
+    domLayout: "autoHeight" as const,
     rowHeight: 50,
     headerHeight: 50,
     suppressCellFocus: true,
     suppressRowClickSelection: true,
-    rowSelection: 'multiple' as const,
+    rowSelection: "multiple" as const,
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
@@ -203,13 +207,13 @@ const EmailDetailsPage: React.FC = () => {
       <div key={record.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
         <div className="grid grid-cols-2 gap-2">
           <div className="text-sm font-medium text-gray-500">Vendor Name</div>
-          <div className="text-sm text-gray-900">{record.email_vendor || '-'}</div>
+          <div className="text-sm text-gray-900">{record.email_vendor || "-"}</div>
 
           <div className="text-sm font-medium text-gray-500">E-Mail</div>
           <div className="text-sm text-gray-900">{record.email_to_address}</div>
 
           <div className="text-sm font-medium text-gray-500">Notification ID</div>
-          <div className="text-sm text-gray-900">{record.email_reference_id || '-'}</div>
+          <div className="text-sm text-gray-900">{record.email_reference_id || "-"}</div>
 
           <div className="text-sm font-medium text-gray-500">App ID</div>
           <div className="text-sm text-gray-900">{record.id}</div>
@@ -219,12 +223,16 @@ const EmailDetailsPage: React.FC = () => {
 
           <div className="text-sm font-medium text-gray-500">Status</div>
           <div className="text-sm">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              record.email_delivery_status === 'delivered' || record.email_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
-              record.email_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }`}>
-              {record.email_delivery_status || '-'}
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                record.email_delivery_status === "delivered" || record.email_delivery_status === "success"
+                  ? "bg-green-100 text-green-800"
+                  : record.email_delivery_status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
+              }`}
+            >
+              {record.email_delivery_status || "-"}
             </span>
           </div>
 
@@ -232,7 +240,9 @@ const EmailDetailsPage: React.FC = () => {
           <div className="text-sm text-gray-900">{record.email_num_retries}</div>
 
           <div className="text-sm font-medium text-gray-500">Balance Left</div>
-          <div className="text-sm text-gray-900">{(record.email_max_retries || 0) - (record.email_num_retries || 0)}</div>
+          <div className="text-sm text-gray-900">
+            {(record.email_max_retries || 0) - (record.email_num_retries || 0)}
+          </div>
         </div>
       </div>
     ));
@@ -241,7 +251,7 @@ const EmailDetailsPage: React.FC = () => {
   // Summary info card for first email record
   const renderSummaryCard = () => {
     if (emailDetailData.length === 0) return null;
-    
+
     const record = emailDetailData[0];
     return (
       <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 mb-6">
@@ -253,12 +263,16 @@ const EmailDetailsPage: React.FC = () => {
             <div>
               <div className="text-sm font-medium text-gray-500">Status</div>
               <div className="text-sm text-gray-900 mt-1">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  record.email_delivery_status === 'delivered' || record.email_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
-                  record.email_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
-                  {record.email_delivery_status || '-'}
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    record.email_delivery_status === "delivered" || record.email_delivery_status === "success"
+                      ? "bg-green-100 text-green-800"
+                      : record.email_delivery_status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {record.email_delivery_status || "-"}
                 </span>
               </div>
             </div>
@@ -285,7 +299,7 @@ const EmailDetailsPage: React.FC = () => {
       <div className="space-y-6">
         {/* Back Navigation - Moved outside the header card */}
         <Button
-          onClick={() => navigate('/notification')}
+          onClick={() => navigate("/notification")}
           variant="outline"
           size="sm"
           className="flex items-center gap-2 mb-4"
@@ -312,7 +326,7 @@ const EmailDetailsPage: React.FC = () => {
               size="sm"
               className="h-10 w-10 p-0 flex items-center justify-center"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
         </div>
@@ -327,7 +341,7 @@ const EmailDetailsPage: React.FC = () => {
           </div>
 
           {/* Desktop View */}
-          <div className="hidden md:block ag-theme-alpine" style={{ width: '100%', height: '400px' }}>
+          <div className="hidden md:block ag-theme-alpine" style={{ width: "100%", height: "400px" }}>
             <AgGridReact
               rowData={emailDetailData}
               columnDefs={emailDetailColumnDefs}
@@ -337,7 +351,7 @@ const EmailDetailsPage: React.FC = () => {
                 headerHeight: 45,
                 rowHeight: 48,
                 paginationPageSize: 15,
-                domLayout: 'normal',
+                domLayout: "normal",
               }}
               onGridReady={(params) => setDetailGridApi(params.api)}
               suppressMenuHide={true}

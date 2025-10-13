@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import '@/styles/ag-grid.css';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Search, Download, Eye, ArrowLeft } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, GridApi } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import "@/styles/ag-grid.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RefreshCw, Search, Download, Eye, ArrowLeft } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 interface LogData {
   id: number;
@@ -31,7 +31,7 @@ const LogsAgGrid = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<LogData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [pageSize, setPageSize] = useState(25);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,20 +41,23 @@ const LogsAgGrid = () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const response = await fetch(`https://stagingv3.leapmile.com/logstore/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/json'
-        }
-      });
+      const response = await fetch(
+        `https://productionv36.qikpod.com/logstore/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+        },
+      );
       if (response.ok) {
         const data = await response.json();
         setRowData(data.records || []);
       } else {
-        console.error('Failed to fetch logs:', response.statusText);
+        console.error("Failed to fetch logs:", response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      console.error("Error fetching logs:", error);
     } finally {
       setLoading(false);
     }
@@ -83,13 +86,18 @@ const LogsAgGrid = () => {
   const LogLevelRenderer = (params: any) => {
     const level = params.value;
     const levelClasses = {
-      INFO: 'bg-blue-100 text-blue-800',
-      WARNING: 'bg-yellow-100 text-yellow-800',
-      ERROR: 'bg-red-100 text-red-800',
-      DEBUG: 'bg-gray-100 text-gray-800'
+      INFO: "bg-blue-100 text-blue-800",
+      WARNING: "bg-yellow-100 text-yellow-800",
+      ERROR: "bg-red-100 text-red-800",
+      DEBUG: "bg-gray-100 text-gray-800",
     };
     return (
-      <span className={cn('px-2 py-1 rounded-full text-xs font-semibold', levelClasses[level as keyof typeof levelClasses] || 'bg-gray-100 text-gray-800')}>
+      <span
+        className={cn(
+          "px-2 py-1 rounded-full text-xs font-semibold",
+          levelClasses[level as keyof typeof levelClasses] || "bg-gray-100 text-gray-800",
+        )}
+      >
         {level}
       </span>
     );
@@ -107,10 +115,11 @@ const LogsAgGrid = () => {
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        {date.toLocaleDateString('en-IN')} • {date.toLocaleTimeString('en-IN', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
+        {date.toLocaleDateString("en-IN")} •{" "}
+        {date.toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
         })}
       </div>
     );
@@ -118,58 +127,58 @@ const LogsAgGrid = () => {
 
   const columnDefs: ColDef[] = [
     {
-      headerName: 'ID',
-      field: 'id',
+      headerName: "ID",
+      field: "id",
       sortable: true,
       filter: true,
       width: 80,
-      cellClass: 'font-medium text-center'
+      cellClass: "font-medium text-center",
     },
     {
-      headerName: 'Log ID',
-      field: 'log_id',
+      headerName: "Log ID",
+      field: "log_id",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium text-black' // Changed from text-primary (yellow) to text-black
+      cellClass: "font-medium text-black", // Changed from text-primary (yellow) to text-black
     },
     {
-      headerName: 'Log Level',
-      field: 'log_level',
+      headerName: "Log Level",
+      field: "log_level",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellRenderer: LogLevelRenderer
+      cellRenderer: LogLevelRenderer,
     },
     {
-      headerName: 'Log Type',
-      field: 'log_type',
+      headerName: "Log Type",
+      field: "log_type",
       sortable: true,
       filter: true,
       flex: 2,
       minWidth: 100,
-      cellClass: 'text-muted-foreground'
+      cellClass: "text-muted-foreground",
     },
     {
-      headerName: 'Log Message',
-      field: 'log_message',
+      headerName: "Log Message",
+      field: "log_message",
       sortable: true,
       filter: true,
       flex: 3,
       minWidth: 300,
-      cellRenderer: MessageRenderer
+      cellRenderer: MessageRenderer,
     },
     {
-      headerName: 'Time',
-      field: 'log_eventtime',
+      headerName: "Time",
+      field: "log_eventtime",
       sortable: true,
       filter: true,
       flex: 1.5,
       minWidth: 160,
-      cellRenderer: DateRenderer
-    }
+      cellRenderer: DateRenderer,
+    },
   ];
 
   const onGridReady = (params: any) => {
@@ -179,14 +188,14 @@ const LogsAgGrid = () => {
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', value);
+      gridRef.current.api.setGridOption("quickFilterText", value);
     }
   }, []);
 
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `logs-${new Date().toISOString().split('T')[0]}.csv`
+        fileName: `logs-${new Date().toISOString().split("T")[0]}.csv`,
       });
     }
   };
@@ -217,9 +226,12 @@ const LogsAgGrid = () => {
                 <Checkbox
                   id="auto-refresh-logs"
                   checked={autoRefresh}
-                  onCheckedChange={checked => setAutoRefresh(checked === true)}
+                  onCheckedChange={(checked) => setAutoRefresh(checked === true)}
                 />
-                <label htmlFor="auto-refresh-logs" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                <label
+                  htmlFor="auto-refresh-logs"
+                  className="text-sm text-muted-foreground font-medium whitespace-nowrap"
+                >
                   Auto Refresh (2m)
                 </label>
               </div>
@@ -227,7 +239,7 @@ const LogsAgGrid = () => {
               {/* Buttons */}
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={fetchLogs} disabled={loading}>
-                  <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                  <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
                 </Button>
 
                 <Button variant="outline" size="sm" onClick={exportData}>
@@ -244,7 +256,7 @@ const LogsAgGrid = () => {
                 <Input
                   placeholder="Search logs..."
                   value={globalFilter}
-                  onChange={e => handleGlobalFilter(e.target.value)}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
                   className="pl-10 w-full"
                 />
               </div>
@@ -252,10 +264,7 @@ const LogsAgGrid = () => {
               {/* Page Size Selector */}
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                <Select
-                  value={pageSize.toString()}
-                  onValueChange={value => setPageSize(Number(value))}
-                >
+                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                   <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
@@ -292,7 +301,7 @@ const LogsAgGrid = () => {
                     resizable: true,
                     sortable: true,
                     filter: true,
-                    cellClass: 'flex items-center'
+                    cellClass: "flex items-center",
                   }}
                   pagination={true}
                   paginationPageSize={pageSize}
@@ -321,14 +330,17 @@ const LogsAgGrid = () => {
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
-                          <div className="text-lg font-semibold text-black mt-1">{log.log_id}</div> {/* Changed to text-black */}
+                          <div className="text-lg font-semibold text-black mt-1">{log.log_id}</div>{" "}
+                          {/* Changed to text-black */}
                         </div>
-                        <span className={cn('px-2 py-1 rounded-full text-xs font-semibold self-start', {
-                          'bg-blue-100 text-blue-800': log.log_level === 'INFO',
-                          'bg-yellow-100 text-yellow-800': log.log_level === 'WARNING',
-                          'bg-red-100 text-red-800': log.log_level === 'ERROR',
-                          'bg-gray-100 text-gray-800': log.log_level === 'DEBUG'
-                        })}>
+                        <span
+                          className={cn("px-2 py-1 rounded-full text-xs font-semibold self-start", {
+                            "bg-blue-100 text-blue-800": log.log_level === "INFO",
+                            "bg-yellow-100 text-yellow-800": log.log_level === "WARNING",
+                            "bg-red-100 text-red-800": log.log_level === "ERROR",
+                            "bg-gray-100 text-gray-800": log.log_level === "DEBUG",
+                          })}
+                        >
                           {log.log_level}
                         </span>
                       </div>
@@ -345,10 +357,11 @@ const LogsAgGrid = () => {
                         <div className="text-sm flex items-center">
                           <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
                           <div>
-                            {new Date(log.log_eventtime).toLocaleDateString('en-IN')} • {new Date(log.log_eventtime).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
+                            {new Date(log.log_eventtime).toLocaleDateString("en-IN")} •{" "}
+                            {new Date(log.log_eventtime).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             })}
                           </div>
                         </div>

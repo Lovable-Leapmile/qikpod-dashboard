@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import '@/styles/ag-grid.css';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, RefreshCw, Search, Download } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import "@/styles/ag-grid.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, RefreshCw, Search, Download } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 interface PaymentDetailData {
   payment_id: string;
@@ -31,7 +31,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<PaymentDetailData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
   const [pageSize, setPageSize] = useState(25);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -42,9 +42,9 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
 
-    return () => window.removeEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const fetchPaymentDetails = useCallback(async () => {
@@ -53,51 +53,56 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://stagingv3.leapmile.com/payments/payments/?record_id=${paymentId}&order_by_field=updated_at&order_by_type=DESC`,
+        `https://productionv36.qikpod.com/payments/payments/?record_id=${paymentId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/json'
-          }
-        }
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+        },
       );
 
       if (response.ok) {
         const data = await response.json();
-        const transformedData = data.records?.map((record: any) => ({
-          payment_id: record.payment_id || record.id || paymentId,
-          payment_type: record.payment_type || record.type || 'N/A',
-          created_time: record.created_time || record.created_at || new Date().toISOString(),
-          payment_time: record.payment_time || record.updated_at || new Date().toISOString(),
-          amount: record.amount || record.payment_amount || '0',
-          payment_status: record.payment_status || record.status || 'pending',
-          client_reference_id: record.client_reference_id || record.payment_client_reference_id || 'N/A'
-        })) || [];
+        const transformedData =
+          data.records?.map((record: any) => ({
+            payment_id: record.payment_id || record.id || paymentId,
+            payment_type: record.payment_type || record.type || "N/A",
+            created_time: record.created_time || record.created_at || new Date().toISOString(),
+            payment_time: record.payment_time || record.updated_at || new Date().toISOString(),
+            amount: record.amount || record.payment_amount || "0",
+            payment_status: record.payment_status || record.status || "pending",
+            client_reference_id: record.client_reference_id || record.payment_client_reference_id || "N/A",
+          })) || [];
 
         setRowData(transformedData);
       } else {
-        console.error('Failed to fetch payment details:', response.statusText);
-        setRowData([{
-          payment_id: paymentId,
-          payment_type: 'Online Payment',
-          created_time: new Date().toISOString(),
-          payment_time: new Date().toISOString(),
-          amount: '1000.00',
-          payment_status: 'completed',
-          client_reference_id: 'REF123456'
-        }]);
+        console.error("Failed to fetch payment details:", response.statusText);
+        setRowData([
+          {
+            payment_id: paymentId,
+            payment_type: "Online Payment",
+            created_time: new Date().toISOString(),
+            payment_time: new Date().toISOString(),
+            amount: "1000.00",
+            payment_status: "completed",
+            client_reference_id: "REF123456",
+          },
+        ]);
       }
     } catch (error) {
-      console.error('Error fetching payment details:', error);
-      setRowData([{
-        payment_id: paymentId,
-        payment_type: 'Online Payment',
-        created_time: new Date().toISOString(),
-        payment_time: new Date().toISOString(),
-        amount: '1000.00',
-        payment_status: 'completed',
-        client_reference_id: 'REF123456'
-      }]);
+      console.error("Error fetching payment details:", error);
+      setRowData([
+        {
+          payment_id: paymentId,
+          payment_type: "Online Payment",
+          created_time: new Date().toISOString(),
+          payment_time: new Date().toISOString(),
+          amount: "1000.00",
+          payment_status: "completed",
+          client_reference_id: "REF123456",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -110,15 +115,15 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   const StatusRenderer = (params: any) => {
     const status = params.value?.toLowerCase();
     const statusClasses = {
-      completed: 'status-paid',
-      paid: 'status-paid',
-      pending: 'status-pending',
-      cancelled: 'status-cancelled',
-      failed: 'status-inactive'
+      completed: "status-paid",
+      paid: "status-paid",
+      pending: "status-pending",
+      cancelled: "status-cancelled",
+      failed: "status-inactive",
     };
 
     return (
-      <span className={cn('status-badge', statusClasses[status as keyof typeof statusClasses] || 'status-inactive')}>
+      <span className={cn("status-badge", statusClasses[status as keyof typeof statusClasses] || "status-inactive")}>
         {params.value}
       </span>
     );
@@ -127,8 +132,9 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   const AmountRenderer = (params: any) => {
     return (
       <span className="font-semibold text-foreground">
-        ₹{parseFloat(params.value || '0').toLocaleString('en-IN', {
-          minimumFractionDigits: 2
+        ₹
+        {parseFloat(params.value || "0").toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
         })}
       </span>
     );
@@ -138,11 +144,11 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        <div className="font-medium">{date.toLocaleDateString('en-IN')}</div>
+        <div className="font-medium">{date.toLocaleDateString("en-IN")}</div>
         <div className="text-muted-foreground">
-          {date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit'
+          {date.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
           })}
         </div>
       </div>
@@ -151,68 +157,68 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
 
   const columnDefs: ColDef[] = [
     {
-      headerName: 'Payment ID',
-      field: 'payment_id',
+      headerName: "Payment ID",
+      field: "payment_id",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium'
+      cellClass: "font-medium",
     },
     {
-      headerName: 'Payment Type',
-      field: 'payment_type',
+      headerName: "Payment Type",
+      field: "payment_type",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellClass: 'text-muted-foreground'
+      cellClass: "text-muted-foreground",
     },
     {
-      headerName: 'Created Time',
-      field: 'created_time',
+      headerName: "Created Time",
+      field: "created_time",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 140,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'Payment Time',
-      field: 'payment_time',
+      headerName: "Payment Time",
+      field: "payment_time",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 140,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'Amount',
-      field: 'amount',
+      headerName: "Amount",
+      field: "amount",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 100,
-      cellRenderer: AmountRenderer
+      cellRenderer: AmountRenderer,
     },
     {
-      headerName: 'Payment Status',
-      field: 'payment_status',
+      headerName: "Payment Status",
+      field: "payment_status",
       sortable: true,
       filter: true,
       flex: 1,
       minWidth: 130,
-      cellRenderer: StatusRenderer
+      cellRenderer: StatusRenderer,
     },
     {
-      headerName: 'Client Reference ID',
-      field: 'client_reference_id',
+      headerName: "Client Reference ID",
+      field: "client_reference_id",
       sortable: true,
       filter: true,
       flex: 1.5,
       minWidth: 150,
-      cellClass: 'font-medium'
-    }
+      cellClass: "font-medium",
+    },
   ];
 
   const onGridReady = (params: any) => {
@@ -222,14 +228,14 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', value);
+      gridRef.current.api.setGridOption("quickFilterText", value);
     }
   }, []);
 
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `payment-details-${paymentId}-${new Date().toISOString().split('T')[0]}.csv`
+        fileName: `payment-details-${paymentId}-${new Date().toISOString().split("T")[0]}.csv`,
       });
     }
   };
@@ -246,14 +252,16 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
                   <h3 className="font-medium text-gray-900">Payment ID</h3>
                   <p className="text-sm text-muted-foreground">{payment.payment_id}</p>
                 </div>
-                <div className={cn(
-                  'px-2 py-1 rounded-full text-xs font-medium',
-                  payment.payment_status === 'completed' || payment.payment_status === 'paid'
-                    ? 'bg-green-100 text-green-800'
-                    : payment.payment_status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-                )}>
+                <div
+                  className={cn(
+                    "px-2 py-1 rounded-full text-xs font-medium",
+                    payment.payment_status === "completed" || payment.payment_status === "paid"
+                      ? "bg-green-100 text-green-800"
+                      : payment.payment_status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800",
+                  )}
+                >
                   {payment.payment_status}
                 </div>
               </div>
@@ -266,8 +274,9 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
                 <div>
                   <h3 className="font-medium text-gray-900 text-sm">Amount</h3>
                   <p className="text-sm font-semibold">
-                    ₹{parseFloat(payment.amount || '0').toLocaleString('en-IN', {
-                      minimumFractionDigits: 2
+                    ₹
+                    {parseFloat(payment.amount || "0").toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
                     })}
                   </p>
                 </div>
@@ -276,10 +285,10 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
               <div>
                 <h3 className="font-medium text-gray-900 text-sm">Created Time</h3>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(payment.created_time).toLocaleDateString('en-IN')} at {' '}
-                  {new Date(payment.created_time).toLocaleTimeString('en-IN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
+                  {new Date(payment.created_time).toLocaleDateString("en-IN")} at{" "}
+                  {new Date(payment.created_time).toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
               </div>
@@ -287,10 +296,10 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
               <div>
                 <h3 className="font-medium text-gray-900 text-sm">Payment Time</h3>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(payment.payment_time).toLocaleDateString('en-IN')} at {' '}
-                  {new Date(payment.payment_time).toLocaleTimeString('en-IN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
+                  {new Date(payment.payment_time).toLocaleDateString("en-IN")} at{" "}
+                  {new Date(payment.payment_time).toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
               </div>
@@ -310,12 +319,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
     <div className="w-full h-full flex flex-col animate-fade-in">
       {/* Back Button - Always at the top */}
       <div className="mb-4">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          className="flex items-center gap-2"
-          size="sm"
-        >
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2" size="sm">
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Payments</span>
         </Button>
@@ -358,7 +362,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
                     </SelectContent>
                   </Select>
                   <Button variant="outline" size="sm" onClick={fetchPaymentDetails} disabled={loading}>
-                    <RefreshCw className={cn('h-4 w-4 mr-1', loading && 'animate-spin')} />
+                    <RefreshCw className={cn("h-4 w-4 mr-1", loading && "animate-spin")} />
                     <span className="hidden sm:inline">Refresh</span>
                   </Button>
                 </div>
@@ -387,7 +391,7 @@ const PaymentDetail: React.FC<PaymentDetailProps> = ({ paymentId, onBack }) => {
               resizable: true,
               sortable: true,
               filter: true,
-              cellClass: 'flex items-center'
+              cellClass: "flex items-center",
             }}
             pagination={true}
             paginationPageSize={pageSize}

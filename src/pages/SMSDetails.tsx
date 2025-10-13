@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import { useAuth } from '@/contexts/AuthContext';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import Layout from '@/components/Layout';
+import React, { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, GridApi } from "ag-grid-community";
+import { useAuth } from "@/contexts/AuthContext";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import Layout from "@/components/Layout";
 
 interface SMSDetailRecord {
   id: number;
@@ -36,51 +36,51 @@ const SMSDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [detailGridApi, setDetailGridApi] = useState<GridApi | null>(null);
   const [attemptGridApi, setAttemptGridApi] = useState<GridApi | null>(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const fetchSMSDetails = useCallback(async () => {
     if (!accessToken || !recordId) return;
-    
+
     try {
       setLoading(true);
       // Fetch SMS Info details using the provided API URL
       const smsResponse = await fetch(
-        `https://stagingv3.leapmile.com/notifications/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
+        `https://productionv36.qikpod.com/notifications/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
           },
-        }
+        },
       );
 
       if (smsResponse.ok) {
         const smsData = await smsResponse.json();
         setSmsDetailData(smsData.records || []); // Use records array from API response
       } else {
-        toast.error('Failed to fetch SMS details');
+        toast.error("Failed to fetch SMS details");
       }
 
       // Fetch SMS Attempts
       const attemptsResponse = await fetch(
-        `https://stagingv3.leapmile.com/notifications/notifications/sms/${recordId}/attempts/`,
+        `https://productionv36.qikpod.com/notifications/notifications/sms/${recordId}/attempts/`,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
           },
-        }
+        },
       );
 
       if (attemptsResponse.ok) {
         const attemptsData = await attemptsResponse.json();
         setSmsAttemptData(attemptsData.records || []);
       } else {
-        toast.error('Failed to fetch SMS attempts');
+        toast.error("Failed to fetch SMS attempts");
       }
     } catch (error) {
-      console.error('SMS details fetch error:', error);
-      toast.error('Error fetching SMS details');
+      console.error("SMS details fetch error:", error);
+      toast.error("Error fetching SMS details");
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ const SMSDetailsPage: React.FC = () => {
 
   const refreshData = useCallback(async () => {
     await fetchSMSDetails();
-    toast.success('Data refreshed successfully');
+    toast.success("Data refreshed successfully");
   }, [fetchSMSDetails]);
 
   useEffect(() => {
@@ -102,31 +102,31 @@ const SMSDetailsPage: React.FC = () => {
     setSearchText(value);
 
     if (detailGridApi) {
-      detailGridApi.setGridOption('quickFilterText', value);
+      detailGridApi.setGridOption("quickFilterText", value);
     }
     if (attemptGridApi) {
-      attemptGridApi.setGridOption('quickFilterText', value);
+      attemptGridApi.setGridOption("quickFilterText", value);
     }
   };
 
   const smsDetailColumnDefs: ColDef[] = [
     {
-      headerName: 'Vendor Name',
-      field: 'sms_vendor',
+      headerName: "Vendor Name",
+      field: "sms_vendor",
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Mobile No',
-      field: 'sms_to_phone_number',
+      headerName: "Mobile No",
+      field: "sms_to_phone_number",
       flex: 1,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Last Updated',
-      field: 'updated_at',
+      headerName: "Last Updated",
+      field: "updated_at",
       flex: 1,
       sortable: true,
       filter: true,
@@ -134,35 +134,39 @@ const SMSDetailsPage: React.FC = () => {
         if (params.value) {
           return new Date(params.value).toLocaleString();
         }
-        return '';
+        return "";
       },
     },
     {
-      headerName: 'Status',
-      field: 'sms_delivery_status',
+      headerName: "Status",
+      field: "sms_delivery_status",
       flex: 1,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          params.value === 'delivered' || params.value === 'success' ? 'bg-green-100 text-green-800' :
-          params.value === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-red-100 text-red-800'
-        }`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            params.value === "delivered" || params.value === "success"
+              ? "bg-green-100 text-green-800"
+              : params.value === "pending"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
+          }`}
+        >
           {params.value}
         </span>
       ),
     },
     {
-      headerName: 'No. of Tries',
-      field: 'sms_num_retries',
+      headerName: "No. of Tries",
+      field: "sms_num_retries",
       width: 120,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Balance Left',
-      field: 'sms_balance',
+      headerName: "Balance Left",
+      field: "sms_balance",
       width: 120,
       sortable: true,
       filter: true,
@@ -171,15 +175,15 @@ const SMSDetailsPage: React.FC = () => {
 
   const smsAttemptColumnDefs: ColDef[] = [
     {
-      headerName: 'ID',
-      field: 'id',
+      headerName: "ID",
+      field: "id",
       width: 80,
       sortable: true,
       filter: true,
     },
     {
-      headerName: 'Attempt Timestamp',
-      field: 'attempt_timestamp',
+      headerName: "Attempt Timestamp",
+      field: "attempt_timestamp",
       flex: 2,
       sortable: true,
       filter: true,
@@ -187,33 +191,37 @@ const SMSDetailsPage: React.FC = () => {
         if (params.value) {
           return new Date(params.value).toLocaleString();
         }
-        return '';
+        return "";
       },
     },
     {
-      headerName: 'Status',
-      field: 'status',
+      headerName: "Status",
+      field: "status",
       flex: 1,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          params.value === 'delivered' || params.value === 'success' ? 'bg-green-100 text-green-800' :
-          params.value === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-red-100 text-red-800'
-        }`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            params.value === "delivered" || params.value === "success"
+              ? "bg-green-100 text-green-800"
+              : params.value === "pending"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
+          }`}
+        >
           {params.value}
         </span>
       ),
     },
     {
-      headerName: 'Error',
-      field: 'error_message',
+      headerName: "Error",
+      field: "error_message",
       flex: 2,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => {
-        return params.value || 'No error';
+        return params.value || "No error";
       },
     },
   ];
@@ -228,12 +236,12 @@ const SMSDetailsPage: React.FC = () => {
     pagination: true,
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50],
-    domLayout: 'autoHeight' as const,
+    domLayout: "autoHeight" as const,
     rowHeight: 50,
     headerHeight: 50,
     suppressCellFocus: true,
     suppressRowClickSelection: true,
-    rowSelection: 'multiple' as const,
+    rowSelection: "multiple" as const,
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
@@ -256,11 +264,15 @@ const SMSDetailsPage: React.FC = () => {
 
           <div className="text-sm font-medium text-gray-500">Status</div>
           <div className="text-sm">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              record.sms_delivery_status === 'delivered' || record.sms_delivery_status === 'success' ? 'bg-green-100 text-green-800' :
-              record.sms_delivery_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                record.sms_delivery_status === "delivered" || record.sms_delivery_status === "success"
+                  ? "bg-green-100 text-green-800"
+                  : record.sms_delivery_status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
+              }`}
+            >
               {record.sms_delivery_status}
             </span>
           </div>
@@ -288,17 +300,21 @@ const SMSDetailsPage: React.FC = () => {
 
           <div className="text-sm font-medium text-gray-500">Status</div>
           <div className="text-sm">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              record.status === 'delivered' || record.status === 'success' ? 'bg-green-100 text-green-800' :
-              record.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                record.status === "delivered" || record.status === "success"
+                  ? "bg-green-100 text-green-800"
+                  : record.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
+              }`}
+            >
               {record.status}
             </span>
           </div>
 
           <div className="text-sm font-medium text-gray-500">Error</div>
-          <div className="text-sm text-gray-900">{record.error_message || 'No error'}</div>
+          <div className="text-sm text-gray-900">{record.error_message || "No error"}</div>
         </div>
       </div>
     ));
@@ -309,7 +325,7 @@ const SMSDetailsPage: React.FC = () => {
       <div className="space-y-6">
         {/* Back Navigation - Moved outside the header card */}
         <Button
-          onClick={() => navigate('/notification')}
+          onClick={() => navigate("/notification")}
           variant="outline"
           size="sm"
           className="flex items-center gap-2 mb-4"
@@ -336,7 +352,7 @@ const SMSDetailsPage: React.FC = () => {
               size="sm"
               className="h-10 w-10 p-0 flex items-center justify-center"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
         </div>
@@ -348,7 +364,7 @@ const SMSDetailsPage: React.FC = () => {
           </div>
 
           {/* Desktop View */}
-          <div className="hidden md:block ag-theme-alpine" style={{ width: '100%', height: '320px' }}>
+          <div className="hidden md:block ag-theme-alpine" style={{ width: "100%", height: "320px" }}>
             <AgGridReact
               rowData={smsDetailData}
               columnDefs={smsDetailColumnDefs}
@@ -358,7 +374,7 @@ const SMSDetailsPage: React.FC = () => {
                 headerHeight: 45,
                 rowHeight: 48,
                 paginationPageSize: 10,
-                domLayout: 'normal',
+                domLayout: "normal",
               }}
               onGridReady={(params) => setDetailGridApi(params.api)}
               suppressMenuHide={true}
@@ -383,7 +399,7 @@ const SMSDetailsPage: React.FC = () => {
           </div>
 
           {/* Desktop View */}
-          <div className="hidden md:block ag-theme-alpine" style={{ width: '100%', height: '400px' }}>
+          <div className="hidden md:block ag-theme-alpine" style={{ width: "100%", height: "400px" }}>
             <AgGridReact
               rowData={smsAttemptData}
               columnDefs={smsAttemptColumnDefs}
@@ -393,7 +409,7 @@ const SMSDetailsPage: React.FC = () => {
                 headerHeight: 45,
                 rowHeight: 48,
                 paginationPageSize: 15,
-                domLayout: 'normal',
+                domLayout: "normal",
               }}
               onGridReady={(params) => setAttemptGridApi(params.api)}
               suppressMenuHide={true}
