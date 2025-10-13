@@ -42,7 +42,7 @@ const EditLocationPopup: React.FC<EditLocationPopupProps> = ({ open, onOpenChang
 
     setIsLoading(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/locations/?record_id=${locationId}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/locations/?record_id=${locationId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
@@ -119,7 +119,7 @@ const EditLocationPopup: React.FC<EditLocationPopupProps> = ({ open, onOpenChang
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/locations/${locationId}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/locations/${locationId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

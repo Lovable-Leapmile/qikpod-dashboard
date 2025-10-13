@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const generateOTP = async (mobile: string): Promise<boolean> => {
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/otp/generate_otp/?user_phone=${mobile}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/otp/generate_otp/?user_phone=${mobile}`, {
         method: "GET",
         headers: {
           Authorization:
@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const validateOTP = async (mobile: string, otp: string): Promise<{ success: boolean; data?: any }> => {
     try {
       const response = await fetch(
-        `http://productionv36.qikpod.com/podcore/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
+        `https://productionv36.qikpod.com/podcore/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
         {
           method: "GET",
           headers: {
@@ -134,13 +134,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok && data.access_token) {
         // Use the dynamic auth token to check user type
         try {
-          const userCheckResponse = await fetch(`http://productionv36.qikpod.com/podcore/users/?user_phone=${mobile}`, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${data.access_token}`,
+          const userCheckResponse = await fetch(
+            `https://productionv36.qikpod.com/podcore/users/?user_phone=${mobile}`,
+            {
+              method: "GET",
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${data.access_token}`,
+              },
             },
-          });
+          );
 
           const userCheckData = await userCheckResponse.json();
 

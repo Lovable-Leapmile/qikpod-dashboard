@@ -48,7 +48,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
 
     setLoading(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/users/${user.id}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/${user.id}`, {
         method: "PATCH",
         headers: {
           accept: "application/json",

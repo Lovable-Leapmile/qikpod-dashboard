@@ -30,7 +30,7 @@ const DeleteUserPopup: React.FC<DeleteUserPopupProps> = ({ open, onOpenChange, u
 
     setLoading(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/users/${user.id}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/${user.id}`, {
         method: "DELETE",
         headers: {
           accept: "application/json",

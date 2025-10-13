@@ -33,7 +33,7 @@ const PaymentModePopup: React.FC<PaymentModePopupProps> = ({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/locations/${locationId}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/locations/${locationId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

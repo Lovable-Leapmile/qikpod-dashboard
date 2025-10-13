@@ -83,7 +83,7 @@ const CreateUserPopup: React.FC<CreateUserPopupProps> = ({ open, onOpenChange, l
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com/podcore/users/${locationId}`, {
+      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/${locationId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

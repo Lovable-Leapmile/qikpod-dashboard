@@ -129,7 +129,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://productionv36.qikpod.com/podcore/get_partner_reservation/?reservation_type=${reservationType}`,
+        `https://productionv36.qikpod.com/podcore/get_partner_reservation/?reservation_type=${reservationType}`,
         {
           headers: {
             accept: "application/json",
