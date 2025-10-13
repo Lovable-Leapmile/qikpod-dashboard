@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { PodDetail } from '@/services/dashboardApi';
+import React, { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { PodDetail } from "@/services/dashboardApi";
 
 interface EditPodPopupProps {
   open: boolean;
@@ -24,35 +24,30 @@ interface PodUpdateData {
   pod_mode: string;
 }
 
-const EditPodPopup: React.FC<EditPodPopupProps> = ({
-  open,
-  onOpenChange,
-  podData,
-  onSuccess,
-}) => {
+const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState<PodUpdateData>({
-    status: '',
-    pod_name: '',
+    status: "",
+    pod_name: "",
     pod_flag_maintenance: null,
-    pod_state: '',
-    pod_connection_method: '',
-    pod_mode: '',
+    pod_state: "",
+    pod_connection_method: "",
+    pod_mode: "",
   });
 
   // Pre-fill form data when popup opens or pod data changes
   useEffect(() => {
     if (podData) {
       setFormData({
-        status: podData.status || '',
-        pod_name: podData.pod_name || '',
+        status: podData.status || "",
+        pod_name: podData.pod_name || "",
         pod_flag_maintenance: podData.pod_flag_maintenance || null,
-        pod_state: podData.pod_state || '',
-        pod_connection_method: podData.pod_connection_method || '',
-        pod_mode: podData.pod_mode || '',
+        pod_state: podData.pod_state || "",
+        pod_connection_method: podData.pod_connection_method || "",
+        pod_mode: podData.pod_mode || "",
       });
     }
   }, [podData]);
@@ -62,17 +57,14 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://productionv36.qikpod.com:8989/pods/${podData.id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`http://productionv36.qikpod.com/podcore/pods/${podData.id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
         toast({
@@ -82,10 +74,10 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
         onSuccess();
         onOpenChange(false);
       } else {
-        throw new Error('Failed to update pod');
+        throw new Error("Failed to update pod");
       }
     } catch (error) {
-      console.error('Error updating pod:', error);
+      console.error("Error updating pod:", error);
       toast({
         title: "Error",
         description: "Failed to update pod. Please try again.",
@@ -97,9 +89,9 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
   };
 
   const updateFormField = (field: keyof PodUpdateData, value: string | null) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -109,18 +101,15 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
         <DialogHeader>
           <DialogTitle>Edit Pod Details</DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
           {/* Column 1: Pod Status */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2">Pod Status</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => updateFormField('status', value)}
-              >
+              <Select value={formData.status} onValueChange={(value) => updateFormField("status", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -135,13 +124,13 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
           {/* Column 2: Pod Details */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2">Pod Details</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="pod_name">Pod Name</Label>
               <Input
                 id="pod_name"
                 value={formData.pod_name}
-                onChange={(e) => updateFormField('pod_name', e.target.value)}
+                onChange={(e) => updateFormField("pod_name", e.target.value)}
                 placeholder="Enter pod name"
               />
             </div>
@@ -149,8 +138,8 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
             <div className="space-y-2">
               <Label htmlFor="pod_flag_maintenance">Flag Maintenance</Label>
               <Select
-                value={formData.pod_flag_maintenance || 'null'}
-                onValueChange={(value) => updateFormField('pod_flag_maintenance', value === 'null' ? null : value)}
+                value={formData.pod_flag_maintenance || "null"}
+                onValueChange={(value) => updateFormField("pod_flag_maintenance", value === "null" ? null : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select flag maintenance" />
@@ -165,10 +154,7 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="pod_state">Pod State</Label>
-              <Select
-                value={formData.pod_state}
-                onValueChange={(value) => updateFormField('pod_state', value)}
-              >
+              <Select value={formData.pod_state} onValueChange={(value) => updateFormField("pod_state", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select pod state" />
                 </SelectTrigger>
@@ -184,12 +170,12 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
           {/* Column 3: Pod Connection */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2">Pod Connection</h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="pod_connection_method">Pod Connection Method</Label>
               <Select
                 value={formData.pod_connection_method}
-                onValueChange={(value) => updateFormField('pod_connection_method', value)}
+                onValueChange={(value) => updateFormField("pod_connection_method", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select connection method" />
@@ -203,10 +189,7 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="pod_mode">Pod Mode</Label>
-              <Select
-                value={formData.pod_mode}
-                onValueChange={(value) => updateFormField('pod_mode', value)}
-              >
+              <Select value={formData.pod_mode} onValueChange={(value) => updateFormField("pod_mode", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select pod mode" />
                 </SelectTrigger>
@@ -222,18 +205,11 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({
         </div>
 
         <DialogFooter className="gap-2">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={loading}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? 'Updating...' : 'Save/Update'}
+          <Button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Updating..." : "Save/Update"}
           </Button>
         </DialogFooter>
       </DialogContent>

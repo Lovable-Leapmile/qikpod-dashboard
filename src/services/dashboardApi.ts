@@ -233,12 +233,12 @@ interface UserReservation {
   status: string;
 }
 
-const BASE_URL = 'http://productionv36.qikpod.com:8989';
-const LOGS_BASE_URL = 'https://newproduction.qikpod.com:8988';
+const BASE_URL = "http://productionv36.qikpod.com/podcore";
+const LOGS_BASE_URL = "https://newproduction.qikpod.com:8988";
 
 const getAuthHeaders = (token: string) => ({
-  'Authorization': `Bearer ${token}`,
-  'Accept': 'application/json',
+  Authorization: `Bearer ${token}`,
+  Accept: "application/json",
 });
 
 export const dashboardApi = {
@@ -285,13 +285,14 @@ export const dashboardApi = {
 
     return {
       total_pods: pods.length,
-      certified_pods: pods.filter(pod => pod.pod_state === 'Certified' || pod.pod_state === 'certified').length,
-      unregistered_pods: pods.filter(pod => pod.pod_state === 'Unregistered' || pod.pod_state === 'unregistered').length,
-      green_pods: pods.filter(pod => pod.pod_health === 'Green' || pod.pod_health === 'green').length,
-      red_pods: pods.filter(pod => pod.pod_health === 'Red' || pod.pod_health === 'red').length,
-      yellow_pods: pods.filter(pod => pod.pod_health === 'Yellow' || pod.pod_health === 'yellow').length,
-      active_pods: pods.filter(pod => pod.status === 'active').length,
-      inactive_pods: pods.filter(pod => pod.status === 'inactive').length,
+      certified_pods: pods.filter((pod) => pod.pod_state === "Certified" || pod.pod_state === "certified").length,
+      unregistered_pods: pods.filter((pod) => pod.pod_state === "Unregistered" || pod.pod_state === "unregistered")
+        .length,
+      green_pods: pods.filter((pod) => pod.pod_health === "Green" || pod.pod_health === "green").length,
+      red_pods: pods.filter((pod) => pod.pod_health === "Red" || pod.pod_health === "red").length,
+      yellow_pods: pods.filter((pod) => pod.pod_health === "Yellow" || pod.pod_health === "yellow").length,
+      active_pods: pods.filter((pod) => pod.status === "active").length,
+      inactive_pods: pods.filter((pod) => pod.status === "inactive").length,
     };
   },
 
@@ -378,7 +379,10 @@ export const dashboardApi = {
   },
 
   // Reservation Detail APIs
-  getStandardReservationDetail: async (token: string, reservationId: number): Promise<StandardReservationDetail | null> => {
+  getStandardReservationDetail: async (
+    token: string,
+    reservationId: number,
+  ): Promise<StandardReservationDetail | null> => {
     const response = await fetch(`${BASE_URL}/reservations/${reservationId}`, {
       headers: getAuthHeaders(token),
     });
@@ -403,7 +407,11 @@ export const dashboardApi = {
     return data.records?.[0] || null;
   },
 
-  getLocationStandardReservations: async (token: string, locationId: number, numRecords: number = 100): Promise<StandardReservation[]> => {
+  getLocationStandardReservations: async (
+    token: string,
+    locationId: number,
+    numRecords: number = 100,
+  ): Promise<StandardReservation[]> => {
     const response = await fetch(`${BASE_URL}/reservations/?location_id=${locationId}&num_records=${numRecords}`, {
       headers: getAuthHeaders(token),
     });
@@ -411,10 +419,17 @@ export const dashboardApi = {
     return data.records || [];
   },
 
-  getLocationAdhocReservations: async (token: string, locationId: number, numRecords: number = 100): Promise<AdhocReservation[]> => {
-    const response = await fetch(`${BASE_URL}/adhoc/reservations/?location_id=${locationId}&num_records=${numRecords}`, {
-      headers: getAuthHeaders(token),
-    });
+  getLocationAdhocReservations: async (
+    token: string,
+    locationId: number,
+    numRecords: number = 100,
+  ): Promise<AdhocReservation[]> => {
+    const response = await fetch(
+      `${BASE_URL}/adhoc/reservations/?location_id=${locationId}&num_records=${numRecords}`,
+      {
+        headers: getAuthHeaders(token),
+      },
+    );
     const data: ApiResponse<AdhocReservation> = await response.json();
     return data.records || [];
   },
@@ -439,72 +454,72 @@ export const dashboardApi = {
   // Pod Update APIs
   updatePodMode: async (token: string, podId: number, podMode: string): Promise<void> => {
     const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         ...getAuthHeaders(token),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ pod_mode: podMode }),
     });
     if (!response.ok) {
-      throw new Error('Failed to update pod mode');
+      throw new Error("Failed to update pod mode");
     }
   },
 
   updatePodVersion: async (token: string, podId: number, versionData: any): Promise<void> => {
     const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         ...getAuthHeaders(token),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(versionData),
     });
     if (!response.ok) {
-      throw new Error('Failed to update pod version');
+      throw new Error("Failed to update pod version");
     }
   },
 
   updatePodFE: async (token: string, podId: number, feData: { fe_tag: string; fe_details: string }): Promise<void> => {
     const response = await fetch(`${BASE_URL}/pods/${podId}?verbose=true`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         ...getAuthHeaders(token),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(feData),
     });
     if (!response.ok) {
-      throw new Error('Failed to update pod FE');
+      throw new Error("Failed to update pod FE");
     }
   },
 
   updatePod: async (token: string, podId: number, podData: any): Promise<void> => {
     const response = await fetch(`${BASE_URL}/pods/?record_id=${podId}&order_by_field=updated_at&order_by_type=DESC`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         ...getAuthHeaders(token),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(podData),
     });
     if (!response.ok) {
-      throw new Error('Failed to update pod');
+      throw new Error("Failed to update pod");
     }
   },
 
   // User CRUD APIs
   createUser: async (token: string, userData: CreateUserData): Promise<void> => {
     const response = await fetch(`${BASE_URL}/users/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         ...getAuthHeaders(token),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
     });
     if (!response.ok) {
-      throw new Error('Failed to create user');
+      throw new Error("Failed to create user");
     }
   },
 
@@ -534,4 +549,22 @@ export const dashboardApi = {
   },
 };
 
-export type { Location, Pod, User, Reservation, StandardReservation, AdhocReservation, StandardReservationDetail, AdhocReservationDetail, LocationDetail, PodDetail, LogEntry, CreateUserData, UserDetail, UserLocation, UserReservation, PodStats, PodMonitorResponse };
+export type {
+  Location,
+  Pod,
+  User,
+  Reservation,
+  StandardReservation,
+  AdhocReservation,
+  StandardReservationDetail,
+  AdhocReservationDetail,
+  LocationDetail,
+  PodDetail,
+  LogEntry,
+  CreateUserData,
+  UserDetail,
+  UserLocation,
+  UserReservation,
+  PodStats,
+  PodMonitorResponse,
+};

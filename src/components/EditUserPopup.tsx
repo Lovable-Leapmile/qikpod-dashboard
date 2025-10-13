@@ -1,14 +1,13 @@
-
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { UserDetail } from '@/services/dashboardApi';
+import React, { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Save } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { UserDetail } from "@/services/dashboardApi";
 
 interface EditUserPopupProps {
   open: boolean;
@@ -17,33 +16,28 @@ interface EditUserPopupProps {
   onSuccess: () => void;
 }
 
-const EditUserPopup: React.FC<EditUserPopupProps> = ({
-  open,
-  onOpenChange,
-  user,
-  onSuccess
-}) => {
+const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    user_type: '',
-    user_name: '',
-    user_email: '',
-    user_phone: '',
-    user_flatno: '',
-    user_address: ''
+    user_type: "",
+    user_name: "",
+    user_email: "",
+    user_phone: "",
+    user_flatno: "",
+    user_address: "",
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user && open) {
       setFormData({
-        user_type: user.user_type || '',
-        user_name: user.user_name || '',
-        user_email: user.user_email?.replace('@gmail.com', '') || '',
-        user_phone: user.user_phone || '',
-        user_flatno: user.user_flatno || '',
-        user_address: user.user_address || ''
+        user_type: user.user_type || "",
+        user_name: user.user_name || "",
+        user_email: user.user_email?.replace("@gmail.com", "") || "",
+        user_phone: user.user_phone || "",
+        user_flatno: user.user_flatno || "",
+        user_address: user.user_address || "",
       });
     }
   }, [user, open]);
@@ -54,12 +48,12 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com:8989/users/${user.id}`, {
-        method: 'PATCH',
+      const response = await fetch(`http://productionv36.qikpod.com/podcore/users/${user.id}`, {
+        method: "PATCH",
         headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           user_name: formData.user_name,
@@ -67,26 +61,26 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
           user_phone: formData.user_phone,
           user_type: formData.user_type,
           user_address: formData.user_address,
-          user_flatno: formData.user_flatno
-        })
+          user_flatno: formData.user_flatno,
+        }),
       });
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "User updated successfully"
+          description: "User updated successfully",
         });
         onSuccess();
         onOpenChange(false);
       } else {
-        throw new Error('Failed to update user');
+        throw new Error("Failed to update user");
       }
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       toast({
         title: "Error",
         description: "Failed to update user",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -94,8 +88,8 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
   };
 
   const handlePhoneChange = (value: string) => {
-    const numericValue = value.replace(/\D/g, '');
-    setFormData(prev => ({ ...prev, user_phone: numericValue }));
+    const numericValue = value.replace(/\D/g, "");
+    setFormData((prev) => ({ ...prev, user_phone: numericValue }));
   };
 
   return (
@@ -104,13 +98,13 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Edit User</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="user_type">User Type</Label>
-            <Select 
-              value={formData.user_type} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, user_type: value }))}
+            <Select
+              value={formData.user_type}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, user_type: value }))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select user type" />
@@ -130,7 +124,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
             <Input
               id="user_name"
               value={formData.user_name}
-              onChange={(e) => setFormData(prev => ({ ...prev, user_name: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, user_name: e.target.value }))}
               required
             />
           </div>
@@ -141,7 +135,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
               <Input
                 id="user_email"
                 value={formData.user_email}
-                onChange={(e) => setFormData(prev => ({ ...prev, user_email: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, user_email: e.target.value }))}
                 className="rounded-r-none"
                 required
               />
@@ -167,7 +161,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
             <Input
               id="user_flatno"
               value={formData.user_flatno}
-              onChange={(e) => setFormData(prev => ({ ...prev, user_flatno: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, user_flatno: e.target.value }))}
             />
           </div>
 
@@ -176,13 +170,13 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({
             <Input
               id="user_address"
               value={formData.user_address}
-              onChange={(e) => setFormData(prev => ({ ...prev, user_address: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, user_address: e.target.value }))}
             />
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
             <Save className="w-4 h-4 mr-2" />
-            {loading ? 'Updating...' : 'Submit'}
+            {loading ? "Updating..." : "Submit"}
           </Button>
         </form>
       </DialogContent>

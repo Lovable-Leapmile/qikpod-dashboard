@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Download, RefreshCw, Search } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import NoDataIllustration from '@/components/ui/no-data-illustration';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, GridApi } from "ag-grid-community";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Download, RefreshCw, Search } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import NoDataIllustration from "@/components/ui/no-data-illustration";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 
 interface PartnerReservation {
   reservation_type: string;
@@ -30,108 +30,126 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const [rowData, setRowData] = useState<PartnerReservation[]>([]);
   const [filteredData, setFilteredData] = useState<PartnerReservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [globalFilter, setGlobalFilter] = useState("");
   const [pageSize, setPageSize] = useState(25);
 
-  const columnDefs: ColDef[] = useMemo(() => [
-    {
-      headerName: 'TYPE',
-      field: 'reservation_type',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'font-medium text-center'
-    }, {
-      headerName: 'AWB NO',
-      field: 'reservation_awbno',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'font-medium'
-    }, {
-      headerName: 'STATUS',
-      field: 'reservation_status',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'CREATED NAME',
-      field: 'created_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'CREATED PHONE',
-      field: 'created_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'DELIVERY NAME',
-      field: 'drop_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'DELIVERY PHONE',
-      field: 'drop_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PICKUP NAME',
-      field: 'pickup_by_name',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PICKUP PHONE',
-      field: 'pickup_by_phone',
-      flex: 1,
-      minWidth: 150,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT MODE',
-      field: 'payment_mode',
-      flex: 1,
-      minWidth: 120,
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT AMOUNT',
-      field: 'payment_amount',
-      flex: 1,
-      minWidth: 140,
-      valueFormatter: params => params.value ? `₹${params.value}` : '-',
-      cellClass: 'text-muted-foreground'
-    }, {
-      headerName: 'PAYMENT STATUS',
-      field: 'payment_status',
-      flex: 1,
-      minWidth: 140,
-      cellClass: 'text-muted-foreground'
-    }
-  ], []);
+  const columnDefs: ColDef[] = useMemo(
+    () => [
+      {
+        headerName: "TYPE",
+        field: "reservation_type",
+        flex: 1,
+        minWidth: 120,
+        cellClass: "font-medium text-center",
+      },
+      {
+        headerName: "AWB NO",
+        field: "reservation_awbno",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "font-medium",
+      },
+      {
+        headerName: "STATUS",
+        field: "reservation_status",
+        flex: 1,
+        minWidth: 120,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "CREATED NAME",
+        field: "created_by_name",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "CREATED PHONE",
+        field: "created_by_phone",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "DELIVERY NAME",
+        field: "drop_by_name",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "DELIVERY PHONE",
+        field: "drop_by_phone",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "PICKUP NAME",
+        field: "pickup_by_name",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "PICKUP PHONE",
+        field: "pickup_by_phone",
+        flex: 1,
+        minWidth: 150,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "PAYMENT MODE",
+        field: "payment_mode",
+        flex: 1,
+        minWidth: 120,
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "PAYMENT AMOUNT",
+        field: "payment_amount",
+        flex: 1,
+        minWidth: 140,
+        valueFormatter: (params) => (params.value ? `₹${params.value}` : "-"),
+        cellClass: "text-muted-foreground",
+      },
+      {
+        headerName: "PAYMENT STATUS",
+        field: "payment_status",
+        flex: 1,
+        minWidth: 140,
+        cellClass: "text-muted-foreground",
+      },
+    ],
+    [],
+  );
 
-  const fetchPartnerReservations = async (reservationType: string = 'FK_Delivery') => {
+  const fetchPartnerReservations = async (reservationType: string = "FK_Delivery") => {
     try {
       setLoading(true);
-      const response = await fetch(`http://productionv36.qikpod.com:8989/get_partner_reservation/?reservation_type=${reservationType}`, {
-        headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY'
-        }
-      });
+      const response = await fetch(
+        `http://productionv36.qikpod.com/podcore/get_partner_reservation/?reservation_type=${reservationType}`,
+        {
+          headers: {
+            accept: "application/json",
+            Authorization:
+              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY",
+          },
+        },
+      );
       if (response.ok) {
         const data = await response.json();
         const reservations = data.records || [];
         setRowData(reservations);
         setFilteredData(reservations);
       } else {
-        console.error('Failed to fetch partner reservations');
+        console.error("Failed to fetch partner reservations");
         setRowData([]);
         setFilteredData([]);
       }
     } catch (error) {
-      console.error('Error fetching partner reservations:', error);
+      console.error("Error fetching partner reservations:", error);
       setRowData([]);
       setFilteredData([]);
     } finally {
@@ -145,10 +163,10 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
   const handleFilterChange = (value: string) => {
     setSelectedFilter(value);
-    if (value === 'all') {
+    if (value === "all") {
       setFilteredData(rowData);
     } else {
-      const filtered = rowData.filter(item => item.reservation_status?.toLowerCase().includes(value.toLowerCase()));
+      const filtered = rowData.filter((item) => item.reservation_status?.toLowerCase().includes(value.toLowerCase()));
       setFilteredData(filtered);
     }
   };
@@ -160,16 +178,25 @@ const PartnerReservationsAgGrid: React.FC = () => {
     }
     const headers = Object.keys(jsonDataList[0]);
     let csvData = headers.join(",") + "\n";
-    jsonDataList.forEach(json => {
-      const values = headers.map(header => json[header] !== null && json[header] !== undefined ? json[header].toString() : "");
+    jsonDataList.forEach((json) => {
+      const values = headers.map((header) =>
+        json[header] !== null && json[header] !== undefined ? json[header].toString() : "",
+      );
       csvData += values.join(",") + "\n";
     });
     const now = new Date();
-    const pad = (n: number) => n < 10 ? "0" + n : n;
-    const formattedDateTime = now.getFullYear().toString() + pad(now.getMonth() + 1) + pad(now.getDate()) + "_" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    const pad = (n: number) => (n < 10 ? "0" + n : n);
+    const formattedDateTime =
+      now.getFullYear().toString() +
+      pad(now.getMonth() + 1) +
+      pad(now.getDate()) +
+      "_" +
+      pad(now.getHours()) +
+      pad(now.getMinutes()) +
+      pad(now.getSeconds());
     const fileName = `QikPod_${formattedDateTime}.csv`;
     const blob = new Blob([csvData], {
-      type: 'text/csv;charset=utf-8;'
+      type: "text/csv;charset=utf-8;",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -191,7 +218,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', value);
+      gridRef.current.api.setGridOption("quickFilterText", value);
     }
   }, []);
 
@@ -201,15 +228,15 @@ const PartnerReservationsAgGrid: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'droppending':
-      case 'pickuppending':
-      case 'rtopending':
-        return 'text-orange-600 bg-orange-50';
-      case 'pickupcompleted':
-      case 'rtocompleted':
-        return 'text-green-600 bg-green-50';
+      case "droppending":
+      case "pickuppending":
+      case "rtopending":
+        return "text-orange-600 bg-orange-50";
+      case "pickupcompleted":
+      case "rtocompleted":
+        return "text-green-600 bg-green-50";
       default:
-        return 'text-gray-600 bg-gray-50';
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -256,7 +283,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
                 </Select>
 
                 <div className="flex items-center gap-2">
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                     <SelectTrigger className="w-full sm:w-16 h-9">
                       <SelectValue />
                     </SelectTrigger>
@@ -269,12 +296,22 @@ const PartnerReservationsAgGrid: React.FC = () => {
                   </Select>
 
                   <div className="flex gap-2">
-                    <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="h-9 px-2 flex-1 sm:flex-initial">
+                    <Button
+                      onClick={handleDownloadCSV}
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-2 flex-1 sm:flex-initial"
+                    >
                       <Download className="h-4 w-4 sm:mr-1" />
                       <span className="hidden sm:inline">Export</span>
                     </Button>
 
-                    <Button variant="outline" size="sm" onClick={refreshData} className="h-9 px-2 flex-1 sm:flex-initial">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={refreshData}
+                      className="h-9 px-2 flex-1 sm:flex-initial"
+                    >
                       <RefreshCw className="h-4 w-4 sm:mr-1" />
                       <span className="hidden sm:inline">Refresh</span>
                     </Button>
@@ -302,7 +339,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
                 resizable: true,
                 sortable: true,
                 filter: true,
-                cellClass: 'flex items-center'
+                cellClass: "flex items-center",
               }}
               pagination={true}
               paginationPageSize={pageSize}
@@ -349,7 +386,9 @@ const PartnerReservationsAgGrid: React.FC = () => {
                     <div className="font-semibold text-gray-900">{reservation.reservation_awbno}</div>
                     <div className="text-sm text-gray-600">{reservation.reservation_type}</div>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.reservation_status)}`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.reservation_status)}`}
+                  >
                     {reservation.reservation_status}
                   </span>
                 </div>
@@ -384,9 +423,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
                       <div className="text-sm text-gray-600">{reservation.payment_status}</div>
                     </div>
                     {reservation.payment_amount && (
-                      <div className="text-lg font-semibold text-gray-900">
-                        ₹{reservation.payment_amount}
-                      </div>
+                      <div className="text-lg font-semibold text-gray-900">₹{reservation.payment_amount}</div>
                     )}
                   </div>
                 </div>

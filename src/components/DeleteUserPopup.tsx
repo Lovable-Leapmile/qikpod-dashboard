@@ -1,9 +1,17 @@
-
-import React, { useState } from 'react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { UserDetail } from '@/services/dashboardApi';
+import React, { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { UserDetail } from "@/services/dashboardApi";
 
 interface DeleteUserPopupProps {
   open: boolean;
@@ -12,12 +20,7 @@ interface DeleteUserPopupProps {
   onSuccess: () => void;
 }
 
-const DeleteUserPopup: React.FC<DeleteUserPopupProps> = ({
-  open,
-  onOpenChange,
-  user,
-  onSuccess
-}) => {
+const DeleteUserPopup: React.FC<DeleteUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -27,30 +30,30 @@ const DeleteUserPopup: React.FC<DeleteUserPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`http://productionv36.qikpod.com:8989/users/${user.id}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://productionv36.qikpod.com/podcore/users/${user.id}`, {
+        method: "DELETE",
         headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        }
+          accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       if (response.ok) {
         toast({
           title: "Success",
-          description: "User deleted successfully"
+          description: "User deleted successfully",
         });
         onSuccess();
         onOpenChange(false);
       } else {
-        throw new Error('Failed to delete user');
+        throw new Error("Failed to delete user");
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       toast({
         title: "Error",
         description: "Failed to delete user",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -69,12 +72,8 @@ const DeleteUserPopup: React.FC<DeleteUserPopupProps> = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>No</AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={handleDelete} 
-            disabled={loading}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            {loading ? 'Deleting...' : 'Yes'}
+          <AlertDialogAction onClick={handleDelete} disabled={loading} className="bg-red-600 hover:bg-red-700">
+            {loading ? "Deleting..." : "Yes"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

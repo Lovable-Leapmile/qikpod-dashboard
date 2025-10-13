@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface User {
   user_name: string;
@@ -24,7 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -37,19 +37,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Check for existing session on app load
-    const token = localStorage.getItem('access_token');
-    const userData = localStorage.getItem('user_data');
-    
+    const token = localStorage.getItem("access_token");
+    const userData = localStorage.getItem("user_data");
+
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
 
         // Check if stored user is not a customer
-        if (parsedUser.user_type && parsedUser.user_type.toLowerCase() === 'customer') {
+        if (parsedUser.user_type && parsedUser.user_type.toLowerCase() === "customer") {
           // Clear customer data from storage
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('user_data');
-          toast.error('Customer accounts are not allowed to access this application');
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("user_data");
+          toast.error("Customer accounts are not allowed to access this application");
         } else {
           setAccessToken(token);
           setUser(parsedUser);
@@ -57,8 +57,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (error) {
         // Clear invalid data
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user_data');
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_data");
       }
     }
     setIsLoading(false);
@@ -66,13 +66,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = (token: string, userData: User) => {
     // Double-check that user is not a customer before allowing login
-    if (userData.user_type && userData.user_type.toLowerCase() === 'customer') {
-      toast.error('Customer accounts are not allowed to access this application');
+    if (userData.user_type && userData.user_type.toLowerCase() === "customer") {
+      toast.error("Customer accounts are not allowed to access this application");
       return;
     }
 
-    localStorage.setItem('access_token', token);
-    localStorage.setItem('user_data', JSON.stringify(userData));
+    localStorage.setItem("access_token", token);
+    localStorage.setItem("user_data", JSON.stringify(userData));
     setAccessToken(token);
     setUser(userData);
     setIsAuthenticated(true);
@@ -80,39 +80,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_data');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_data");
     setAccessToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    toast.success('Logged out successfully');
+    toast.success("Logged out successfully");
   };
 
   const generateOTP = async (mobile: string): Promise<boolean> => {
     try {
-      const response = await fetch(
-        `http://productionv36.qikpod.com:8989/otp/generate_otp/?user_phone=${mobile}`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY',
-            'Accept': 'application/json',
-          },
-        }
-      );
+      const response = await fetch(`http://productionv36.qikpod.com/podcore/otp/generate_otp/?user_phone=${mobile}`, {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY",
+          Accept: "application/json",
+        },
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('OTP sent successfully!');
+        toast.success("OTP sent successfully!");
         return true;
       } else {
-        toast.error(data.message || 'Failed to send OTP');
+        toast.error(data.message || "Failed to send OTP");
         return false;
       }
     } catch (error) {
-      console.error('Generate OTP error:', error);
-      toast.error('No Internet Connection');
+      console.error("Generate OTP error:", error);
+      toast.error("No Internet Connection");
       return false;
     }
   };
@@ -120,14 +118,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const validateOTP = async (mobile: string, otp: string): Promise<{ success: boolean; data?: any }> => {
     try {
       const response = await fetch(
-        `http://productionv36.qikpod.com:8989/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
+        `http://productionv36.qikpod.com/podcore/otp/validate_otp/?user_phone=${mobile}&otp_text=${otp}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-             'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY',
-            'Accept': 'application/json',
+            Authorization:
+              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY",
+            Accept: "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -135,16 +134,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok && data.access_token) {
         // Use the dynamic auth token to check user type
         try {
-          const userCheckResponse = await fetch(
-            `http://productionv36.qikpod.com:8989/users/?user_phone=${mobile}`,
-            {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${data.access_token}`,
-              },
-            }
-          );
+          const userCheckResponse = await fetch(`http://productionv36.qikpod.com/podcore/users/?user_phone=${mobile}`, {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${data.access_token}`,
+            },
+          });
 
           const userCheckData = await userCheckResponse.json();
 
@@ -153,31 +149,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userName = userCheckData.records[0].user_name;
 
             // Block customers from accessing the dashboard
-            if (userType && userType.toLowerCase() === 'customer') {
-              toast.error('Customer accounts are not allowed to access this application');
+            if (userType && userType.toLowerCase() === "customer") {
+              toast.error("Customer accounts are not allowed to access this application");
               return { success: false };
             }
 
             // Add user data to the response for login
             data.records = userCheckData.records;
           } else {
-            toast.error('Failed to retrieve user information');
+            toast.error("Failed to retrieve user information");
             return { success: false };
           }
         } catch (userCheckError) {
-          console.error('User type check error:', userCheckError);
-          toast.error('Failed to verify user permissions');
+          console.error("User type check error:", userCheckError);
+          toast.error("Failed to verify user permissions");
           return { success: false };
         }
 
         return { success: true, data };
       } else {
-        toast.error(data.message || 'Invalid OTP');
+        toast.error(data.message || "Invalid OTP");
         return { success: false };
       }
     } catch (error) {
-      console.error('Validate OTP error:', error);
-      toast.error('No Internet Connection');
+      console.error("Validate OTP error:", error);
+      toast.error("No Internet Connection");
       return { success: false };
     }
   };
