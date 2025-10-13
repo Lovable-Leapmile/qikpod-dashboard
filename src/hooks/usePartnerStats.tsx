@@ -27,7 +27,7 @@ export const usePartnerStats = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://productionv36.qikpod.com/podcore/pod_monitor/?pod_type=reservation_details",
+        "http://productionv36.qikpod.com/podcore/pods/pod_monitor/?pod_type=reservation_details",
         {
           headers: {
             accept: "application/json",

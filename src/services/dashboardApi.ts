@@ -234,7 +234,7 @@ interface UserReservation {
 }
 
 const BASE_URL = "http://productionv36.qikpod.com/podcore";
-const LOGS_BASE_URL = "https://newproduction.qikpod.com:8988";
+const LOGS_BASE_URL = "https://productionv36.qikpod.com/";
 
 const getAuthHeaders = (token: string) => ({
   Authorization: `Bearer ${token}`,
@@ -297,7 +297,7 @@ export const dashboardApi = {
   },
 
   getAlertPodsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/podcore/pod_monitor/?pod_type=field_alert_pods`, {
+    const response = await fetch(`${BASE_URL}/pods/pod_monitor/?pod_type=field_alert_pods`, {
       headers: getAuthHeaders(token),
     });
     const data: PodMonitorResponse = await response.json();
@@ -305,7 +305,7 @@ export const dashboardApi = {
   },
 
   getReservationPodsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/podcore/pod_monitor/?pod_type=alert_pods_reservation`, {
+    const response = await fetch(`${BASE_URL}/pods/pod_monitor/?pod_type=alert_pods_reservation`, {
       headers: getAuthHeaders(token),
     });
     const data: PodMonitorResponse = await response.json();
@@ -313,7 +313,7 @@ export const dashboardApi = {
   },
 
   getFieldPodsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/podcore/pod_monitor/?pod_type=field_pods`, {
+    const response = await fetch(`${BASE_URL}/pods/pod_monitor/?pod_type=field_pods`, {
       headers: getAuthHeaders(token),
     });
     const data: PodMonitorResponse = await response.json();
@@ -321,7 +321,7 @@ export const dashboardApi = {
   },
 
   getIgnorePodsCount: async (token: string): Promise<number> => {
-    const response = await fetch(`${BASE_URL}/podcore/pod_monitor/?pod_type=field_ignored_pods`, {
+    const response = await fetch(`${BASE_URL}/pods/pod_monitor/?pod_type=field_ignored_pods`, {
       headers: getAuthHeaders(token),
     });
     const data: PodMonitorResponse = await response.json();
