@@ -26,15 +26,12 @@ export const usePartnerStats = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        "http://productionv36.qikpod.com/podcore/pods/pod_monitor/?pod_type=reservation_details",
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const response = await fetch("https://productionv36.qikpod.com/pod_monitor/?pod_type=reservation_details", {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch partner statistics");
