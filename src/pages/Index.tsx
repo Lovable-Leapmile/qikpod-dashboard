@@ -2,9 +2,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-purple-50 to-blue-50 dark:from-background dark:via-purple-950/20 dark:to-blue-950/20 flex items-center justify-center p-8 overflow-hidden">
       <div className="relative w-full max-w-6xl h-[600px]">
-        <h1 className="text-4xl font-bold text-center mb-12 text-foreground">
-          Testing App
-        </h1>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Testing App
+          </h1>
+          <p className="text-2xl text-muted-foreground">
+            leapmile robotics
+          </p>
+        </div>
         
         {/* Box 1 - Purple - Floating */}
         <div 
