@@ -110,11 +110,9 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
                 <SelectValue placeholder="Select user type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="QPStaff">QPStaff</SelectItem>
                 <SelectItem value="Customer">Customer</SelectItem>
-                <SelectItem value="SiteSecurity">SiteSecurity</SelectItem>
                 <SelectItem value="SiteAdmin">SiteAdmin</SelectItem>
-                <SelectItem value="DeliveryExec">DeliveryExec</SelectItem>
+                <SelectItem value="SiteSecurity">SiteSecurity</SelectItem>
               </SelectContent>
             </Select>
           </div>

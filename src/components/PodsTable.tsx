@@ -17,10 +17,12 @@ import NoDataIllustration from '@/components/ui/no-data-illustration';
 
 interface PodsTableProps {
   onPodClick: (id: number) => void;
+  isDashboard?: boolean;
 }
 
 const PodsTable: React.FC<PodsTableProps> = ({
-  onPodClick
+  onPodClick,
+  isDashboard = false
 }) => {
   const {
     accessToken
@@ -254,7 +256,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className={`ag-theme-alpine ${isDashboard ? 'h-[400px]' : 'h-[calc(100vh-200px)]'} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}>
                 <AgGridReact
                   ref={gridRef}
                   rowData={pods}
