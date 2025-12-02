@@ -217,15 +217,12 @@ const PaymentsAgGrid = () => {
   const hasData = rowData.length > 0;
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Header Section - Updated to be more compact like logs page */}
+      {/* Header Section - simplified into two lines as requested */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
-        {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          {/* First line: title + primary actions */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
-            </div>
+          {/* First line: title (left) and primary controls (right) */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
 
             <div className="flex items-center gap-2">
               <Button
@@ -262,16 +259,27 @@ const PaymentsAgGrid = () => {
             </div>
           </div>
 
-          {/* Second line: filters, search and pagination controls */}
+          {/* Second line: search full width left, status select on right after a gap */}
           <div className="mt-3">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-              <div className="flex items-center gap-4 w-full lg:w-auto">
-                {/* Status Filter */}
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-start gap-4">
+              {/* Search - take full available width */}
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search payments..."
+                  value={globalFilter}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
+
+              {/* Status select - right side */}
+              <div className="w-[200px]">
+                <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Filter by Status" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Status</SelectItem>
@@ -282,158 +290,13 @@ const PaymentsAgGrid = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Search */}
-                <div className="relative flex-1 w-full sm:w-64">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search payments..."
-                    value={globalFilter}
-                    onChange={(e) => handleGlobalFilter(e.target.value)}
-                    className="pl-10 w-full"
-                  />
-                </div>
-              </div>
-
-              {/* Page Size Selector */}
-              <div className="hidden lg:flex items-center space-x-2">
-                <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Tablet layout - keep behavior identical to previous */}
-              <div className="hidden md:flex lg:hidden w-full">
-                <div className="flex items-center justify-between w-full gap-4">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="relative flex-1 max-w-xs">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <Input
-                        placeholder="Search payments..."
-                        value={globalFilter}
-                        onChange={(e) => handleGlobalFilter(e.target.value)}
-                        className="pl-10 w-full"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Status</SelectItem>
-                          <SelectItem value="paid">Paid</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="inactive">Inactive</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="relative flex-1 max-w-xs">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <Input
-                        placeholder="Search payments..."
-                        value={globalFilter}
-                        onChange={(e) => handleGlobalFilter(e.target.value)}
-                        className="pl-10 w-full"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                    <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                      <SelectTrigger className="w-20">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mobile layout */}
-              <div className="md:hidden w-full space-y-3">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search payments..."
-                    value={globalFilter}
-                    onChange={(e) => handleGlobalFilter(e.target.value)}
-                    className="pl-10 w-full"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between w-full gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full max-w-[140px]">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="paid">Paid</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                    <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                      <SelectTrigger className="w-16">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex sm:hidden items-center gap-2">
-                    <Checkbox
-                      id="auto-refresh-payments-mobile"
-                      checked={autoRefresh}
-                      onCheckedChange={(checked) => setAutoRefresh(checked === true)}
-                      className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
-                    />
-                    <label
-                      htmlFor="auto-refresh-payments-mobile"
-                      className="text-sm text-muted-foreground font-medium whitespace-nowrap"
-                    >
-                      Auto Refresh (2m)
-                    </label>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* Content Section (table) - unchanged */}
       <div className="flex-1 w-full">
         {loading ? (
           <div className="flex items-center justify-center h-[200px]">
