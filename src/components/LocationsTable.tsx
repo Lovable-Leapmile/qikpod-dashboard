@@ -34,7 +34,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
 
   // Advanced filtering
   const { filters, setFilters, filteredData, resetFilters } = useTableFilters<Location>(locations, [
-    "primary_name",
     "location_name",
     "location_address",
     "location_pincode",
@@ -261,7 +260,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
-                            <div className="text-lg font-semibold mt-1">{location.primary_name}</div>
                           </div>
                           <Button
                             variant="ghost"
