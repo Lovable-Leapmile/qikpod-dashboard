@@ -562,6 +562,46 @@ export const dashboardApi = {
     const data: ApiResponse<UserReservation> = await response.json();
     return data.records || [];
   },
+
+  // Resend OTP APIs
+  resendReservationOTP: async (token: string, reservationId: number): Promise<void> => {
+    const response = await fetch(`${getBaseUrl()}/reservations/${reservationId}/resend-otp`, {
+      method: "POST",
+      headers: {
+        ...getAuthHeaders(token),
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to resend OTP");
+    }
+  },
+
+  resendAdhocDropOTP: async (token: string, reservationId: number): Promise<void> => {
+    const response = await fetch(`${getBaseUrl()}/adhoc/reservations/${reservationId}/resend-drop-otp`, {
+      method: "POST",
+      headers: {
+        ...getAuthHeaders(token),
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to resend drop OTP");
+    }
+  },
+
+  resendAdhocPickupOTP: async (token: string, reservationId: number): Promise<void> => {
+    const response = await fetch(`${getBaseUrl()}/adhoc/reservations/${reservationId}/resend-pickup-otp`, {
+      method: "POST",
+      headers: {
+        ...getAuthHeaders(token),
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to resend pickup OTP");
+    }
+  },
 };
 
 export type {

@@ -133,45 +133,49 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     {
       headerName: 'ID',
       field: 'id',
-      width: 80,
+      flex: 1,
+      minWidth: 80,
       cellClass: 'font-medium text-center'
     },
     {
       headerName: 'User Name',
       field: 'drop_by_name',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellClass: 'font-medium'
     },
     {
       headerName: 'Location',
       field: 'location_name',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellClass: 'text-muted-foreground'
     },
     {
       headerName: 'Created By',
       field: 'created_by_name',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellClass: 'text-muted-foreground'
     },
     {
       headerName: 'Status',
       field: 'status',
-      width: 120,
+      flex: 1,
+      minWidth: 120,
       cellClass: 'font-medium'
     },
     {
       headerName: 'Created At',
       field: 'created_at',
-      width: 160,
+      flex: 2,
+      minWidth: 160,
       cellRenderer: DateRenderer
     },
     {
       headerName: 'Action',
-      width: 100,
+      flex: 1,
+      minWidth: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
       cellClass: 'flex items-center justify-center'
     }
@@ -181,51 +185,56 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     {
       headerName: 'ID',
       field: 'id',
-      width: 80,
+      flex: 1,
+      minWidth: 80,
       cellClass: 'font-medium text-center'
     },
     {
       headerName: 'Pod ID',
       field: 'pod_name',
-      width: 120,
+      flex: 1,
+      minWidth: 120,
       cellClass: 'font-medium'
     },
     {
       headerName: 'User Phone',
       field: 'user_phone',
-      width: 130,
+      flex: 2,
+      minWidth: 130,
       cellClass: 'text-muted-foreground'
     },
     {
       headerName: 'Drop Time',
       field: 'drop_time',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellRenderer: DateRenderer
     },
     {
       headerName: 'Pickup Time',
       field: 'pickup_time',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellRenderer: DateRenderer
     },
     {
       headerName: 'RTO Pickup',
       field: 'rto_picktime',
-      flex: 1,
+      flex: 2,
       minWidth: 150,
       cellRenderer: DateRenderer
     },
     {
       headerName: 'Status',
       field: 'reservation_status',
-      width: 120,
+      flex: 1,
+      minWidth: 120,
       cellClass: 'font-medium'
     },
     {
       headerName: 'Action',
-      width: 100,
+      flex: 1,
+      minWidth: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
       cellClass: 'flex items-center justify-center'
     }
@@ -286,7 +295,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                 <Switch
                   checked={!isStandardMode}
                   onCheckedChange={checked => setIsStandardMode(!checked)}
-                  className="data-[state=checked]:bg-accent"
+                  className="data-[state=checked]:bg-[#FDDC4E]"
                 />
                 <span className={`text-sm ${!isStandardMode ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
                   Adhoc
