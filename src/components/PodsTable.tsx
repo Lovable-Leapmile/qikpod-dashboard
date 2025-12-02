@@ -1,51 +1,44 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import '@/styles/ag-grid.css';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Package, Eye, RefreshCw, Search, Filter, Download, FileSpreadsheet, FileText } from 'lucide-react';
-import TableFilters, { FilterConfig } from '@/components/filters/TableFilters';
-import { useTableFilters } from '@/hooks/useTableFilters';
-import { exportTableData, ExportFormat } from '@/lib/tableExport';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import "@/styles/ag-grid.css";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Package, Eye, RefreshCw, Download, FileSpreadsheet, FileText } from "lucide-react";
+import TableFilters, { FilterConfig } from "@/components/filters/TableFilters";
+import { useTableFilters } from "@/hooks/useTableFilters";
+import { exportTableData, ExportFormat } from "@/lib/tableExport";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Checkbox } from '@/components/ui/checkbox';
-import { dashboardApi, Pod } from '@/services/dashboardApi';
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
-import NoDataIllustration from '@/components/ui/no-data-illustration';
+} from "@/components/ui/dropdown-menu";
+import { dashboardApi, Pod } from "@/services/dashboardApi";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
+import NoDataIllustration from "@/components/ui/no-data-illustration";
 
 interface PodsTableProps {
   onPodClick: (id: number) => void;
   isDashboard?: boolean;
 }
 
-const PodsTable: React.FC<PodsTableProps> = ({
-  onPodClick,
-  isDashboard = false
-}) => {
-  const {
-    accessToken
-  } = useAuth();
+const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }) => {
+  const { accessToken } = useAuth();
   const gridRef = useRef<AgGridReact>(null);
   const [pods, setPods] = useState<Pod[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(25);
 
-  const { filters, setFilters, filteredData, resetFilters } = useTableFilters(
+  const { filters, setFilters, filteredData, resetFilters } = useTableFilters<Pod>(
     pods,
-    ['pod_name', 'location_name', 'pod_health'],
-    'status',
-    undefined
+    ["pod_name", "location_name", "pod_health"],
+    "status",
+    undefined,
   );
 
   const fetchData = useCallback(async () => {
@@ -55,7 +48,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
       const data = await dashboardApi.getPods(accessToken, pageSize);
       setPods(data || []);
     } catch (error) {
-      console.error('Error fetching pods:', error);
+      console.error("Error fetching pods:", error);
       setPods([]);
     } finally {
       setLoading(false);
@@ -66,115 +59,130 @@ const PodsTable: React.FC<PodsTableProps> = ({
     fetchData();
   }, [fetchData]);
 
-  const StatusBadge = ({
-    value
-  }: {
-    value: string;
-  }) => {
-    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
-      value === 'active' ? 'bg-green-100 text-green-800' :
-      value === 'inactive' ? 'bg-red-100 text-red-800' :
-      'bg-gray-100 text-gray-800')}>
-      {value}
-    </span>;
-  };
-
-  const PowerStatusBadge = ({
-    value
-  }: {
-    value: string;
-  }) => {
-    return <span className={cn('px-2 py-1 rounded-full text-xs font-semibold',
-      value === 'ON' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
-      {value}
-    </span>;
-  };
-
-  const ActionRenderer = ({ data }: { data: Pod }) => {
+  const StatusBadge: React.FC<{ value?: string }> = ({ value = "" }) => {
+    const v = value.toLowerCase();
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onPodClick(data.id);
-        }}
-        className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-        title="View Pod Details"
+      <span
+        className={cn(
+          "px-2 py-1 rounded-full text-xs font-semibold inline-block",
+          v === "active"
+            ? "bg-green-100 text-green-800"
+            : v === "inactive"
+              ? "bg-red-100 text-red-800"
+              : "bg-gray-100 text-gray-800",
+        )}
       >
-        <Eye className="h-4 w-4" />
-      </Button>
+        {value || "N/A"}
+      </span>
     );
   };
 
-  const columnDefs: ColDef[] = [{
-    field: 'id',
-    headerName: 'ID',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 80,
-    cellClass: 'font-medium text-center'
-  }, {
-    field: 'pod_name',
-    headerName: 'Pod Name',
-    sortable: true,
-    filter: true,
-    flex: 2,
-    minWidth: 150,
-    cellClass: 'font-medium'
-  }, {
-    field: 'pod_power_status',
-    headerName: 'Power',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 100,
-    cellRenderer: ({ value }: { value: string }) => <PowerStatusBadge value={value} />,
-    cellClass: 'text-center'
-  }, {
-    field: 'status',
-    headerName: 'Status',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 100,
-    cellRenderer: ({ value }: { value: string }) => <StatusBadge value={value} />,
-    cellClass: 'text-center'
-  }, {
-    field: 'pod_health',
-    headerName: 'Health',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 100,
-    cellClass: 'text-muted-foreground text-center'
-  }, {
-    field: 'pod_numtotaldoors',
-    headerName: 'Doors',
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 80,
-    cellClass: 'text-muted-foreground text-center'
-  }, {
-    field: 'location_name',
-    headerName: 'Location',
-    sortable: true,
-    filter: true,
-    flex: 2,
-    minWidth: 150,
-    cellClass: 'text-muted-foreground'
-  }, {
-    headerName: 'Action',
-    flex: 1,
-    minWidth: 100,
-    cellRenderer: ActionRenderer,
-    sortable: false,
-    filter: false,
-    resizable: false,
-    cellClass: ['flex', 'items-center', 'justify-center']
-  }];
+  const PowerStatusBadge: React.FC<{ value?: string }> = ({ value = "" }) => {
+    const v = (value || "").toUpperCase();
+    return (
+      <span
+        className={cn(
+          "px-2 py-1 rounded-full text-xs font-semibold inline-block",
+          v === "ON" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
+        )}
+      >
+        {value || "N/A"}
+      </span>
+    );
+  };
+
+  const ActionRenderer = ({ data }: { data: Pod }) => (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={(e) => {
+        e.stopPropagation();
+        onPodClick(data.id);
+      }}
+      className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+      title="View Pod Details"
+    >
+      <Eye className="h-4 w-4" />
+    </Button>
+  );
+
+  const columnDefs: ColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 80,
+      cellClass: "font-medium text-center",
+    },
+    {
+      field: "pod_name",
+      headerName: "Pod Name",
+      sortable: true,
+      filter: true,
+      flex: 2,
+      minWidth: 150,
+      cellClass: "font-medium",
+    },
+    {
+      field: "pod_power_status",
+      headerName: "Power",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+      cellRenderer: ({ value }: { value: string }) => <PowerStatusBadge value={value} />,
+      cellClass: "text-center",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+      cellRenderer: ({ value }: { value: string }) => <StatusBadge value={value} />,
+      cellClass: "text-center",
+    },
+    {
+      field: "pod_health",
+      headerName: "Health",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 100,
+      cellClass: "text-muted-foreground text-center",
+    },
+    {
+      field: "pod_numtotaldoors",
+      headerName: "Doors",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      minWidth: 80,
+      cellClass: "text-muted-foreground text-center",
+    },
+    {
+      field: "location_name",
+      headerName: "Location",
+      sortable: true,
+      filter: true,
+      flex: 2,
+      minWidth: 150,
+      cellClass: "text-muted-foreground",
+    },
+    {
+      headerName: "Action",
+      flex: 1,
+      minWidth: 100,
+      cellRenderer: ActionRenderer,
+      sortable: false,
+      filter: false,
+      resizable: false,
+      cellClass: "flex items-center justify-center",
+    },
+  ];
 
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
@@ -186,25 +194,25 @@ const PodsTable: React.FC<PodsTableProps> = ({
 
   const handleExport = (format: ExportFormat) => {
     const exportColumns = columnDefs
-      .filter(col => col.field)
-      .map(col => ({
+      .filter((col) => !!col.field)
+      .map((col) => ({
         field: col.field!,
-        headerName: col.headerName!
+        headerName: col.headerName || col.field,
       }));
 
     exportTableData({
       data: filteredData,
       columns: exportColumns,
-      filename: 'pods',
-      format
+      filename: "pods",
+      format,
     });
   };
 
   const filterConfig: FilterConfig = {
     searchPlaceholder: "Search pods...",
     statusOptions: [
-      { label: 'Active', value: 'active' },
-      { label: 'Inactive', value: 'inactive' }
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
     ],
     dateRangeEnabled: false,
   };
@@ -214,9 +222,9 @@ const PodsTable: React.FC<PodsTableProps> = ({
   return (
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Package className="h-5 w-5 text-gray-700" />
               <h2 className="text-lg font-semibold text-gray-900">Pods</h2>
@@ -231,20 +239,21 @@ const PodsTable: React.FC<PodsTableProps> = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem onClick={() => handleExport('csv')}>
+                  <DropdownMenuItem onClick={() => handleExport("csv")}>
                     <FileText className="w-4 h-4 mr-2" />
                     Export as CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleExport('excel')}>
+                  <DropdownMenuItem onClick={() => handleExport("excel")}>
                     <FileSpreadsheet className="w-4 h-4 mr-2" />
                     Export as Excel
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                  <DropdownMenuItem onClick={() => handleExport("pdf")}>
                     <FileText className="w-4 h-4 mr-2" />
                     Export as PDF
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
               <Button variant="outline" size="sm" onClick={refreshData}>
                 <RefreshCw className="h-4 w-4 mr-1" />
                 <span className="hidden sm:inline">Refresh</span>
@@ -252,12 +261,9 @@ const PodsTable: React.FC<PodsTableProps> = ({
             </div>
           </div>
 
-          <TableFilters
-            config={filterConfig}
-            state={filters}
-            onChange={setFilters}
-            onReset={resetFilters}
-          />
+          <div className="mt-4">
+            <TableFilters config={filterConfig} state={filters} onChange={setFilters} onReset={resetFilters} />
+          </div>
         </div>
       </div>
 
@@ -265,13 +271,15 @@ const PodsTable: React.FC<PodsTableProps> = ({
       <div className="flex-1 w-full">
         {loading ? (
           <div className="flex items-center justify-center h-[200px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
           </div>
         ) : hasData ? (
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className={`ag-theme-alpine ${isDashboard ? 'h-[400px]' : 'h-[calc(100vh-280px)]'} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}>
+              <div
+                className={`ag-theme-alpine ${isDashboard ? "h-[400px]" : "h-[calc(100vh-240px)]"} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
+              >
                 <AgGridReact
                   ref={gridRef}
                   rowData={filteredData}
@@ -280,7 +288,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
                     resizable: true,
                     sortable: true,
                     filter: true,
-                    cellClass: 'flex items-center'
+                    cellClass: "flex items-center",
                   }}
                   pagination={true}
                   paginationPageSize={pageSize}
@@ -302,15 +310,20 @@ const PodsTable: React.FC<PodsTableProps> = ({
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {filteredData.map(pod => (
+              <div className="space-y-4 max-h-[calc(100vh-240px)] overflow-y-auto">
+                {filteredData.map((pod) => (
                   <Card key={pod.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {pod.id}</div>
-                          <div className="text-lg font-semibold mt-1">{pod.pod_name}</div>
+                        <div className="flex-1 flex items-center space-x-3">
+                          {/* Icon left-aligned beside pod name */}
+                          <Package className="h-5 w-5 text-gray-700 flex-shrink-0" />
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">ID: {pod.id}</div>
+                            <div className="text-lg font-semibold mt-1">{pod.pod_name}</div>
+                          </div>
                         </div>
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -323,6 +336,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
+
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-gray-700">Power:</span>
