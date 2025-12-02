@@ -254,7 +254,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const hasData = currentData && currentData.length > 0;
 
   return (
-    <div className="w-full h-full flex flex-col animate-fade-in">
+    <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">

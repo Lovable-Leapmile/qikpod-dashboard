@@ -14,11 +14,6 @@ const LocationsPage: React.FC = () => {
     setCurrentView('locationDetail');
   };
 
-  const handleBackToLocations = () => {
-    setCurrentView('locations');
-    setSelectedLocationId(null);
-  };
-
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -32,7 +27,7 @@ const LocationsPage: React.FC = () => {
   if (currentView === 'locationDetail' && selectedLocationId) {
     return (
       <Layout title="Location Details" breadcrumb="Operations / Locations Management / Location Details">
-        <LocationDetail locationId={selectedLocationId} onBack={handleBackToLocations} />
+        <LocationDetail locationId={selectedLocationId} onBack={() => setCurrentView('locations')} />
       </Layout>
     );
   }
