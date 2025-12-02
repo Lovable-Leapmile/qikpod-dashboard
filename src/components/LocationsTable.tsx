@@ -92,7 +92,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       filter: true,
       flex: 2,
       minWidth: 150,
-      cellClass: "text-muted-foreground text-center",
+      cellClass: "text-muted-foreground",
     },
     {
       field: "location_address",
@@ -101,7 +101,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       filter: true,
       flex: 3,
       minWidth: 200,
-      cellClass: "text-muted-foreground text-center",
+      cellClass: "text-muted-foreground",
       tooltipField: "location_address",
     },
     {
@@ -111,7 +111,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       filter: true,
       flex: 1,
       minWidth: 120,
-      cellClass: "text-muted-foreground text-center",
+      cellClass: "text-muted-foreground",
     },
     {
       headerName: "Action",
@@ -121,7 +121,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       sortable: false,
       filter: false,
       resizable: false,
-      cellClass: ["flex", "items-center", "justify-center"],
     },
   ];
   const onGridReady = (params: any) => {
