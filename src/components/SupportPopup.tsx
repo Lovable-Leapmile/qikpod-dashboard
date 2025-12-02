@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Send, X, Mail, Copy, ExternalLink, LifeBuoy } from "lucide-react";
+import { Send, X, Mail, Copy, ExternalLink, Headset } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SupportPopupProps {
@@ -111,6 +111,7 @@ Thank you!`;
     try {
       const { subject, emailBody } = generateEmailContent();
       const mailtoLink = `mailto:magesh.thalamurugan@qikpod.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
       const link = document.createElement("a");
       link.href = mailtoLink;
       link.style.display = "none";
@@ -125,7 +126,7 @@ Thank you!`;
         description: "If your email client didn't open, you can copy the email content below and send it manually.",
       });
     } catch (error) {
-      console.error("Error opening email client:", error);
+      console.error("Error:", error);
       setShowEmailTemplate(true);
       toast({
         title: "Email Client Not Available",
@@ -137,111 +138,69 @@ Thank you!`;
     }
   };
 
-  const handleBackupEmailSend = () => {
-    const { subject, emailBody } = generateEmailContent();
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=magesh.thalamurugan@qikpod.com&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    window.open(gmailUrl, "_blank");
-
-    toast({
-      title: "Gmail Opened",
-      description: "Gmail web interface has been opened in a new tab.",
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({ fromEmail: "", name: "", phone: "", details: "" });
-    setEmailError("");
-    setShowEmailTemplate(false);
-    onClose();
-  };
-
-  if (showEmailTemplate) {
-    const { subject, emailBody } = generateEmailContent();
-
-    return (
-      <Dialog open={isOpen} onOpenChange={resetForm}>
-        <DialogContent className="sm:max-w-2xl w-full mx-4 max-height-[90vh] overflow-y-auto">
-          {/* ... unchanged code ... */}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md w-full mx-4">
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
-            <LifeBuoy className="h-6 w-6 text-gray-700" />
+            <Headset className="h-6 w-6 text-gray-700" />
             Support
           </DialogTitle>
         </DialogHeader>
 
-        {/* --- FORM BELOW REMAINS COMPLETELY UNCHANGED --- */}
+        {/* --- Rest of the code remains unchanged --- */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* From Address */}
+          {/* From Email */}
           <div className="space-y-2">
-            <Label htmlFor="fromEmail" className="text-sm font-medium text-gray-700">
-              From Address
-            </Label>
+            <Label>From Address</Label>
             <div className="relative">
               <Input
                 id="fromEmail"
                 type="email"
                 value={formData.fromEmail}
                 onChange={(e) => handleInputChange("fromEmail", e.target.value)}
-                placeholder="Enter your email address"
-                className={`focus:ring-2 focus:ring-[#FDDC4E] focus:border-[#FDDC4E] ${emailError ? "border-red-500" : ""}`}
+                placeholder="Enter your email"
+                className={`focus:ring-2 focus:ring-[#FDDC4E] ${emailError ? "border-red-500" : ""}`}
                 required
               />
-              <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
             {emailError && <p className="text-sm text-red-500">{emailError}</p>}
           </div>
 
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
-              Name
-            </Label>
+            <Label>Name</Label>
             <Input
               id="name"
-              type="text"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="Enter your full name"
-              className="focus:ring-2 focus:ring-[#FDDC4E] focus:border-[#FDDC4E]"
               required
             />
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
-              Phone
-            </Label>
+            <Label>Phone</Label>
             <Input
               id="phone"
-              type="tel"
               value={formData.phone}
               onChange={(e) => handleInputChange("phone", e.target.value)}
               placeholder="Enter your phone number"
-              className="focus:ring-2 focus:ring-[#FDDC4E] focus:border-[#FDDC4E]"
               required
             />
           </div>
 
           {/* Details */}
           <div className="space-y-2">
-            <Label htmlFor="details" className="text-sm font-medium text-gray-700">
-              Details
-            </Label>
+            <Label>Details</Label>
             <Textarea
               id="details"
               value={formData.details}
               onChange={(e) => handleInputChange("details", e.target.value)}
-              placeholder="Please describe your issue or question in detail..."
-              className="min-h-[100px] focus:ring-2 focus:ring-[#FDDC4E] focus:border-[#FDDC4E]"
+              placeholder="Describe your issue in detail..."
+              className="min-h-[100px]"
               required
             />
           </div>
@@ -254,7 +213,7 @@ Thank you!`;
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !!emailError}
+              disabled={isSubmitting}
               className="flex-1 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
             >
               <Send className="w-4 h-4 mr-2" />
