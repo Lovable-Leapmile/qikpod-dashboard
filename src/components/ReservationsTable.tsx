@@ -287,9 +287,9 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const hasData = filteredData && filteredData.length > 0;
 
   return (
-    <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
+    <div className="w-full h-full flex flex-col animate-fade-in p-0 m-0 pt-0">
       {/* Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-0">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
