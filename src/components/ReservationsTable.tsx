@@ -129,7 +129,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       field: "id",
       flex: 1,
       minWidth: 80,
-      cellClass: "font-medium text-center",
+      cellClass: "font-medium",
     },
     {
       headerName: "User Name",
@@ -171,7 +171,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       flex: 1,
       minWidth: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
-      cellClass: "flex items-center justify-center",
     },
   ];
 
