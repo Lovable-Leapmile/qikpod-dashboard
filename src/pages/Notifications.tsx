@@ -311,7 +311,7 @@ const NotificationsPage: React.FC = () => {
   const hasEmailData = emailData.length > 0;
   return (
     <Layout title="Notification Centre" breadcrumb="Notifications">
-      <div className="space-y-0 px-[4px]">
+      <div className="space-y-6 px-[4px]">
         {/* Back Button at the top */}
         <div className="mb-2"></div>
 
