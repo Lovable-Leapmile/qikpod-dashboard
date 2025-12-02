@@ -153,7 +153,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
     <ErrorBoundary>
       <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
         {/* Header Section */}
-        <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+        <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
           <div className="p-4 border-b border-gray-200 bg-gray-100">
             <div className="flex flex-col gap-4">
               {/* Title with Icon */}
@@ -220,7 +220,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
               {/* Desktop view - AG Grid */}
               <div className="hidden md:block">
                 <div
-                  className={`ag-theme-alpine ${isDashboard ? "h-[400px]" : "h-[calc(100vh-220px)]"} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
+                  className={`ag-theme-alpine ${isDashboard ? "h-[400px]" : "h-[calc(100vh-230px)]"} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
                 >
                   <AgGridReact
                     ref={gridRef}
