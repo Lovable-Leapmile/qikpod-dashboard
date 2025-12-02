@@ -309,15 +309,23 @@ const PaymentsAgGrid = () => {
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-sm text-gray-600 whitespace-nowrap">per page</span>
               </div>
 
               {/* Tablet layout - keep behavior identical to previous */}
               <div className="hidden md:flex lg:hidden w-full">
                 <div className="flex items-center justify-between w-full gap-4">
                   <div className="flex items-center gap-4 flex-1">
+                    <div className="relative flex-1 max-w-xs">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search payments..."
+                        value={globalFilter}
+                        onChange={(e) => handleGlobalFilter(e.target.value)}
+                        className="pl-10 w-full"
+                      />
+                    </div>
+
                     <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[140px]">
                           <SelectValue placeholder="Status" />
