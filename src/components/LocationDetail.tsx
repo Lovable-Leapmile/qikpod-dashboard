@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, MapPin, Users, Package, Eye, EyeOff, Smartphone } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { dashboardApi, LocationDetail as LocationDetailType } from '@/services/dashboardApi';
-import LocationReservationsTable from './LocationReservationsTable';
-import AssignFeBdPopup from './AssignFeBdPopup';
-import CreateUserPopup from './CreateUserPopup';
-import PaymentModePopup from './PaymentModePopup';
-import EditLocationPopup from './EditLocationPopup';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, MapPin, Users, Package, Eye, EyeOff, Smartphone } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { dashboardApi, LocationDetail as LocationDetailType } from "@/services/dashboardApi";
+import LocationReservationsTable from "./LocationReservationsTable";
+import AssignFeBdPopup from "./AssignFeBdPopup";
+import CreateUserPopup from "./CreateUserPopup";
+import PaymentModePopup from "./PaymentModePopup";
+import EditLocationPopup from "./EditLocationPopup";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface LocationDetailProps {
   locationId: number;
@@ -22,7 +22,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   locationId,
   onBack,
   onStandardReservationClick,
-  onAdhocReservationClick
+  onAdhocReservationClick,
 }) => {
   const { accessToken } = useAuth();
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
@@ -32,7 +32,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
   const [showPaymentModePopup, setShowPaymentModePopup] = useState(false);
   const [showEditLocationPopup, setShowEditLocationPopup] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const fetchLocationDetail = async () => {
     if (!accessToken) return;
@@ -41,7 +41,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       const data = await dashboardApi.getLocationDetail(accessToken, locationId);
       setLocationDetail(data);
     } catch (error) {
-      console.error('Error fetching location detail:', error);
+      console.error("Error fetching location detail:", error);
     } finally {
       setLoading(false);
     }
@@ -52,8 +52,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   }, [locationId, accessToken]);
 
   const formatValue = (value: any): string => {
-    if (value === null || value === undefined || value === 'null' || value === '') {
-      return 'N/A';
+    if (value === null || value === undefined || value === "null" || value === "") {
+      return "N/A";
     }
     return String(value);
   };
@@ -96,14 +96,6 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      {/* Navigation */}
-      <div className="flex items-center space-x-4">
-        <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Back to Locations</span>
-        </Button>
-      </div>
-
       {/* Location Details Card - Made more compact */}
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-3 pt-4">
@@ -152,23 +144,41 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
             {/* Row 5 */}
             <div className="truncate md:col-span-2">
               <span className="text-gray-600 font-medium">ADDRESS:</span>
-              <span className="ml-1 text-gray-900 text-xs md:text-sm">{formatValue(locationDetail.location_address)}</span>
+              <span className="ml-1 text-gray-900 text-xs md:text-sm">
+                {formatValue(locationDetail.location_address)}
+              </span>
             </div>
           </div>
         </CardHeader>
         <CardContent className="pb-4">
           {/* Action Buttons - Made more compact */}
           <div className="flex flex-wrap gap-2 md:gap-3 mb-3 justify-center md:justify-start">
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowAssignFeBdPopup(true)}>
+            <Button
+              variant="outline"
+              className="rounded-lg text-xs md:text-sm h-8 px-2"
+              onClick={() => setShowAssignFeBdPopup(true)}
+            >
               Assign FE/BD
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowCreateUserPopup(true)}>
+            <Button
+              variant="outline"
+              className="rounded-lg text-xs md:text-sm h-8 px-2"
+              onClick={() => setShowCreateUserPopup(true)}
+            >
               Create User
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowPaymentModePopup(true)}>
+            <Button
+              variant="outline"
+              className="rounded-lg text-xs md:text-sm h-8 px-2"
+              onClick={() => setShowPaymentModePopup(true)}
+            >
               Payment Mode
             </Button>
-            <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowEditLocationPopup(true)}>
+            <Button
+              variant="outline"
+              className="rounded-lg text-xs md:text-sm h-8 px-2"
+              onClick={() => setShowEditLocationPopup(true)}
+            >
               Edit
             </Button>
             <Button variant="destructive" className="rounded-lg text-xs md:text-sm h-8 px-2">
@@ -178,9 +188,13 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
           {/* Hide/Show Toggle */}
           <div className="mb-3 text-center md:text-left">
-            <Button variant="ghost" onClick={() => setShowHiddenSection(!showHiddenSection)} className="flex items-center space-x-1 text-gray-600 mx-auto md:mx-0 h-8 text-xs">
+            <Button
+              variant="ghost"
+              onClick={() => setShowHiddenSection(!showHiddenSection)}
+              className="flex items-center space-x-1 text-gray-600 mx-auto md:mx-0 h-8 text-xs"
+            >
               {showHiddenSection ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-              <span>{showHiddenSection ? 'Hide' : 'Show More Details'}</span>
+              <span>{showHiddenSection ? "Hide" : "Show More Details"}</span>
             </Button>
           </div>
 
@@ -263,7 +277,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
         initialValues={{
           primary_fe: locationDetail.primary_fe,
           secondary_fe: locationDetail.secondary_fe,
-          primary_bd: locationDetail.primary_bd
+          primary_bd: locationDetail.primary_bd,
         }}
         onSuccess={handlePopupSuccess}
       />
