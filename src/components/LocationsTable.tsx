@@ -87,15 +87,6 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       cellClass: "font-medium text-center",
     },
     {
-      field: "primary_name",
-      headerName: "Name",
-      sortable: true,
-      filter: true,
-      flex: 2,
-      minWidth: 150,
-      cellClass: "font-medium",
-    },
-    {
       field: "location_name",
       headerName: "Location",
       sortable: true,
@@ -270,7 +261,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
-                            {/* <div className="text-lg font-semibold mt-1">{location.primary_name}</div> */}
+                            <div className="text-lg font-semibold mt-1">{location.primary_name}</div>
                           </div>
                           <Button
                             variant="ghost"
@@ -286,7 +277,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                         </div>
                         <div className="space-y-2">
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Location Name:</span> {location.location_name}
+                            <span className="font-medium text-gray-700">Location:</span> {location.location_name}
                           </div>
                           <div className="text-sm">
                             <span className="font-medium text-gray-700">Address:</span> {location.location_address}
