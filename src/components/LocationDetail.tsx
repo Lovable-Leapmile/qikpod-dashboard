@@ -95,7 +95,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-4 p-4 md:p-4">
       {/* Location Details Card - Made more compact */}
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-3 pt-4">
