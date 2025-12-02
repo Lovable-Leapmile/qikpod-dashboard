@@ -99,11 +99,11 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       {/* Partner Dashboard */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
+            {/* Left Title */}
             <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
-          </div>
-          {/* Header with Back button and Run Batch button */}
-          <div className="flex items-center justify-between gap-4 mb-2">
+
+            {/* Right Button */}
             <Button
               onClick={() => setShowModal(true)}
               className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9 px-3"
