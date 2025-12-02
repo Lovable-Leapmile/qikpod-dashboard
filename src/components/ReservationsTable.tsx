@@ -289,7 +289,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   return (
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
@@ -352,13 +352,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              {/*
-                To adjust the table height, modify the h-[calc(100vh-280px)] value below.
-                Increase the number (280) to make the table shorter, decrease to make taller.
-                Example alternatives:
-                h-[calc(100vh-240px)] - taller
-                h-[calc(100vh-320px)] - shorter
-              */}
               <div className="ag-theme-alpine h-[calc(100vh-240px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
