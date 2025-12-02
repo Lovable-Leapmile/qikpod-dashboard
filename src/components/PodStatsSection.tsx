@@ -11,49 +11,49 @@ const PodStatsSection: React.FC = () => {
       title: "Total Pods",
       value: podStats.total_pods,
       icon: Database,
-      color: " border-blue-200 text-blue-700",
+      color: "border-blue-200 text-blue-700",
       iconColor: "text-blue-600",
     },
     {
       title: "Alert Pods",
       value: podStats.alert_pods,
       icon: AlertTriangle,
-      color: " border-red-200 text-red-700",
+      color: "border-red-200 text-red-700",
       iconColor: "text-red-600",
     },
     {
       title: "Reservation Pods",
       value: podStats.reservation_pods,
       icon: Calendar,
-      color: " border-purple-200 text-purple-700",
+      color: "border-purple-200 text-purple-700",
       iconColor: "text-purple-600",
     },
     {
       title: "Field Pods",
       value: podStats.field_pods,
       icon: Wrench,
-      color: " border-orange-200 text-orange-700",
+      color: "border-orange-200 text-orange-700",
       iconColor: "text-orange-600",
     },
     {
       title: "Ignore Pods",
       value: podStats.ignore_pods,
       icon: FileX,
-      color: " border-gray-200 text-gray-700",
+      color: "border-gray-200 text-gray-700",
       iconColor: "text-gray-600",
     },
     {
       title: "Certified Pods",
       value: podStats.certified_pods,
       icon: CheckCircle,
-      color: " border-green-200 text-green-700",
+      color: "border-green-200 text-green-700",
       iconColor: "text-green-600",
     },
     {
       title: "Unregistered Pods",
       value: podStats.unregistered_pods,
       icon: Package,
-      color: " border-yellow-200 text-yellow-700",
+      color: "border-yellow-200 text-yellow-700",
       iconColor: "text-yellow-600",
     },
   ];
@@ -62,31 +62,31 @@ const PodStatsSection: React.FC = () => {
     {
       title: "Green Pods",
       value: podStats.green_pods,
-      color: " border-green-300 text-green-800",
+      color: "border-green-300 text-green-800",
       iconColor: "bg-green-500",
     },
     {
       title: "Yellow Pods",
       value: podStats.yellow_pods,
-      color: " border-yellow-300 text-yellow-800",
+      color: "border-yellow-300 text-yellow-800",
       iconColor: "bg-yellow-500",
     },
     {
       title: "Red Pods",
       value: podStats.red_pods,
-      color: "bg-red-100 border-red-300 text-red-800",
+      color: "border-red-300 text-red-800",
       iconColor: "bg-red-500",
     },
     {
       title: "Active Pods",
       value: podStats.active_pods,
-      color: "bg-teal-100 border-teal-300 text-teal-800",
+      color: "border-teal-300 text-teal-800",
       iconColor: "bg-teal-500",
     },
     {
       title: "Inactive Pods",
       value: podStats.inactive_pods,
-      color: "bg-slate-100 border-slate-300 text-slate-800",
+      color: "border-slate-300 text-slate-800",
       iconColor: "bg-slate-500",
     },
   ];
@@ -111,7 +111,7 @@ const PodStatsSection: React.FC = () => {
               className={`${stat.color} border-2 px-3 py-3 flex flex-col items-center justify-center text-center rounded-lg shadow-sm hover:shadow-md transition-shadow`}
             >
               <stat.icon className={`h-5 w-5 mb-2 ${stat.iconColor}`} />
-              <div className="text-lg font-bold">{stat.value}</div>
+              <div className="text-xl font-bold">{stat.value}</div>
               <div className="text-xs font-medium mt-1">{stat.title}</div>
             </Card>
           ))}
