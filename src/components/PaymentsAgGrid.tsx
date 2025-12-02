@@ -221,20 +221,22 @@ const PaymentsAgGrid = () => {
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          {/* Single line for all controls on desktop */}
-          <Button
-            onClick={() => setShowCreatePayment(true)}
-            className="flex items-center gap-2 h-8 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
-            size="sm"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Create Payment</span>
-          </Button>
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="flex items-center gap-4 w-full lg:w-auto">
+          {/* First line: title + primary actions */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
               <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
+            </div>
 
-              {/* Auto Refresh Checkbox */}
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setShowCreatePayment(true)}
+                className="flex items-center gap-2 h-8 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
+                size="sm"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Create Payment</span>
+              </Button>
+
               <div className="hidden sm:flex items-center gap-2">
                 <Checkbox
                   id="auto-refresh-payments"
@@ -250,50 +252,51 @@ const PaymentsAgGrid = () => {
                 </label>
               </div>
 
-              {/* Buttons */}
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
-                  <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-                </Button>
+              <Button variant="outline" size="sm" onClick={fetchPayments} disabled={loading}>
+                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+              </Button>
 
-                <Button variant="outline" size="sm" onClick={exportData}>
-                  <Download className="h-4 w-4" />
-                </Button>
-              </div>
+              <Button variant="outline" size="sm" onClick={exportData}>
+                <Download className="h-4 w-4" />
+              </Button>
             </div>
+          </div>
 
-            {/* Desktop layout */}
-            <div className="hidden lg:flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
-              {/* Status Filter */}
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <SelectValue placeholder="Filter by Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Second line: filters, search and pagination controls */}
+          <div className="mt-3">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div className="flex items-center gap-4 w-full lg:w-auto">
+                {/* Status Filter */}
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="Filter by Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Search */}
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search payments..."
-                  value={globalFilter}
-                  onChange={(e) => handleGlobalFilter(e.target.value)}
-                  className="pl-10 w-full"
-                />
+                {/* Search */}
+                <div className="relative flex-1 w-full sm:w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search payments..."
+                    value={globalFilter}
+                    onChange={(e) => handleGlobalFilter(e.target.value)}
+                    className="pl-10 w-full"
+                  />
+                </div>
               </div>
 
               {/* Page Size Selector */}
-              <div className="flex items-center space-x-2">
+              <div className="hidden lg:flex items-center space-x-2">
                 <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
                 <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                   <SelectTrigger className="w-20">
@@ -308,17 +311,72 @@ const PaymentsAgGrid = () => {
                 </Select>
                 <span className="text-sm text-gray-600 whitespace-nowrap">per page</span>
               </div>
-            </div>
 
-            {/* Tablet layout - Filters and pagination in single line */}
-            <div className="hidden md:flex lg:hidden w-full">
-              <div className="flex items-center justify-between w-full gap-4">
-                {/* Status Filter and Search */}
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="flex items-center gap-2">
+              {/* Tablet layout - keep behavior identical to previous */}
+              <div className="hidden md:flex lg:hidden w-full">
+                <div className="flex items-center justify-between w-full gap-4">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Status</SelectItem>
+                          <SelectItem value="paid">Paid</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="relative flex-1 max-w-xs">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search payments..."
+                        value={globalFilter}
+                        onChange={(e) => handleGlobalFilter(e.target.value)}
+                        className="pl-10 w-full"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                    <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile layout */}
+              <div className="md:hidden w-full space-y-3">
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search payments..."
+                    value={globalFilter}
+                    onChange={(e) => handleGlobalFilter(e.target.value)}
+                    className="pl-10 w-full"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between w-full gap-2">
+                  <div className="flex items-center gap-2 flex-1">
                     <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-[140px]">
+                      <SelectTrigger className="w-full max-w-[140px]">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -331,98 +389,36 @@ const PaymentsAgGrid = () => {
                     </Select>
                   </div>
 
-                  <div className="relative flex-1 max-w-xs">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Search payments..."
-                      value={globalFilter}
-                      onChange={(e) => handleGlobalFilter(e.target.value)}
-                      className="pl-10 w-full"
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+                    <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                      <SelectTrigger className="w-16">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex sm:hidden items-center gap-2">
+                    <Checkbox
+                      id="auto-refresh-payments-mobile"
+                      checked={autoRefresh}
+                      onCheckedChange={(checked) => setAutoRefresh(checked === true)}
+                      className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
                     />
+                    <label
+                      htmlFor="auto-refresh-payments-mobile"
+                      className="text-sm text-muted-foreground font-medium whitespace-nowrap"
+                    >
+                      Auto Refresh (2m)
+                    </label>
                   </div>
                 </div>
-
-                {/* Page Size Selector */}
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile layout */}
-            <div className="md:hidden w-full space-y-3">
-              {/* Search */}
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search payments..."
-                  value={globalFilter}
-                  onChange={(e) => handleGlobalFilter(e.target.value)}
-                  className="pl-10 w-full"
-                />
-              </div>
-
-              {/* Status Filter and Page Size in single line */}
-              <div className="flex items-center justify-between w-full gap-2">
-                {/* Status Filter */}
-                <div className="flex items-center gap-2 flex-1">
-                  <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full max-w-[140px]">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Page Size Selector */}
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-16">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Auto Refresh for mobile */}
-              <div className="flex sm:hidden items-center gap-2">
-                <Checkbox
-                  id="auto-refresh-payments-mobile"
-                  checked={autoRefresh}
-                  onCheckedChange={(checked) => setAutoRefresh(checked === true)}
-                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
-                />
-                <label
-                  htmlFor="auto-refresh-payments-mobile"
-                  className="text-sm text-muted-foreground font-medium whitespace-nowrap"
-                >
-                  Auto Refresh (2m)
-                </label>
               </div>
             </div>
           </div>
