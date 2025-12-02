@@ -306,7 +306,7 @@ const PaymentsAgGrid = () => {
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-220px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={getFilteredData()}
