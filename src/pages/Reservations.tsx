@@ -20,11 +20,6 @@ const ReservationsPage: React.FC = () => {
     setCurrentView('adhocReservationDetail');
   };
 
-  const handleBackToReservations = () => {
-    setCurrentView('reservations');
-    setSelectedReservationId(null);
-  };
-  
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -38,7 +33,7 @@ const ReservationsPage: React.FC = () => {
   if (currentView === 'reservationDetail' && selectedReservationId) {
     return (
       <Layout title="Reservation Details" breadcrumb="Operations / Reservations Management / Reservation Details">
-        <ReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} />
+        <ReservationDetail reservationId={selectedReservationId} onBack={() => setCurrentView('reservations')} />
       </Layout>
     );
   }
@@ -46,20 +41,18 @@ const ReservationsPage: React.FC = () => {
   if (currentView === 'adhocReservationDetail' && selectedReservationId) {
     return (
       <Layout title="Adhoc Reservation Details" breadcrumb="Operations / Reservations Management / Adhoc Reservation Details">
-        <AdhocReservationDetail reservationId={selectedReservationId} onBack={handleBackToReservations} />
+        <AdhocReservationDetail reservationId={selectedReservationId} onBack={() => setCurrentView('reservations')} />
       </Layout>
     );
   }
 
   return (
     <Layout title="Reservations Management" breadcrumb="Operations / Reservations Management">
-      <div className="px-[4px]">
-        <Reservations 
-          onStandardReservationClick={handleStandardReservationClick}
-          onAdhocReservationClick={handleAdhocReservationClick}
-          onBack={() => window.history.back()}
-        />
-      </div>
+      <Reservations 
+        onStandardReservationClick={handleStandardReservationClick}
+        onAdhocReservationClick={handleAdhocReservationClick}
+        onBack={() => {}}
+      />
     </Layout>
   );
 };

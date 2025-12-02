@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Menu, X, ChevronDown, User } from 'lucide-react';
+import { LogOut, Menu, X, ChevronDown } from 'lucide-react';
 import { NavigationItem } from './NavigationItems';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardNavigationProps {
   navigationItems: NavigationItem[];
@@ -21,8 +21,10 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
 }) => {
   const { user } = useAuth();
   
+  const navigate = useNavigate();
+  
   const handleLogoClick = () => {
-    window.location.reload();
+    navigate('/dashboard');
   };
 
   return (
@@ -65,16 +67,10 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                     {item.name}
                   </button>)}
               
-              {/* User Profile Section */}
+              {/* User Welcome Text */}
               {user && (
-                <div className="flex items-center space-x-2 ml-4">
+                <div className="flex items-center ml-4">
                   <span className="text-xs text-black font-medium">Welcome {user.user_name}</span>
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="" />
-                    <AvatarFallback className="bg-yellow-600 text-white text-xs">
-                      <User className="h-3 w-3" />
-                    </AvatarFallback>
-                  </Avatar>
                 </div>
               )}
               

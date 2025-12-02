@@ -14,11 +14,6 @@ const PodsPage: React.FC = () => {
     setCurrentView('podDetail');
   };
 
-  const handleBackToPods = () => {
-    setCurrentView('pods');
-    setSelectedPodId(null);
-  };
-  
   if (!accessToken) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -32,16 +27,14 @@ const PodsPage: React.FC = () => {
   if (currentView === 'podDetail' && selectedPodId) {
     return (
       <Layout title="Pod Details" breadcrumb="Operations / Pods Management / Pod Details">
-        <PodDetail podId={selectedPodId} onBack={handleBackToPods} />
+        <PodDetail podId={selectedPodId} onBack={() => setCurrentView('pods')} />
       </Layout>
     );
   }
 
   return (
     <Layout title="Pods Management" breadcrumb="Operations / Pods Management">
-      <div className="px-[4px]">
-        <PodsTable onPodClick={handlePodClick} />
-      </div>
+      <PodsTable onPodClick={handlePodClick} />
     </Layout>
   );
 };
