@@ -180,6 +180,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
     let csvData = headers.join(",") + "\n";
     jsonDataList.forEach((json) => {
       const values = headers.map((header) =>
+        // @ts-ignore
         json[header] !== null && json[header] !== undefined ? json[header].toString() : "",
       );
       csvData += values.join(",") + "\n";
@@ -218,6 +219,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const handleGlobalFilter = useCallback((value: string) => {
     setGlobalFilter(value);
     if (gridRef.current?.api) {
+      // ag-grid quick filter
       gridRef.current.api.setGridOption("quickFilterText", value);
     }
   }, []);
@@ -243,7 +245,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const hasData = filteredData.length > 0;
 
   return (
-    <div className="w-full h-full flex flex-col animate-fade-in">
+    <div className="w-full max-w-full h-full flex flex-col animate-fade-in">
       {/* Header Section - Restructured to match Locations table */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
@@ -330,7 +332,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           </div>
         ) : hasData ? (
-          <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+          <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full max-w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
             <AgGridReact
               ref={gridRef}
               rowData={filteredData}
