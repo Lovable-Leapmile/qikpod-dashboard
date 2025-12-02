@@ -80,7 +80,7 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-6">
           <CardTitle className="text-xl font-semibold text-gray-900">
