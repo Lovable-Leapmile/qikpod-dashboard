@@ -93,11 +93,11 @@ const DashboardPage: React.FC = () => {
 
         <div className="space-y-10 w-full">
           <div className="w-full">
-            <LocationsTable onLocationClick={handleLocationClick} />
+            <LocationsTable onLocationClick={handleLocationClick} isDashboard={true} />
           </div>
 
           <div className="w-full">
-            <PodsTable onPodClick={handlePodClick} />
+            <PodsTable onPodClick={handlePodClick} isDashboard={true} />
           </div>
         </div>
       </div>

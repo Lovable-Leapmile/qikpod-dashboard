@@ -14,9 +14,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
+  isDashboard?: boolean;
 }
 const LocationsTable: React.FC<LocationsTableProps> = ({
-  onLocationClick
+  onLocationClick,
+  isDashboard = false
 }) => {
   const {
     accessToken
@@ -188,7 +190,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
           </div> : hasData ? <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className={`ag-theme-alpine ${isDashboard ? 'h-[400px]' : 'h-[calc(100vh-200px)]'} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}>
                 <AgGridReact ref={gridRef} rowData={locations} columnDefs={columnDefs} defaultColDef={{
               resizable: true,
               sortable: true,

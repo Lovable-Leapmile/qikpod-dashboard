@@ -52,9 +52,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   switch (currentView) {
     case 'locations':
-      return <LocationsTable onLocationClick={onLocationClick} />;
+      return <LocationsTable onLocationClick={onLocationClick} isDashboard={false} />;
     case 'pods':
-      return <PodsTable onPodClick={onPodClick} />;
+      return <PodsTable onPodClick={onPodClick} isDashboard={false} />;
     case 'reservations':
       return (
         <Reservations
@@ -91,8 +91,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
           {/* Tables on Dashboard */}
           <div className="space-y-6">
-            <LocationsTable onLocationClick={onLocationClick} />
-            <PodsTable onPodClick={onPodClick} />
+            <LocationsTable onLocationClick={onLocationClick} isDashboard={true} />
+            <PodsTable onPodClick={onPodClick} isDashboard={true} />
           </div>
         </div>
       );

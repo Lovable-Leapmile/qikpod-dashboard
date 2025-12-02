@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PodsTable from '@/components/PodsTable';
 import PodDetail from '@/components/PodDetail';
+import PodStatsSection from '@/components/PodStatsSection';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -34,7 +35,10 @@ const PodsPage: React.FC = () => {
 
   return (
     <Layout title="Pods Management" breadcrumb="Operations / Pods Management">
-      <PodsTable onPodClick={handlePodClick} />
+      <div className="space-y-6">
+        <PodStatsSection />
+        <PodsTable onPodClick={handlePodClick} />
+      </div>
     </Layout>
   );
 };

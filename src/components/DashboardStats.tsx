@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -21,27 +22,32 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
   statsLoading,
 }) => {
   const { podStats } = usePodStats();
+  const navigate = useNavigate();
 
   const statsData = [
     {
       title: 'LOCATIONS',
       value: dashboardStats.locations.toString(),
       icon: MapPin,
+      route: '/locations',
     },
     {
       title: 'PODS',
       value: podStats.total_pods.toString(),
       icon: Package,
+      route: '/pods',
     },
     {
       title: 'USERS',
       value: dashboardStats.users.toString(),
       icon: Users,
+      route: '/users',
     },
     {
       title: 'RESERVATIONS',
       value: dashboardStats.reservations.toString(),
       icon: Calendar,
+      route: '/reservations',
     },
   ];
 
@@ -50,7 +56,8 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
       {statsData.map((stat, index) => (
         <Card
           key={index}
-          className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200 px-4 py-3 flex flex-col items-center justify-center text-center"
+          onClick={() => navigate(stat.route)}
+          className="bg-white shadow-sm hover:shadow-lg transition-all cursor-pointer rounded-lg border border-gray-200 px-4 py-3 flex flex-col items-center justify-center text-center hover:border-[#FDDC4E]"
         >
           <div className="flex items-center gap-2 mb-1 justify-center">
             <stat.icon className="h-4 w-4 text-gray-800" />
