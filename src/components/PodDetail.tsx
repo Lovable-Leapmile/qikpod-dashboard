@@ -124,14 +124,14 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
         <CardHeader className="pb-3 pt-4">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex flex-col md:flex-row md:items-start gap-4">
-              <div className="w-20 h-24 md:w-32 md:h-40 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
+              <div className="w-20 h-24 md:w-32 md:h-40 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
                 <img
                   alt="Qikpod Logo"
                   src="https://leapmile.com/assets/q35-DUPPwGYr.png"
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  className="w-12 md:w-20 h-auto object-contain"
+                  className="w-16 md:w-25 h-auto object-contain"
                 />
               </div>
               <div className="flex-1">
