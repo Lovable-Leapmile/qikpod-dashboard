@@ -121,7 +121,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       sortable: false,
       filter: false,
       resizable: false,
-      cellClass: ["flex", "items-center", "justify-center"],
+      // cellClass: ["flex", "items-center", "justify-center"],
     },
   ];
   const onGridReady = (params: any) => {
