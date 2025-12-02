@@ -8,7 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Package, Eye, RefreshCw, Search, Filter, Download } from 'lucide-react';
+import { Package, Eye, RefreshCw, Search, Filter, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import TableFilters, { FilterConfig } from '@/components/filters/TableFilters';
+import { useTableFilters } from '@/hooks/useTableFilters';
+import { exportTableData, ExportFormat } from '@/lib/tableExport';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import { dashboardApi, Pod } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,10 +39,14 @@ const PodsTable: React.FC<PodsTableProps> = ({
   const gridRef = useRef<AgGridReact>(null);
   const [pods, setPods] = useState<Pod[]>([]);
   const [loading, setLoading] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [autoRefresh, setAutoRefresh] = useState(false);
   const [pageSize, setPageSize] = useState(25);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { filters, setFilters, filteredData, resetFilters } = useTableFilters(
+    pods,
+    ['pod_name', 'location_name', 'pod_health'],
+    'status',
+    undefined
+  );
 
   const fetchData = useCallback(async () => {
     if (!accessToken) return;
@@ -52,22 +65,6 @@ const PodsTable: React.FC<PodsTableProps> = ({
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  useEffect(() => {
-    if (autoRefresh) {
-      intervalRef.current = setInterval(fetchData, 2 * 60 * 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [autoRefresh, fetchData]);
 
   const StatusBadge = ({
     value
@@ -183,72 +180,84 @@ const PodsTable: React.FC<PodsTableProps> = ({
     params.api.sizeColumnsToFit();
   };
 
-  const handleGlobalFilter = useCallback((value: string) => {
-    setGlobalFilter(value);
-    if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', value);
-    }
-  }, []);
-
   const refreshData = useCallback(() => {
     fetchData();
   }, [fetchData]);
 
-  const exportData = () => {
-    if (gridRef.current?.api) {
-      gridRef.current.api.exportDataAsCsv({
-        fileName: `pods-${new Date().toISOString().split('T')[0]}.csv`
-      });
-    }
+  const handleExport = (format: ExportFormat) => {
+    const exportColumns = columnDefs
+      .filter(col => col.field)
+      .map(col => ({
+        field: col.field!,
+        headerName: col.headerName!
+      }));
+
+    exportTableData({
+      data: filteredData,
+      columns: exportColumns,
+      filename: 'pods',
+      format
+    });
   };
 
-  const hasData = pods.length > 0;
+  const filterConfig: FilterConfig = {
+    searchPlaceholder: "Search pods...",
+    statusOptions: [
+      { label: 'Active', value: 'active' },
+      { label: 'Inactive', value: 'inactive' }
+    ],
+    dateRangeEnabled: false,
+  };
+
+  const hasData = filteredData.length > 0;
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title with Icon */}
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <Package className="h-5 w-5 text-gray-700" />
               <h2 className="text-lg font-semibold text-gray-900">Pods</h2>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              {/* Search */}
-              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search pods..."
-                  value={globalFilter}
-                  onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-
-              {/* Page Size Selector */}
-              <div className="flex items-center space-x-2">
-                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" size="sm" onClick={refreshData}>
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  <span className="hidden sm:inline">Refresh</span>
-                </Button>
-              </div>
+            <div className="flex items-center space-x-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem onClick={() => handleExport('csv')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export as CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('excel')}>
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    Export as Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export as PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="outline" size="sm" onClick={refreshData}>
+                <RefreshCw className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
             </div>
           </div>
+
+          <TableFilters
+            config={filterConfig}
+            state={filters}
+            onChange={setFilters}
+            onReset={resetFilters}
+          />
         </div>
       </div>
 
@@ -262,10 +271,10 @@ const PodsTable: React.FC<PodsTableProps> = ({
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className={`ag-theme-alpine ${isDashboard ? 'h-[400px]' : 'h-[calc(100vh-200px)]'} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}>
+              <div className={`ag-theme-alpine ${isDashboard ? 'h-[400px]' : 'h-[calc(100vh-280px)]'} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}>
                 <AgGridReact
                   ref={gridRef}
-                  rowData={pods}
+                  rowData={filteredData}
                   columnDefs={columnDefs}
                   defaultColDef={{
                     resizable: true,
@@ -287,7 +296,6 @@ const PodsTable: React.FC<PodsTableProps> = ({
                   suppressColumnVirtualisation={true}
                   rowSelection="single"
                   suppressRowClickSelection={true}
-                  quickFilterText={globalFilter}
                 />
               </div>
             </div>
@@ -295,7 +303,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {pods.map(pod => (
+                {filteredData.map(pod => (
                   <Card key={pod.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
@@ -343,7 +351,7 @@ const PodsTable: React.FC<PodsTableProps> = ({
         ) : (
           <NoDataIllustration
             title="No pods found"
-            description={pods.length === 0 ? "No pods data available." : "No matching pods found."}
+            description="No matching pods found with the applied filters."
             icon="package"
           />
         )}

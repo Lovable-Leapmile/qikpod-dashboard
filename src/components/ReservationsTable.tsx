@@ -9,7 +9,16 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Search, Eye, CalendarDays } from 'lucide-react';
+import { RefreshCw, Search, Eye, CalendarDays, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import TableFilters, { FilterConfig } from '@/components/filters/TableFilters';
+import { useTableFilters } from '@/hooks/useTableFilters';
+import { exportTableData, ExportFormat } from '@/lib/tableExport';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
@@ -33,9 +42,23 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const [standardReservations, setStandardReservations] = useState<StandardReservation[]>([]);
   const [adhocReservations, setAdhocReservations] = useState<AdhocReservation[]>([]);
   const [loading, setLoading] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [autoRefresh, setAutoRefresh] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const standardFilters = useTableFilters(
+    standardReservations,
+    ['drop_by_name', 'location_name', 'created_by_name'],
+    'status',
+    'created_at'
+  );
+
+  const adhocFilters = useTableFilters(
+    adhocReservations,
+    ['pod_name', 'user_phone'],
+    'reservation_status',
+    'drop_time'
+  );
+
+  const currentFilters = isStandardMode ? standardFilters : adhocFilters;
+  const { filters, setFilters, filteredData, resetFilters } = currentFilters;
 
   const fetchStandardReservations = useCallback(async () => {
     if (!accessToken) return;
@@ -70,28 +93,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       fetchAdhocReservations();
     }
   }, [isStandardMode, accessToken, fetchStandardReservations, fetchAdhocReservations]);
-
-  useEffect(() => {
-    if (autoRefresh) {
-      intervalRef.current = setInterval(() => {
-        if (isStandardMode) {
-          fetchStandardReservations();
-        } else {
-          fetchAdhocReservations();
-        }
-      }, 2 * 60 * 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [autoRefresh, isStandardMode, fetchStandardReservations, fetchAdhocReservations]);
 
   const ActionCellRenderer = ({
     data,
@@ -244,13 +245,6 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     params.api.sizeColumnsToFit();
   };
 
-  const handleGlobalFilter = useCallback((value: string) => {
-    setGlobalFilter(value);
-    if (gridRef.current?.api) {
-      gridRef.current.api.setGridOption('quickFilterText', value);
-    }
-  }, []);
-
   const refreshData = useCallback(() => {
     if (isStandardMode) {
       fetchStandardReservations();
@@ -259,36 +253,60 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     }
   }, [isStandardMode, fetchStandardReservations, fetchAdhocReservations]);
 
-  const currentData = isStandardMode ? standardReservations : adhocReservations;
-  const hasData = currentData && currentData.length > 0;
+  const handleExport = (format: ExportFormat) => {
+    const currentColumnDefs = isStandardMode ? standardColumnDefs : adhocColumnDefs;
+    const exportColumns = currentColumnDefs
+      .filter(col => col.field)
+      .map(col => ({
+        field: col.field!,
+        headerName: col.headerName!
+      }));
+
+    exportTableData({
+      data: filteredData,
+      columns: exportColumns,
+      filename: isStandardMode ? 'standard-reservations' : 'adhoc-reservations',
+      format
+    });
+  };
+
+  const standardFilterConfig: FilterConfig = {
+    searchPlaceholder: "Search reservations...",
+    statusOptions: [
+      { label: 'Active', value: 'active' },
+      { label: 'Completed', value: 'completed' },
+      { label: 'Cancelled', value: 'cancelled' }
+    ],
+    dateRangeEnabled: true,
+  };
+
+  const adhocFilterConfig: FilterConfig = {
+    searchPlaceholder: "Search adhoc reservations...",
+    statusOptions: [
+      { label: 'Pending', value: 'pending' },
+      { label: 'Active', value: 'active' },
+      { label: 'Completed', value: 'completed' }
+    ],
+    dateRangeEnabled: true,
+  };
+
+  const currentFilterConfig = isStandardMode ? standardFilterConfig : adhocFilterConfig;
+  const hasData = filteredData && filteredData.length > 0;
 
   return (
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            {/* Title with Icon */}
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <CalendarDays className="h-5 w-5 text-gray-700" />
               <h2 className="text-lg font-semibold text-gray-900">Reservations</h2>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              {/* Search */}
-              <div className="relative flex-1 min-w-[200px] sm:min-w-[300px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search reservations..."
-                  value={globalFilter}
-                  onChange={e => handleGlobalFilter(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-
+            <div className="flex items-center space-x-2">
               {/* Mode Switch */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mr-4">
                 <span className={`text-sm ${isStandardMode ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
                   Standard
                 </span>
@@ -301,8 +319,42 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                   Adhoc
                 </span>
               </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white">
+                  <DropdownMenuItem onClick={() => handleExport('csv')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export as CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('excel')}>
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    Export as Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Export as PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="outline" size="sm" onClick={refreshData}>
+                <RefreshCw className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
             </div>
           </div>
+
+          <TableFilters
+            config={currentFilterConfig}
+            state={filters}
+            onChange={setFilters}
+            onReset={resetFilters}
+          />
         </div>
       </div>
 
@@ -319,10 +371,10 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                 h-[calc(100vh-240px)] - taller
                 h-[calc(100vh-320px)] - shorter
               */}
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-320px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
-                  rowData={currentData}
+                  rowData={filteredData}
                   columnDefs={isStandardMode ? standardColumnDefs : adhocColumnDefs}
                   defaultColDef={{
                     resizable: true,
@@ -350,9 +402,8 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {isStandardMode ? (
-                  standardReservations.map(reservation => (
+              <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
+                {(filteredData as any[]).map(reservation => isStandardMode ? (
                     <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-3">
@@ -389,9 +440,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                         </div>
                       </CardContent>
                     </Card>
-                  ))
                 ) : (
-                  adhocReservations.map(reservation => (
                     <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-3">
@@ -439,15 +488,14 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                         </div>
                       </CardContent>
                     </Card>
-                  ))
-                )}
+                ))}
               </div>
             </div>
           </>
         ) : (
           <NoDataIllustration
             title="No reservations found"
-            description={`No ${isStandardMode ? 'standard' : 'adhoc'} reservations found.`}
+            description="No matching reservations found with the applied filters."
             icon="inbox"
           />
         )}

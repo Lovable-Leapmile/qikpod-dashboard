@@ -7,7 +7,14 @@ import '@/styles/ag-grid.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Eye, RefreshCw, Download } from 'lucide-react';
+import { Download, MapPin, FileSpreadsheet, FileText, Eye, RefreshCw } from 'lucide-react';
+import { exportTableData, ExportFormat } from '@/lib/tableExport';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { dashboardApi, Location } from '@/services/dashboardApi';
 import { useAuth } from '@/contexts/AuthContext';
 import NoDataIllustration from '@/components/ui/no-data-illustration';
@@ -124,12 +131,20 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
     fetchData();
   }, [fetchData]);
 
-  const exportData = () => {
-    if (gridRef.current?.api) {
-      gridRef.current.api.exportDataAsCsv({
-        fileName: `locations-${new Date().toISOString().split('T')[0]}.csv`
-      });
-    }
+  const handleExport = (format: ExportFormat) => {
+    const exportColumns = columnDefs
+      .filter(col => col.field)
+      .map(col => ({
+        field: col.field!,
+        headerName: col.headerName!
+      }));
+
+    exportTableData({
+      data: filteredData,
+      columns: exportColumns,
+      filename: 'locations',
+      format
+    });
   };
 
   const hasData = filteredData.length > 0;
@@ -163,10 +178,28 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
                     <RefreshCw className="h-4 w-4 mr-1" />
                     <span className="hidden sm:inline">Refresh</span>
                   </Button>
-                  <Button variant="outline" size="sm" onClick={exportData}>
-                    <Download className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Export</span>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-1" />
+                        <span className="hidden sm:inline">Export</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-white">
+                      <DropdownMenuItem onClick={() => handleExport('csv')}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Export as CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleExport('excel')}>
+                        <FileSpreadsheet className="w-4 h-4 mr-2" />
+                        Export as Excel
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Export as PDF
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 
