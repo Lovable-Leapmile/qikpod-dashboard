@@ -131,7 +131,7 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  className="w-6 md:w-10 h-auto"
+                  className="w-12 md:w-20 h-auto object-contain"
                 />
               </div>
               <div className="flex-1">
