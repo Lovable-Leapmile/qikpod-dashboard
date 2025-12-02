@@ -220,7 +220,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
               {/* Desktop view - AG Grid */}
               <div className="hidden md:block">
                 <div
-                  className={`ag-theme-alpine ${isDashboard ? "h-[400px]" : "h-[calc(100vh-280px)]"} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
+                  className={`ag-theme-alpine ${isDashboard ? "h-[400px]" : "h-[calc(100vh-200px)]"} w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
                 >
                   <AgGridReact
                     ref={gridRef}
