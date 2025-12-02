@@ -1,30 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Package, Eye, EyeOff, Edit, Trash2, Settings, ArrowUp } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { useAuth } from '@/contexts/AuthContext';
-import { dashboardApi, PodDetail as PodDetailType, LogEntry } from '@/services/dashboardApi';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import NoDataIllustration from '@/components/ui/no-data-illustration';
-import EditModePopup from './EditModePopup';
-import UpdatePodVersionPopup from './UpdatePodVersionPopup';
-import FEUpdatePopup from './FEUpdatePopup';
-import EditPodPopup from './EditPodPopup';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Package, Eye, EyeOff, Edit, Trash2, Settings, ArrowUp } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { useAuth } from "@/contexts/AuthContext";
+import { dashboardApi, PodDetail as PodDetailType, LogEntry } from "@/services/dashboardApi";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import NoDataIllustration from "@/components/ui/no-data-illustration";
+import EditModePopup from "./EditModePopup";
+import UpdatePodVersionPopup from "./UpdatePodVersionPopup";
+import FEUpdatePopup from "./FEUpdatePopup";
+import EditPodPopup from "./EditPodPopup";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface PodDetailProps {
   podId: number;
   onBack: () => void;
 }
 
-const PodDetail: React.FC<PodDetailProps> = ({
-  podId,
-  onBack
-}) => {
-  const {
-    accessToken
-  } = useAuth();
+const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
+  const { accessToken } = useAuth();
   const [podDetail, setPodDetail] = useState<PodDetailType | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +29,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
   const [showUpdateVersionPopup, setShowUpdateVersionPopup] = useState(false);
   const [showFEUpdatePopup, setShowFEUpdatePopup] = useState(false);
   const [showEditPodPopup, setShowEditPodPopup] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const fetchPodDetail = async () => {
     if (!accessToken) return;
@@ -43,7 +38,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
       const data = await dashboardApi.getPodDetail(accessToken, podId);
       setPodDetail(data);
     } catch (error) {
-      console.error('Error fetching pod detail:', error);
+      console.error("Error fetching pod detail:", error);
     } finally {
       setLoading(false);
     }
@@ -56,7 +51,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
       const data = await dashboardApi.getPodLogs(accessToken, podId);
       setLogs(data);
     } catch (error) {
-      console.error('Error fetching pod logs:', error);
+      console.error("Error fetching pod logs:", error);
     } finally {
       setLogsLoading(false);
     }
@@ -68,14 +63,14 @@ const PodDetail: React.FC<PodDetailProps> = ({
   }, [podId, accessToken]);
 
   const formatValue = (value: any): string => {
-    if (value === null || value === undefined || value === 'null' || value === '') {
-      return 'N/A';
+    if (value === null || value === undefined || value === "null" || value === "") {
+      return "N/A";
     }
     return String(value);
   };
 
   const getPodStatus = (status: string) => {
-    return status === 'success' ? 'Active' : 'Inactive';
+    return status === "success" ? "Active" : "Inactive";
   };
 
   const handlePopupSuccess = () => {
@@ -132,7 +127,10 @@ const PodDetail: React.FC<PodDetailProps> = ({
               <div className="w-20 h-24 md:w-32 md:h-40 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
                 <img
                   alt="Qikpod Logo"
-                  src="/lovable-uploads/0fd687e7-e1ab-48e0-9dc6-fca54d66bec7.png"
+                  src="https://leapmile.com/assets/q35-DUPPwGYr.png"
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
                   className="w-6 md:w-10 h-auto"
                 />
               </div>
@@ -181,10 +179,18 @@ const PodDetail: React.FC<PodDetailProps> = ({
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-2 items-center md:items-end">
-              <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2 w-full md:w-auto" onClick={() => setShowEditModePopup(true)}>
+              <Button
+                variant="outline"
+                className="rounded-lg text-xs md:text-sm h-8 px-2 w-full md:w-auto"
+                onClick={() => setShowEditModePopup(true)}
+              >
                 Edit Mode
               </Button>
-              <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2 w-full md:w-auto" onClick={() => setShowEditPodPopup(true)}>
+              <Button
+                variant="outline"
+                className="rounded-lg text-xs md:text-sm h-8 px-2 w-full md:w-auto"
+                onClick={() => setShowEditPodPopup(true)}
+              >
                 <Edit className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 Edit
               </Button>
@@ -203,7 +209,9 @@ const PodDetail: React.FC<PodDetailProps> = ({
         <CardContent className="pb-4">
           {/* Pod Versions Section */}
           <div className="mb-4">
-            <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 text-center md:text-left">Pod Versions</h3>
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 text-center md:text-left">
+              Pod Versions
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 text-xs md:text-sm mb-3">
               <div className="truncate">
                 <span className="text-gray-600 font-medium">HEALTH:</span>
@@ -229,9 +237,13 @@ const PodDetail: React.FC<PodDetailProps> = ({
 
             {/* Hide/Show Toggle */}
             <div className="mb-3 text-center md:text-left">
-              <Button variant="ghost" onClick={() => setShowHiddenSection(!showHiddenSection)} className="flex items-center space-x-1 text-gray-600 mx-auto md:mx-0 h-8 text-xs">
+              <Button
+                variant="ghost"
+                onClick={() => setShowHiddenSection(!showHiddenSection)}
+                className="flex items-center space-x-1 text-gray-600 mx-auto md:mx-0 h-8 text-xs"
+              >
                 {showHiddenSection ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                <span>{showHiddenSection ? 'See Less' : 'See More'}</span>
+                <span>{showHiddenSection ? "See Less" : "See More"}</span>
               </Button>
             </div>
 
@@ -270,11 +282,19 @@ const PodDetail: React.FC<PodDetailProps> = ({
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <CardTitle className="text-lg md:text-xl font-bold text-gray-900 text-center md:text-left">Logs</CardTitle>
             <div className="flex flex-wrap gap-2 justify-center md:justify-end">
-              <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowUpdateVersionPopup(true)}>
+              <Button
+                variant="outline"
+                className="rounded-lg text-xs md:text-sm h-8 px-2"
+                onClick={() => setShowUpdateVersionPopup(true)}
+              >
                 <ArrowUp className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 Update Pod Version
               </Button>
-              <Button variant="outline" className="rounded-lg text-xs md:text-sm h-8 px-2" onClick={() => setShowFEUpdatePopup(true)}>
+              <Button
+                variant="outline"
+                className="rounded-lg text-xs md:text-sm h-8 px-2"
+                onClick={() => setShowFEUpdatePopup(true)}
+              >
                 <Settings className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                 FE Update
               </Button>
@@ -301,7 +321,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {logs.map(log => (
+                  {logs.map((log) => (
                     <TableRow key={log.log_id}>
                       <TableCell className="text-xs md:text-sm">{log.log_id}</TableCell>
                       <TableCell className="text-xs md:text-sm">{formatValue(log.updated_at)}</TableCell>
@@ -338,7 +358,7 @@ const PodDetail: React.FC<PodDetailProps> = ({
         podId={podId}
         initialValues={{
           fe_tag: podDetail.fe_tag,
-          fe_details: podDetail.fe_details
+          fe_details: podDetail.fe_details,
         }}
         onSuccess={handlePopupSuccess}
       />
