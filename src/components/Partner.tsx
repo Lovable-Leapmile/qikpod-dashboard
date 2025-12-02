@@ -96,22 +96,21 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
   };
   return (
     <div className="space-y-6 w-full max-w-full mx-0 px-0">
-      {/* Header with Back button and Run Batch button */}
-      <div className="flex items-center justify-between gap-4 mb-2">
-        <Button
-          onClick={() => setShowModal(true)}
-          className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9 px-3"
-        >
-          <Play className="w-4 h-4" />
-          Run Batch Application
-        </Button>
-      </div>
-
       {/* Partner Dashboard */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center">
             <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
+          </div>
+          {/* Header with Back button and Run Batch button */}
+          <div className="flex items-center justify-between gap-4 mb-2">
+            <Button
+              onClick={() => setShowModal(true)}
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9 px-3"
+            >
+              <Play className="w-4 h-4" />
+              Run Batch Application
+            </Button>
           </div>
         </div>
         <CardContent className="p-4">
