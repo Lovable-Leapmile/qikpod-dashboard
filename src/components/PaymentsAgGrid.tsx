@@ -26,9 +26,7 @@ interface PaymentData {
   payment_client_awbno: string;
 }
 const PaymentsAgGrid = () => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
   const navigate = useNavigate();
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<PaymentData[]>([]);
@@ -43,12 +41,15 @@ const PaymentsAgGrid = () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/payments/payments/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json"
-        }
-      });
+      const response = await fetch(
+        `https://productionv36.qikpod.com/payments/payments/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+        },
+      );
       if (response.ok) {
         const data = await response.json();
         setRowData(data.records || []);
@@ -85,91 +86,111 @@ const PaymentsAgGrid = () => {
       paid: "status-paid",
       pending: "status-pending",
       cancelled: "status-cancelled",
-      inactive: "status-inactive"
+      inactive: "status-inactive",
     };
-    return <span className={cn("status-badge", statusClasses[status as keyof typeof statusClasses] || "status-inactive")}>
+    return (
+      <span className={cn("status-badge", statusClasses[status as keyof typeof statusClasses] || "status-inactive")}>
         {status}
-      </span>;
+      </span>
+    );
   };
   const ActionRenderer = (params: any) => {
     const handleViewDetails = () => {
       const paymentId = params.data.id || params.data.payment_reference_id;
       navigate(`/payments/${paymentId}`);
     };
-    return <div className="flex items-center justify-center h-full">
-        <Button variant="ghost" size="sm" onClick={handleViewDetails} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black" title="View Payment Details">
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleViewDetails}
+          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+          title="View Payment Details"
+        >
           <Eye className="h-4 w-4" />
         </Button>
-      </div>;
+      </div>
+    );
   };
   const AmountRenderer = (params: any) => {
-    return <span className="font-semibold text-foreground">
+    return (
+      <span className="font-semibold text-foreground">
         ₹
         {parseFloat(params.value).toLocaleString("en-IN", {
-        minimumFractionDigits: 2
-      })}
-      </span>;
+          minimumFractionDigits: 2,
+        })}
+      </span>
+    );
   };
   const DateRenderer = (params: any) => {
     const date = new Date(params.value);
-    return <div className="text-sm">
+    return (
+      <div className="text-sm">
         {date.toLocaleDateString("en-IN")}{" "}
         {date.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })}
-      </div>;
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </div>
+    );
   };
-  const columnDefs: ColDef[] = [{
-    headerName: "Reservation ID",
-    field: "payment_client_reference_id",
-    sortable: true,
-    filter: true,
-    flex: 3,
-    minWidth: 220,
-    cellClass: "font-medium"
-  }, {
-    headerName: "User ID",
-    field: "user_id",
-    sortable: true,
-    filter: true,
-    flex: 0.8,
-    minWidth: 40,
-    cellClass: "text-muted-foreground"
-  }, {
-    headerName: "Amount",
-    field: "payment_amount",
-    sortable: true,
-    filter: true,
-    flex: 0.8,
-    minWidth: 40,
-    cellRenderer: AmountRenderer
-  }, {
-    headerName: "Date & Time",
-    field: "created_at",
-    sortable: true,
-    filter: true,
-    flex: 1.2,
-    minWidth: 50,
-    cellRenderer: DateRenderer
-  }, {
-    headerName: "Status",
-    field: "payment_status",
-    sortable: true,
-    filter: true,
-    flex: 0.8,
-    minWidth: 40,
-    cellRenderer: StatusRenderer
-  }, {
-    headerName: "Action",
-    field: "action",
-    width: 120,
-    cellRenderer: ActionRenderer,
-    sortable: false,
-    filter: false,
-    resizable: false,
-    cellClass: ["flex", "items-center", "justify-center"]
-  }];
+  const columnDefs: ColDef[] = [
+    {
+      headerName: "Reservation ID",
+      field: "payment_client_reference_id",
+      sortable: true,
+      filter: true,
+      flex: 3,
+      minWidth: 220,
+      cellClass: "font-medium",
+    },
+    {
+      headerName: "User ID",
+      field: "user_id",
+      sortable: true,
+      filter: true,
+      flex: 0.8,
+      minWidth: 40,
+      cellClass: "text-muted-foreground",
+    },
+    {
+      headerName: "Amount",
+      field: "payment_amount",
+      sortable: true,
+      filter: true,
+      flex: 0.8,
+      minWidth: 40,
+      cellRenderer: AmountRenderer,
+    },
+    {
+      headerName: "Date & Time",
+      field: "created_at",
+      sortable: true,
+      filter: true,
+      flex: 1.2,
+      minWidth: 50,
+      cellRenderer: DateRenderer,
+    },
+    {
+      headerName: "Status",
+      field: "payment_status",
+      sortable: true,
+      filter: true,
+      flex: 0.8,
+      minWidth: 40,
+      cellRenderer: StatusRenderer,
+    },
+    {
+      headerName: "Action",
+      field: "action",
+      width: 120,
+      cellRenderer: ActionRenderer,
+      sortable: false,
+      filter: false,
+      resizable: false,
+    },
+  ];
   const onGridReady = (params: any) => {
     params.api.sizeColumnsToFit();
   };
@@ -182,42 +203,49 @@ const PaymentsAgGrid = () => {
   const getFilteredData = useCallback(() => {
     let filtered = rowData;
     if (statusFilter !== "all") {
-      filtered = filtered.filter(row => row.payment_status === statusFilter);
+      filtered = filtered.filter((row) => row.payment_status === statusFilter);
     }
     return filtered;
   }, [rowData, statusFilter]);
   const exportData = () => {
     if (gridRef.current?.api) {
       gridRef.current.api.exportDataAsCsv({
-        fileName: `payments-${new Date().toISOString().split("T")[0]}.csv`
+        fileName: `payments-${new Date().toISOString().split("T")[0]}.csv`,
       });
     }
   };
   const hasData = rowData.length > 0;
-  return <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Back and Create Payment Buttons - Outside the card */}
-      <div className="flex items-center justify-between mb-4">
-        
-
-        <Button onClick={() => setShowCreatePayment(true)} className="flex items-center gap-2 h-8 bg-[#FDDC4E] hover:bg-yellow-400 text-black" size="sm">
-          <Plus className="h-4 w-4" />
-          <span>Create Payment</span>
-        </Button>
-      </div>
-
+  return (
+    <div className="w-full h-full flex flex-col animate-fade-in">
       {/* Header Section - Updated to be more compact like logs page */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           {/* Single line for all controls on desktop */}
+          <Button
+            onClick={() => setShowCreatePayment(true)}
+            className="flex items-center gap-2 h-8 bg-[#FDDC4E] hover:bg-yellow-400 text-black"
+            size="sm"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create Payment</span>
+          </Button>
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full lg:w-auto">
               <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
 
               {/* Auto Refresh Checkbox */}
               <div className="hidden sm:flex items-center gap-2">
-                <Checkbox id="auto-refresh-payments" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked === true)} className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300" />
-                <label htmlFor="auto-refresh-payments" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                <Checkbox
+                  id="auto-refresh-payments"
+                  checked={autoRefresh}
+                  onCheckedChange={(checked) => setAutoRefresh(checked === true)}
+                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
+                />
+                <label
+                  htmlFor="auto-refresh-payments"
+                  className="text-sm text-muted-foreground font-medium whitespace-nowrap"
+                >
                   Auto Refresh (2m)
                 </label>
               </div>
@@ -256,13 +284,18 @@ const PaymentsAgGrid = () => {
               {/* Search */}
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10 w-full" />
+                <Input
+                  placeholder="Search payments..."
+                  value={globalFilter}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  className="pl-10 w-full"
+                />
               </div>
 
               {/* Page Size Selector */}
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                   <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
@@ -300,14 +333,19 @@ const PaymentsAgGrid = () => {
 
                   <div className="relative flex-1 max-w-xs">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10 w-full" />
+                    <Input
+                      placeholder="Search payments..."
+                      value={globalFilter}
+                      onChange={(e) => handleGlobalFilter(e.target.value)}
+                      className="pl-10 w-full"
+                    />
                   </div>
                 </div>
 
                 {/* Page Size Selector */}
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
                     </SelectTrigger>
@@ -327,7 +365,12 @@ const PaymentsAgGrid = () => {
               {/* Search */}
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input placeholder="Search payments..." value={globalFilter} onChange={e => handleGlobalFilter(e.target.value)} className="pl-10 w-full" />
+                <Input
+                  placeholder="Search payments..."
+                  value={globalFilter}
+                  onChange={(e) => handleGlobalFilter(e.target.value)}
+                  className="pl-10 w-full"
+                />
               </div>
 
               {/* Status Filter and Page Size in single line */}
@@ -352,7 +395,7 @@ const PaymentsAgGrid = () => {
                 {/* Page Size Selector */}
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
-                  <Select value={pageSize.toString()} onValueChange={value => setPageSize(Number(value))}>
+                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
                     <SelectTrigger className="w-16">
                       <SelectValue />
                     </SelectTrigger>
@@ -368,8 +411,16 @@ const PaymentsAgGrid = () => {
 
               {/* Auto Refresh for mobile */}
               <div className="flex sm:hidden items-center gap-2">
-                <Checkbox id="auto-refresh-payments-mobile" checked={autoRefresh} onCheckedChange={checked => setAutoRefresh(checked === true)} className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300" />
-                <label htmlFor="auto-refresh-payments-mobile" className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                <Checkbox
+                  id="auto-refresh-payments-mobile"
+                  checked={autoRefresh}
+                  onCheckedChange={(checked) => setAutoRefresh(checked === true)}
+                  className="h-4 w-4 data-[state=checked]:bg-[#FDDC4E] data-[state=checked]:text-black border-gray-300"
+                />
+                <label
+                  htmlFor="auto-refresh-payments-mobile"
+                  className="text-sm text-muted-foreground font-medium whitespace-nowrap"
+                >
                   Auto Refresh (2m)
                 </label>
               </div>
@@ -380,31 +431,59 @@ const PaymentsAgGrid = () => {
 
       {/* Content Section */}
       <div className="flex-1 w-full">
-        {loading ? <div className="flex items-center justify-center h-[200px]">
+        {loading ? (
+          <div className="flex items-center justify-center h-[200px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div> : hasData ? <>
+          </div>
+        ) : hasData ? (
+          <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact ref={gridRef} rowData={getFilteredData()} columnDefs={columnDefs} defaultColDef={{
-              resizable: true,
-              sortable: true,
-              filter: true,
-              cellClass: "flex items-center"
-            }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+                <AgGridReact
+                  ref={gridRef}
+                  rowData={getFilteredData()}
+                  columnDefs={columnDefs}
+                  defaultColDef={{
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                    cellClass: "flex items-center",
+                  }}
+                  pagination={true}
+                  paginationPageSize={pageSize}
+                  loading={loading}
+                  suppressRowHoverHighlight={false}
+                  suppressCellFocus={true}
+                  animateRows={true}
+                  rowBuffer={10}
+                  enableCellTextSelection={true}
+                  onGridReady={onGridReady}
+                  rowHeight={36}
+                  headerHeight={38}
+                  suppressColumnVirtualisation={true}
+                  rowSelection="single"
+                  suppressRowClickSelection={true}
+                />
               </div>
             </div>
 
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {getFilteredData().map(payment => <Card key={payment.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                {getFilteredData().map((payment) => (
+                  <Card key={payment.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <div className="text-lg font-semibold">{payment.payment_client_reference_id}</div>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => navigate(`/payments/${payment.id || payment.payment_reference_id}`)} className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/payments/${payment.id || payment.payment_reference_id}`)}
+                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
@@ -415,20 +494,24 @@ const PaymentsAgGrid = () => {
                             <span className="font-medium text-gray-700">User ID:</span> {payment.user_id}
                           </div>
                           <div className="text-sm font-semibold">
-                            ₹{parseFloat(payment.payment_amount).toLocaleString("en-IN", {
-                        minimumFractionDigits: 2
-                      })}
+                            ₹
+                            {parseFloat(payment.payment_amount).toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                            })}
                           </div>
                         </div>
 
                         {/* Status and Date in single line */}
                         <div className="flex justify-between items-center">
                           <div className="text-sm">
-                            <span className={cn("px-2 py-1 rounded-full text-xs font-medium", {
-                        "bg-green-100 text-green-800": payment.payment_status === "paid",
-                        "bg-yellow-100 text-yellow-800": payment.payment_status === "pending",
-                        "bg-red-100 text-red-800": payment.payment_status === "cancelled" || payment.payment_status === "inactive"
-                      })}>
+                            <span
+                              className={cn("px-2 py-1 rounded-full text-xs font-medium", {
+                                "bg-green-100 text-green-800": payment.payment_status === "paid",
+                                "bg-yellow-100 text-yellow-800": payment.payment_status === "pending",
+                                "bg-red-100 text-red-800":
+                                  payment.payment_status === "cancelled" || payment.payment_status === "inactive",
+                              })}
+                            >
                               {payment.payment_status}
                             </span>
                           </div>
@@ -438,18 +521,27 @@ const PaymentsAgGrid = () => {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>)}
+                  </Card>
+                ))}
               </div>
             </div>
-          </> : <div className="flex items-center justify-center h-[200px]">
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-[200px]">
             <div className="text-gray-500 text-center">
               <p>No payment data available</p>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Create Payment Modal */}
-      <CreatePaymentPopup isOpen={showCreatePayment} onClose={() => setShowCreatePayment(false)} onSuccess={fetchPayments} />
-    </div>;
+      <CreatePaymentPopup
+        isOpen={showCreatePayment}
+        onClose={() => setShowCreatePayment(false)}
+        onSuccess={fetchPayments}
+      />
+    </div>
+  );
 };
 export default PaymentsAgGrid;
