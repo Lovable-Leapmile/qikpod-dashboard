@@ -78,14 +78,15 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
     headerName: 'ID',
     sortable: true,
     filter: true,
-    width: 80,
+    flex: 1,
+    minWidth: 80,
     cellClass: 'font-medium text-center'
   }, {
     field: 'primary_name',
     headerName: 'Name',
     sortable: true,
     filter: true,
-    flex: 1,
+    flex: 2,
     minWidth: 150,
     cellClass: 'font-medium'
   }, {
@@ -93,7 +94,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
     headerName: 'Location',
     sortable: true,
     filter: true,
-    flex: 1,
+    flex: 2,
     minWidth: 150,
     cellClass: 'text-muted-foreground'
   }, {
@@ -101,7 +102,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
     headerName: 'Address',
     sortable: true,
     filter: true,
-    flex: 2,
+    flex: 3,
     minWidth: 200,
     cellClass: 'text-muted-foreground',
     tooltipField: 'location_address'
@@ -110,11 +111,13 @@ const LocationsTable: React.FC<LocationsTableProps> = ({
     headerName: 'Pincode',
     sortable: true,
     filter: true,
-    width: 120,
+    flex: 1,
+    minWidth: 120,
     cellClass: 'text-muted-foreground text-center'
   }, {
     headerName: 'Action',
-    width: 100,
+    flex: 1,
+    minWidth: 100,
     cellRenderer: ActionRenderer,
     sortable: false,
     filter: false,

@@ -115,14 +115,15 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'ID',
     sortable: true,
     filter: true,
-    width: 80,
+    flex: 1,
+    minWidth: 80,
     cellClass: 'font-medium text-center'
   }, {
     field: 'pod_name',
     headerName: 'Pod Name',
     sortable: true,
     filter: true,
-    flex: 1,
+    flex: 2,
     minWidth: 150,
     cellClass: 'font-medium'
   }, {
@@ -130,7 +131,8 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'Power',
     sortable: true,
     filter: true,
-    width: 100,
+    flex: 1,
+    minWidth: 100,
     cellRenderer: ({ value }: { value: string }) => <PowerStatusBadge value={value} />,
     cellClass: 'text-center'
   }, {
@@ -138,7 +140,8 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'Status',
     sortable: true,
     filter: true,
-    width: 100,
+    flex: 1,
+    minWidth: 100,
     cellRenderer: ({ value }: { value: string }) => <StatusBadge value={value} />,
     cellClass: 'text-center'
   }, {
@@ -146,26 +149,29 @@ const PodsTable: React.FC<PodsTableProps> = ({
     headerName: 'Health',
     sortable: true,
     filter: true,
-    width: 100,
+    flex: 1,
+    minWidth: 100,
     cellClass: 'text-muted-foreground text-center'
   }, {
     field: 'pod_numtotaldoors',
     headerName: 'Doors',
     sortable: true,
     filter: true,
-    width: 80,
+    flex: 1,
+    minWidth: 80,
     cellClass: 'text-muted-foreground text-center'
   }, {
     field: 'location_name',
     headerName: 'Location',
     sortable: true,
     filter: true,
-    flex: 1,
+    flex: 2,
     minWidth: 150,
     cellClass: 'text-muted-foreground'
   }, {
     headerName: 'Action',
-    width: 100,
+    flex: 1,
+    minWidth: 100,
     cellRenderer: ActionRenderer,
     sortable: false,
     filter: false,
