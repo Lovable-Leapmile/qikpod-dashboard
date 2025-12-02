@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import '@/styles/ag-grid.css';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, Search, Eye, CalendarDays, Download, FileSpreadsheet, FileText } from 'lucide-react';
-import TableFilters, { FilterConfig } from '@/components/filters/TableFilters';
-import { useTableFilters } from '@/hooks/useTableFilters';
-import { exportTableData, ExportFormat } from '@/lib/tableExport';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, GridApi } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import "@/styles/ag-grid.css";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RefreshCw, Search, Eye, CalendarDays, Download, FileSpreadsheet, FileText } from "lucide-react";
+import TableFilters, { FilterConfig } from "@/components/filters/TableFilters";
+import { useTableFilters } from "@/hooks/useTableFilters";
+import { exportTableData, ExportFormat } from "@/lib/tableExport";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useAuth } from '@/contexts/AuthContext';
-import { dashboardApi, StandardReservation, AdhocReservation } from '@/services/dashboardApi';
-import { cn } from '@/lib/utils';
-import NoDataIllustration from '@/components/ui/no-data-illustration';
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/contexts/AuthContext";
+import { dashboardApi, StandardReservation, AdhocReservation } from "@/services/dashboardApi";
+import { cn } from "@/lib/utils";
+import NoDataIllustration from "@/components/ui/no-data-illustration";
 
 interface ReservationsTableProps {
   onStandardReservationClick?: (reservationId: number) => void;
@@ -32,11 +32,9 @@ interface ReservationsTableProps {
 
 const ReservationsTable: React.FC<ReservationsTableProps> = ({
   onStandardReservationClick,
-  onAdhocReservationClick
+  onAdhocReservationClick,
 }) => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
   const gridRef = useRef<AgGridReact>(null);
   const [isStandardMode, setIsStandardMode] = useState(true);
   const [standardReservations, setStandardReservations] = useState<StandardReservation[]>([]);
@@ -45,16 +43,16 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
 
   const standardFilters = useTableFilters(
     standardReservations,
-    ['drop_by_name', 'location_name', 'created_by_name'],
-    'status',
-    'created_at'
+    ["drop_by_name", "location_name", "created_by_name"],
+    "status",
+    "created_at",
   );
 
   const adhocFilters = useTableFilters(
     adhocReservations,
-    ['pod_name', 'user_phone'],
-    'reservation_status',
-    'drop_time'
+    ["pod_name", "user_phone"],
+    "reservation_status",
+    "drop_time",
   );
 
   const currentFilters = isStandardMode ? standardFilters : adhocFilters;
@@ -67,7 +65,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       const data = await dashboardApi.getStandardReservations(accessToken);
       setStandardReservations(data);
     } catch (error) {
-      console.error('Error fetching standard reservations:', error);
+      console.error("Error fetching standard reservations:", error);
     } finally {
       setLoading(false);
     }
@@ -80,7 +78,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
       const data = await dashboardApi.getAdhocReservations(accessToken);
       setAdhocReservations(data);
     } catch (error) {
-      console.error('Error fetching adhoc reservations:', error);
+      console.error("Error fetching adhoc reservations:", error);
     } finally {
       setLoading(false);
     }
@@ -94,13 +92,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     }
   }, [isStandardMode, accessToken, fetchStandardReservations, fetchAdhocReservations]);
 
-  const ActionCellRenderer = ({
-    data,
-    isStandard
-  }: {
-    data: any;
-    isStandard: boolean;
-  }) => (
+  const ActionCellRenderer = ({ data, isStandard }: { data: any; isStandard: boolean }) => (
     <Button
       variant="ghost"
       size="sm"
@@ -121,10 +113,11 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     const date = new Date(params.value);
     return (
       <div className="text-sm">
-        {date.toLocaleDateString('en-IN')} • {date.toLocaleTimeString('en-IN', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
+        {date.toLocaleDateString("en-IN")} •{" "}
+        {date.toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
         })}
       </div>
     );
@@ -132,113 +125,113 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
 
   const standardColumnDefs: ColDef[] = [
     {
-      headerName: 'ID',
-      field: 'id',
+      headerName: "ID",
+      field: "id",
       flex: 1,
       minWidth: 80,
-      cellClass: 'font-medium text-center'
+      cellClass: "font-medium text-center",
     },
     {
-      headerName: 'User Name',
-      field: 'drop_by_name',
+      headerName: "User Name",
+      field: "drop_by_name",
       flex: 2,
       minWidth: 150,
-      cellClass: 'font-medium'
+      cellClass: "font-medium",
     },
     {
-      headerName: 'Location',
-      field: 'location_name',
+      headerName: "Location",
+      field: "location_name",
       flex: 2,
       minWidth: 150,
-      cellClass: 'text-muted-foreground'
+      cellClass: "text-muted-foreground",
     },
     {
-      headerName: 'Created By',
-      field: 'created_by_name',
+      headerName: "Created By",
+      field: "created_by_name",
       flex: 2,
       minWidth: 150,
-      cellClass: 'text-muted-foreground'
+      cellClass: "text-muted-foreground",
     },
     {
-      headerName: 'Status',
-      field: 'status',
+      headerName: "Status",
+      field: "status",
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium'
+      cellClass: "font-medium",
     },
     {
-      headerName: 'Created At',
-      field: 'created_at',
+      headerName: "Created At",
+      field: "created_at",
       flex: 2,
       minWidth: 160,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'Action',
+      headerName: "Action",
       flex: 1,
       minWidth: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={true} />,
-      cellClass: 'flex items-center justify-center'
-    }
+      cellClass: "flex items-center justify-center",
+    },
   ];
 
   const adhocColumnDefs: ColDef[] = [
     {
-      headerName: 'ID',
-      field: 'id',
+      headerName: "ID",
+      field: "id",
       flex: 1,
       minWidth: 80,
-      cellClass: 'font-medium text-center'
+      cellClass: "font-medium text-center",
     },
     {
-      headerName: 'Pod ID',
-      field: 'pod_name',
+      headerName: "Pod ID",
+      field: "pod_name",
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium'
+      cellClass: "font-medium",
     },
     {
-      headerName: 'User Phone',
-      field: 'user_phone',
+      headerName: "User Phone",
+      field: "user_phone",
       flex: 2,
       minWidth: 130,
-      cellClass: 'text-muted-foreground'
+      cellClass: "text-muted-foreground",
     },
     {
-      headerName: 'Drop Time',
-      field: 'drop_time',
+      headerName: "Drop Time",
+      field: "drop_time",
       flex: 2,
       minWidth: 150,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'Pickup Time',
-      field: 'pickup_time',
+      headerName: "Pickup Time",
+      field: "pickup_time",
       flex: 2,
       minWidth: 150,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'RTO Pickup',
-      field: 'rto_picktime',
+      headerName: "RTO Pickup",
+      field: "rto_picktime",
       flex: 2,
       minWidth: 150,
-      cellRenderer: DateRenderer
+      cellRenderer: DateRenderer,
     },
     {
-      headerName: 'Status',
-      field: 'reservation_status',
+      headerName: "Status",
+      field: "reservation_status",
       flex: 1,
       minWidth: 120,
-      cellClass: 'font-medium'
+      cellClass: "font-medium",
     },
     {
-      headerName: 'Action',
+      headerName: "Action",
       flex: 1,
       minWidth: 100,
       cellRenderer: (params: any) => <ActionCellRenderer data={params.data} isStandard={false} />,
-      cellClass: 'flex items-center justify-center'
-    }
+      cellClass: "flex items-center justify-center",
+    },
   ];
 
   const onGridReady = (params: any) => {
@@ -256,26 +249,26 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const handleExport = (format: ExportFormat) => {
     const currentColumnDefs = isStandardMode ? standardColumnDefs : adhocColumnDefs;
     const exportColumns = currentColumnDefs
-      .filter(col => col.field)
-      .map(col => ({
+      .filter((col) => col.field)
+      .map((col) => ({
         field: col.field!,
-        headerName: col.headerName!
+        headerName: col.headerName!,
       }));
 
     exportTableData({
       data: filteredData,
       columns: exportColumns,
-      filename: isStandardMode ? 'standard-reservations' : 'adhoc-reservations',
-      format
+      filename: isStandardMode ? "standard-reservations" : "adhoc-reservations",
+      format,
     });
   };
 
   const standardFilterConfig: FilterConfig = {
     searchPlaceholder: "Search reservations...",
     statusOptions: [
-      { label: 'Active', value: 'active' },
-      { label: 'Completed', value: 'completed' },
-      { label: 'Cancelled', value: 'cancelled' }
+      { label: "Active", value: "active" },
+      { label: "Completed", value: "completed" },
+      { label: "Cancelled", value: "cancelled" },
     ],
     dateRangeEnabled: true,
   };
@@ -283,9 +276,9 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   const adhocFilterConfig: FilterConfig = {
     searchPlaceholder: "Search adhoc reservations...",
     statusOptions: [
-      { label: 'Pending', value: 'pending' },
-      { label: 'Active', value: 'active' },
-      { label: 'Completed', value: 'completed' }
+      { label: "Pending", value: "pending" },
+      { label: "Active", value: "active" },
+      { label: "Completed", value: "completed" },
     ],
     dateRangeEnabled: true,
   };
@@ -296,7 +289,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
   return (
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
@@ -307,15 +300,15 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
             <div className="flex items-center space-x-2">
               {/* Mode Switch */}
               <div className="flex items-center space-x-2 mr-4">
-                <span className={`text-sm ${isStandardMode ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+                <span className={`text-sm ${isStandardMode ? "text-gray-900 font-medium" : "text-gray-500"}`}>
                   Standard
                 </span>
                 <Switch
                   checked={!isStandardMode}
-                  onCheckedChange={checked => setIsStandardMode(!checked)}
+                  onCheckedChange={(checked) => setIsStandardMode(!checked)}
                   className="data-[state=checked]:bg-[#FDDC4E]"
                 />
-                <span className={`text-sm ${!isStandardMode ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+                <span className={`text-sm ${!isStandardMode ? "text-gray-900 font-medium" : "text-gray-500"}`}>
                   Adhoc
                 </span>
               </div>
@@ -328,15 +321,15 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white">
-                  <DropdownMenuItem onClick={() => handleExport('csv')}>
+                  <DropdownMenuItem onClick={() => handleExport("csv")}>
                     <FileText className="w-4 h-4 mr-2" />
                     Export as CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleExport('excel')}>
+                  <DropdownMenuItem onClick={() => handleExport("excel")}>
                     <FileSpreadsheet className="w-4 h-4 mr-2" />
                     Export as Excel
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                  <DropdownMenuItem onClick={() => handleExport("pdf")}>
                     <FileText className="w-4 h-4 mr-2" />
                     Export as PDF
                   </DropdownMenuItem>
@@ -349,12 +342,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
             </div>
           </div>
 
-          <TableFilters
-            config={currentFilterConfig}
-            state={filters}
-            onChange={setFilters}
-            onReset={resetFilters}
-          />
+          <TableFilters config={currentFilterConfig} state={filters} onChange={setFilters} onReset={resetFilters} />
         </div>
       </div>
 
@@ -371,7 +359,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                 h-[calc(100vh-240px)] - taller
                 h-[calc(100vh-320px)] - shorter
               */}
-              <div className="ag-theme-alpine h-[calc(100vh-320px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-260px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={filteredData}
@@ -380,7 +368,7 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                     resizable: true,
                     sortable: true,
                     filter: true,
-                    cellClass: 'flex items-center'
+                    cellClass: "flex items-center",
                   }}
                   pagination={true}
                   paginationPageSize={25}
@@ -403,7 +391,8 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
             {/* Mobile view - Cards */}
             <div className="block md:hidden">
               <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                {(filteredData as any[]).map(reservation => isStandardMode ? (
+                {(filteredData as any[]).map((reservation) =>
+                  isStandardMode ? (
                     <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-3">
@@ -431,16 +420,18 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                             <span className="font-medium text-gray-700">Status:</span> {reservation.status}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Created At:</span> {new Date(reservation.created_at).toLocaleDateString('en-IN')} • {new Date(reservation.created_at).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
+                            <span className="font-medium text-gray-700">Created At:</span>{" "}
+                            {new Date(reservation.created_at).toLocaleDateString("en-IN")} •{" "}
+                            {new Date(reservation.created_at).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             })}
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                ) : (
+                  ) : (
                     <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-3">
@@ -462,24 +453,30 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                             <span className="font-medium text-gray-700">User Phone:</span> {reservation.user_phone}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Drop Time:</span> {new Date(reservation.drop_time).toLocaleDateString('en-IN')} • {new Date(reservation.drop_time).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
+                            <span className="font-medium text-gray-700">Drop Time:</span>{" "}
+                            {new Date(reservation.drop_time).toLocaleDateString("en-IN")} •{" "}
+                            {new Date(reservation.drop_time).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             })}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Pickup Time:</span> {new Date(reservation.pickup_time).toLocaleDateString('en-IN')} • {new Date(reservation.pickup_time).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
+                            <span className="font-medium text-gray-700">Pickup Time:</span>{" "}
+                            {new Date(reservation.pickup_time).toLocaleDateString("en-IN")} •{" "}
+                            {new Date(reservation.pickup_time).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             })}
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">RTO Pickup:</span> {new Date(reservation.rto_picktime).toLocaleDateString('en-IN')} • {new Date(reservation.rto_picktime).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit'
+                            <span className="font-medium text-gray-700">RTO Pickup:</span>{" "}
+                            {new Date(reservation.rto_picktime).toLocaleDateString("en-IN")} •{" "}
+                            {new Date(reservation.rto_picktime).toLocaleTimeString("en-IN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                             })}
                           </div>
                           <div className="text-sm">
@@ -488,7 +485,8 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
                         </div>
                       </CardContent>
                     </Card>
-                ))}
+                  ),
+                )}
               </div>
             </div>
           </>
