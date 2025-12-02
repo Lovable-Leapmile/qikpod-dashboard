@@ -180,7 +180,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
       sortable: false,
       filter: false,
       resizable: false,
-      cellClass: "flex items-center justify-center",
+      // cellClass: "flex items-center justify-center",
     },
   ];
 
