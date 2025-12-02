@@ -77,22 +77,6 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
     fetchPodDetail();
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6 p-4 md:p-6">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack} className="flex items-center space-x-2">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back to Pods</span>
-          </Button>
-        </div>
-        <div className="text-center py-12">
-          <p className="text-gray-500">Loading pod details...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (!podDetail) {
     return (
       <div className="space-y-6 p-4 md:p-6">
