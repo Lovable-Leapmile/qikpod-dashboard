@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, EyeOff, Send } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { dashboardApi, StandardReservationDetail } from '@/services/dashboardApi';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Eye, EyeOff, Send } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { dashboardApi, StandardReservationDetail } from "@/services/dashboardApi";
 
 interface ReservationDetailProps {
   reservationId: number;
   onBack: () => void;
 }
 
-const ReservationDetail: React.FC<ReservationDetailProps> = ({
-  reservationId,
-  onBack
-}) => {
+const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, onBack }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const [reservation, setReservation] = useState<StandardReservationDetail | null>(null);
@@ -30,7 +27,7 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
         const data = await dashboardApi.getStandardReservationDetail(accessToken, reservationId);
         setReservation(data);
       } catch (error) {
-        console.error('Error fetching standard reservation detail:', error);
+        console.error("Error fetching standard reservation detail:", error);
       } finally {
         setLoading(false);
       }
@@ -40,7 +37,7 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
 
   const handleResendOTP = async () => {
     if (!accessToken) return;
-    
+
     setResendingOTP(true);
     try {
       await dashboardApi.resendReservationOTP(accessToken, reservationId);
@@ -49,7 +46,7 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
         description: "OTP has been resent successfully",
       });
     } catch (error) {
-      console.error('Error resending OTP:', error);
+      console.error("Error resending OTP:", error);
       toast({
         title: "Error",
         description: "Failed to resend OTP",
@@ -61,24 +58,29 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
   };
 
   if (loading) {
-    return <div className="space-y-6">
+    return (
+      <div className="space-y-6">
         <div className="flex justify-center items-center py-8">
           <div className="text-gray-500">Loading reservation details...</div>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   if (!reservation) {
-    return <div className="space-y-6">
+    return (
+      <div className="space-y-6">
         <Card className="bg-white shadow-sm rounded-xl border-gray-200">
           <CardContent className="p-8">
             <p className="text-gray-600">Reservation not found.</p>
           </CardContent>
         </Card>
-      </div>;
+      </div>
+    );
   }
 
-  return <div className="space-y-6">
+  return (
+    <div className="space-y-6">
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-6">
           <CardTitle className="text-xl font-semibold text-gray-900">
@@ -135,30 +137,39 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
           {/* Action Buttons */}
           <div className="border-t pt-6">
             <div className="flex flex-wrap gap-3">
-              <Button 
-                onClick={handleResendOTP} 
+              <Button
+                onClick={handleResendOTP}
                 disabled={resendingOTP}
                 className="bg-[#FDDC4E] hover:bg-yellow-400 text-black"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {resendingOTP ? 'Sending...' : 'Resend OTP'}
+                {resendingOTP ? "Sending..." : "Resend OTP"}
               </Button>
             </div>
           </div>
 
           {/* Show More Details */}
           <div className="border-t pt-6">
-            <Button variant="ghost" onClick={() => setShowMoreDetails(!showMoreDetails)} className="flex items-center text-gray-600 hover:text-gray-900">
-              {showMoreDetails ? <>
+            <Button
+              variant="ghost"
+              onClick={() => setShowMoreDetails(!showMoreDetails)}
+              className="flex items-center text-gray-600 hover:text-gray-900"
+            >
+              {showMoreDetails ? (
+                <>
                   <EyeOff className="w-4 h-4 mr-2" />
                   Hide Details
-                </> : <>
+                </>
+              ) : (
+                <>
                   <Eye className="w-4 h-4 mr-2" />
                   Show More Details
-                </>}
+                </>
+              )}
             </Button>
 
-            {showMoreDetails && <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+            {showMoreDetails && (
+              <div className=" grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
                 <div>
                   <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Created By</label>
                   <p className="text-sm text-gray-900 mt-1">{reservation.created_by_name}</p>
@@ -184,15 +195,19 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({
                   <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">User ID</label>
                   <p className="text-sm text-gray-900 mt-1">{reservation.user_id}</p>
                 </div>
-                {reservation.notes && <div className="col-span-2 md:col-span-3">
+                {reservation.notes && (
+                  <div className="col-span-2 md:col-span-3">
                     <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Notes</label>
                     <p className="text-sm text-gray-900 mt-1">{reservation.notes}</p>
-                  </div>}
-              </div>}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
 
 export default ReservationDetail;
