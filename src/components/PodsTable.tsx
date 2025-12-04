@@ -21,6 +21,8 @@ import { dashboardApi, Pod } from "@/services/dashboardApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import NoDataIllustration from "@/components/ui/no-data-illustration";
+import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
+import { PullToRefreshContainer } from "@/components/ui/pull-to-refresh";
 
 interface PodsTableProps {
   onPodClick: (id: number) => void;
@@ -270,9 +272,14 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
         {loading ? (
-          <div className="flex items-center justify-center h-[200px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-          </div>
+          <>
+            <div className="hidden md:flex items-center justify-center h-[200px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+            </div>
+            <div className="block md:hidden">
+              <MobileCardSkeleton variant="pod" count={5} />
+            </div>
+          </>
         ) : hasData ? (
           <>
             {/* Desktop view - AG Grid */}
@@ -308,58 +315,62 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
               </div>
             </div>
 
-            {/* Mobile view - Cards */}
+            {/* Mobile view - Cards with Pull to Refresh */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-240px)] overflow-y-auto">
-                {filteredData.map((pod) => (
-                  <Card key={pod.id} className="bg-white shadow-sm rounded-xl border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex-1 flex items-center space-x-3">
-                          {/* Icon left-aligned beside pod name */}
-                          <Package className="h-5 w-5 text-gray-700 flex-shrink-0" />
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">ID: {pod.id}</div>
-                            <div className="text-lg font-semibold mt-1">{pod.pod_name}</div>
+              <PullToRefreshContainer
+                onRefresh={async () => { await fetchData(); }}
+                className="max-h-[calc(100vh-240px)]"
+              >
+                <div className="space-y-4 pb-4">
+                  {filteredData.map((pod) => (
+                    <Card key={pod.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1 flex items-center space-x-3">
+                            <Package className="h-5 w-5 text-gray-700 flex-shrink-0" />
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">ID: {pod.id}</div>
+                              <div className="text-lg font-semibold mt-1">{pod.pod_name}</div>
+                            </div>
+                          </div>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onPodClick(pod.id);
+                            }}
+                            className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">Power:</span>
+                            <PowerStatusBadge value={pod.pod_power_status} />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">Status:</span>
+                            <StatusBadge value={pod.status} />
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">Health:</span> {pod.pod_health}
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">Doors:</span> {pod.pod_numtotaldoors}
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">Location:</span> {pod.location_name}
                           </div>
                         </div>
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onPodClick(pod.id);
-                          }}
-                          className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Power:</span>
-                          <PowerStatusBadge value={pod.pod_power_status} />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Status:</span>
-                          <StatusBadge value={pod.status} />
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Health:</span> {pod.pod_health}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Doors:</span> {pod.pod_numtotaldoors}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Location:</span> {pod.location_name}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </PullToRefreshContainer>
             </div>
           </>
         ) : (

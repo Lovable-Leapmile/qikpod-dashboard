@@ -24,6 +24,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { dashboardApi, StandardReservation, AdhocReservation } from "@/services/dashboardApi";
 import { cn } from "@/lib/utils";
 import NoDataIllustration from "@/components/ui/no-data-illustration";
+import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
+import { PullToRefreshContainer } from "@/components/ui/pull-to-refresh";
 
 interface ReservationsTableProps {
   onStandardReservationClick?: (reservationId: number) => void;
@@ -347,7 +349,16 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
 
       {/* AG Grid Table */}
       <div className="flex-1 w-full">
-        {hasData ? (
+        {loading ? (
+          <>
+            <div className="hidden md:flex items-center justify-center h-[200px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+            <div className="block md:hidden">
+              <MobileCardSkeleton variant="reservation" count={5} />
+            </div>
+          </>
+        ) : hasData ? (
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
@@ -380,106 +391,111 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
               </div>
             </div>
 
-            {/* Mobile view - Cards */}
+            {/* Mobile view - Cards with Pull to Refresh */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                {(filteredData as any[]).map((reservation) =>
-                  isStandardMode ? (
-                    <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-900">ID: {reservation.id}</div>
-                            <div className="text-sm text-gray-600 mt-1">{reservation.drop_by_name}</div>
+              <PullToRefreshContainer
+                onRefresh={async () => { await refreshData(); }}
+                className="max-h-[calc(100vh-400px)]"
+              >
+                <div className="space-y-4 pb-4">
+                  {(filteredData as any[]).map((reservation) =>
+                    isStandardMode ? (
+                      <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-gray-900">ID: {reservation.id}</div>
+                              <div className="text-sm text-gray-600 mt-1">{reservation.drop_by_name}</div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onStandardReservationClick?.(reservation.id)}
+                              className="text-gray-800 bg-gray-100 hover:bg-gray-200"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onStandardReservationClick?.(reservation.id)}
-                            className="text-gray-800 bg-gray-100 hover:bg-gray-200"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Location:</span> {reservation.location_name}
+                          <div className="space-y-2">
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Location:</span> {reservation.location_name}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Created By:</span> {reservation.created_by_name}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Status:</span> {reservation.status}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Created At:</span>{" "}
+                              {new Date(reservation.created_at).toLocaleDateString("en-IN")} •{" "}
+                              {new Date(reservation.created_at).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })}
+                            </div>
                           </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Created By:</span> {reservation.created_by_name}
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-gray-900">ID: {reservation.id}</div>
+                              <div className="text-sm text-gray-600 mt-1">Pod: {reservation.pod_name}</div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onAdhocReservationClick?.(reservation.id)}
+                              className="text-gray-800 bg-gray-100 hover:bg-gray-200"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Status:</span> {reservation.status}
+                          <div className="space-y-2">
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">User Phone:</span> {reservation.user_phone}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Drop Time:</span>{" "}
+                              {new Date(reservation.drop_time).toLocaleDateString("en-IN")} •{" "}
+                              {new Date(reservation.drop_time).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Pickup Time:</span>{" "}
+                              {new Date(reservation.pickup_time).toLocaleDateString("en-IN")} •{" "}
+                              {new Date(reservation.pickup_time).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">RTO Pickup:</span>{" "}
+                              {new Date(reservation.rto_picktime).toLocaleDateString("en-IN")} •{" "}
+                              {new Date(reservation.rto_picktime).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                              })}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Status:</span> {reservation.reservation_status}
+                            </div>
                           </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Created At:</span>{" "}
-                            {new Date(reservation.created_at).toLocaleDateString("en-IN")} •{" "}
-                            {new Date(reservation.created_at).toLocaleTimeString("en-IN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <Card key={reservation.id} className="bg-white shadow-sm rounded-xl border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-900">ID: {reservation.id}</div>
-                            <div className="text-sm text-gray-600 mt-1">Pod: {reservation.pod_name}</div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onAdhocReservationClick?.(reservation.id)}
-                            className="text-gray-800 bg-gray-100 hover:bg-gray-200"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">User Phone:</span> {reservation.user_phone}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Drop Time:</span>{" "}
-                            {new Date(reservation.drop_time).toLocaleDateString("en-IN")} •{" "}
-                            {new Date(reservation.drop_time).toLocaleTimeString("en-IN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Pickup Time:</span>{" "}
-                            {new Date(reservation.pickup_time).toLocaleDateString("en-IN")} •{" "}
-                            {new Date(reservation.pickup_time).toLocaleTimeString("en-IN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">RTO Pickup:</span>{" "}
-                            {new Date(reservation.rto_picktime).toLocaleDateString("en-IN")} •{" "}
-                            {new Date(reservation.rto_picktime).toLocaleTimeString("en-IN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Status:</span> {reservation.reservation_status}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ),
-                )}
-              </div>
+                        </CardContent>
+                      </Card>
+                    ),
+                  )}
+                </div>
+              </PullToRefreshContainer>
             </div>
           </>
         ) : (
