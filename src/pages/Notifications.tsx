@@ -312,9 +312,6 @@ const NotificationsPage: React.FC = () => {
   return (
     <Layout title="Notification Centre" breadcrumb="Notifications">
       <div className="space-y-3 px-[4px]">
-        {/* Back Button at the top */}
-        <div className="mb-2"></div>
-
         {/* Compact Header Controls - RESPONSIVE VERSION */}
         <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
           <div className="p-4 border-b border-gray-200 bg-gray-100">
