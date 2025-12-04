@@ -170,13 +170,8 @@ const LogsAgGrid = () => {
   };
   const hasData = rowData.length > 0;
   return <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Back Button at the top */}
-      <div className="mb-2">
-        
-      </div>
-
       {/* Compact Header Section */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
         {/* Table Title and Controls */}
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           {/* Single line for all controls on desktop */}

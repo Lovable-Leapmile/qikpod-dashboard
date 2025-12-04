@@ -98,7 +98,7 @@ const Layout: React.FC<LayoutProps> = ({
       <DashboardNavigation navigationItems={navigationItems} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} setShowLogoutDialog={setShowLogoutDialog} />
 
       {/* Main Content with top padding for fixed header */}
-      <main className="w-full py-3 pt-16 px-4">
+      <main className="w-full pt-16 pb-4 px-4">
         {/* Page Header - Only show for non-dashboard pages */}
         {currentView !== 'dashboard'}
 
