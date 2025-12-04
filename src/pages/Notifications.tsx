@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
+import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
+import { PullToRefreshContainer } from "@/components/ui/pull-to-refresh";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 interface SMSRecord {
@@ -394,9 +396,14 @@ const NotificationsPage: React.FC = () => {
           </div>
           <div className="flex-1 w-full">
             {loading ? (
-              <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              </div>
+              <>
+                <div className="hidden md:flex items-center justify-center h-96">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+                <div className="block md:hidden p-4">
+                  <MobileCardSkeleton variant="notification" count={3} />
+                </div>
+              </>
             ) : hasSMSData ? (
               <>
                 {/* Desktop view - AG Grid */}

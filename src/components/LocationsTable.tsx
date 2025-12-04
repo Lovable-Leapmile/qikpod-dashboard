@@ -21,6 +21,8 @@ import NoDataIllustration from "@/components/ui/no-data-illustration";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import TableFilters, { FilterConfig, FilterState } from "@/components/filters/TableFilters";
 import { useTableFilters } from "@/hooks/useTableFilters";
+import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
+import { PullToRefreshContainer } from "@/components/ui/pull-to-refresh";
 interface LocationsTableProps {
   onLocationClick: (id: number) => void;
   isDashboard?: boolean;
@@ -212,9 +214,14 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
         {/* Content Section */}
         <div className="flex-1 w-full">
           {loading ? (
-            <div className="flex items-center justify-center h-[200px]">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
+            <>
+              <div className="hidden md:flex items-center justify-center h-[200px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              </div>
+              <div className="block md:hidden">
+                <MobileCardSkeleton variant="location" count={5} />
+              </div>
+            </>
           ) : hasData ? (
             <>
               {/* Desktop view - AG Grid */}
@@ -250,43 +257,48 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                 </div>
               </div>
 
-              {/* Mobile view - Cards */}
+              {/* Mobile view - Cards with Pull to Refresh */}
               <div className="block md:hidden">
-                <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                  {filteredData.map((location) => (
-                    <Card key={location.id} className="bg-white shadow-sm rounded-xl border-gray-200">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
+                <PullToRefreshContainer
+                  onRefresh={async () => { await fetchData(); }}
+                  className="max-h-[calc(100vh-280px)]"
+                >
+                  <div className="space-y-4 pb-4">
+                    {filteredData.map((location) => (
+                      <Card key={location.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-gray-900">ID: {location.id}</div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onLocationClick(location.id);
+                              }}
+                              className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onLocationClick(location.id);
-                            }}
-                            className="h-8 w-8 p-0 transition-colors bg-gray-100 text-gray-600 hover:text-gray-800 hover:bg-[#FDDC4E] hover:text-black"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Location:</span> {location.location_name}
+                          <div className="space-y-2">
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Location:</span> {location.location_name}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Address:</span> {location.location_address}
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-700">Pincode:</span> {location.location_pincode}
+                            </div>
                           </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Address:</span> {location.location_address}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-700">Pincode:</span> {location.location_pincode}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </PullToRefreshContainer>
               </div>
             </>
           ) : (

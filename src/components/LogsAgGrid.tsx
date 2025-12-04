@@ -13,6 +13,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
+import { PullToRefreshContainer } from "@/components/ui/pull-to-refresh";
 interface LogData {
   id: number;
   log_id: string;
@@ -169,7 +171,8 @@ const LogsAgGrid = () => {
     }
   };
   const hasData = rowData.length > 0;
-  return <div className="w-full h-full flex flex-col animate-fade-in">
+  return (
+    <div className="w-full h-full flex flex-col animate-fade-in">
       {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
         {/* Table Title and Controls */}
@@ -230,73 +233,110 @@ const LogsAgGrid = () => {
 
       {/* Content Section */}
       <div className="flex-1 w-full">
-        {loading ? <div className="flex items-center justify-center h-[200px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div> : hasData ? <>
+        {loading ? (
+          <>
+            <div className="hidden md:flex items-center justify-center h-[200px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+            <div className="block md:hidden">
+              <MobileCardSkeleton variant="log" count={5} />
+            </div>
+          </>
+        ) : hasData ? (
+          <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
               <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                <AgGridReact ref={gridRef} rowData={rowData} columnDefs={columnDefs} defaultColDef={{
-              resizable: true,
-              sortable: true,
-              filter: true,
-              cellClass: "flex items-center"
-            }} pagination={true} paginationPageSize={pageSize} loading={loading} suppressRowHoverHighlight={false} suppressCellFocus={true} animateRows={true} rowBuffer={10} enableCellTextSelection={true} onGridReady={onGridReady} rowHeight={36} headerHeight={38} suppressColumnVirtualisation={true} rowSelection="single" suppressRowClickSelection={true} />
+                <AgGridReact
+                  ref={gridRef}
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  defaultColDef={{
+                    resizable: true,
+                    sortable: true,
+                    filter: true,
+                    cellClass: "flex items-center"
+                  }}
+                  pagination={true}
+                  paginationPageSize={pageSize}
+                  loading={loading}
+                  suppressRowHoverHighlight={false}
+                  suppressCellFocus={true}
+                  animateRows={true}
+                  rowBuffer={10}
+                  enableCellTextSelection={true}
+                  onGridReady={onGridReady}
+                  rowHeight={36}
+                  headerHeight={38}
+                  suppressColumnVirtualisation={true}
+                  rowSelection="single"
+                  suppressRowClickSelection={true}
+                />
               </div>
             </div>
 
-            {/* Mobile view - Cards */}
+            {/* Mobile view - Cards with Pull to Refresh */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
-                {rowData.map(log => <Card key={log.id} className="bg-white shadow-sm rounded-xl border-gray-200">
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
-                          <div className="text-lg font-semibold text-black mt-1">{log.log_id}</div>{" "}
-                          {/* Changed to text-black */}
+              <PullToRefreshContainer
+                onRefresh={async () => { await fetchLogs(); }}
+                className="max-h-[calc(100vh-280px)]"
+              >
+                <div className="space-y-4 pb-4">
+                  {rowData.map(log => (
+                    <Card key={log.id} className="bg-white shadow-sm rounded-xl border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-gray-900">ID: {log.id}</div>
+                            <div className="text-lg font-semibold text-black mt-1">{log.log_id}</div>
+                          </div>
+                          <span className={cn("px-2 py-1 rounded-full text-xs font-semibold self-start", {
+                            "bg-blue-100 text-blue-800": log.log_level === "INFO",
+                            "bg-yellow-100 text-yellow-800": log.log_level === "WARNING",
+                            "bg-red-100 text-red-800": log.log_level === "ERROR",
+                            "bg-gray-100 text-gray-800": log.log_level === "DEBUG"
+                          })}>
+                            {log.log_level}
+                          </span>
                         </div>
-                        <span className={cn("px-2 py-1 rounded-full text-xs font-semibold self-start", {
-                    "bg-blue-100 text-blue-800": log.log_level === "INFO",
-                    "bg-yellow-100 text-yellow-800": log.log_level === "WARNING",
-                    "bg-red-100 text-red-800": log.log_level === "ERROR",
-                    "bg-gray-100 text-gray-800": log.log_level === "DEBUG"
-                  })}>
-                          {log.log_level}
-                        </span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Type:</span> {log.log_type}
-                        </div>
-                        <div className="text-sm flex items-start">
-                          <span className="font-medium text-gray-700 shrink-0 mr-1">Message:</span>
-                          <div className="text-muted-foreground truncate" title={log.log_message}>
-                            {log.log_message}
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">Type:</span> {log.log_type}
+                          </div>
+                          <div className="text-sm flex items-start">
+                            <span className="font-medium text-gray-700 shrink-0 mr-1">Message:</span>
+                            <div className="text-muted-foreground truncate" title={log.log_message}>
+                              {log.log_message}
+                            </div>
+                          </div>
+                          <div className="text-sm flex items-center">
+                            <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
+                            <div>
+                              {new Date(log.log_eventtime).toLocaleDateString("en-IN")} •{" "}
+                              {new Date(log.log_eventtime).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit"
+                              })}
+                            </div>
                           </div>
                         </div>
-                        <div className="text-sm flex items-center">
-                          <span className="font-medium text-gray-700 shrink-0 mr-1">Time:</span>
-                          <div>
-                            {new Date(log.log_eventtime).toLocaleDateString("en-IN")} •{" "}
-                            {new Date(log.log_eventtime).toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                      })}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>)}
-              </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </PullToRefreshContainer>
             </div>
-          </> : <div className="flex items-center justify-center h-[200px]">
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-[200px]">
             <div className="text-gray-500 text-center">
               <p>No log data available</p>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
 export default LogsAgGrid;
