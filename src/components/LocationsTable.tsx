@@ -302,10 +302,12 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
               </div>
             </>
           ) : (
-            <NoDataIllustration
+          <NoDataIllustration
               title="No locations found"
               description={locations.length === 0 ? "No locations data available." : "No matching locations found."}
               icon="map-pin"
+              showRefresh
+              onRefresh={refreshData}
             />
           )}
         </div>
