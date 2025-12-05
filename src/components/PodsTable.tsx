@@ -376,8 +376,10 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
         ) : (
           <NoDataIllustration
             title="No pods found"
-            description="No matching pods found with the applied filters."
+            description={pods.length === 0 ? "No pods data available." : "No matching pods found with the applied filters."}
             icon="package"
+            showRefresh
+            onRefresh={refreshData}
           />
         )}
       </div>

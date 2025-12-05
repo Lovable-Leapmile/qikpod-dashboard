@@ -501,8 +501,14 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         ) : (
           <NoDataIllustration
             title="No reservations found"
-            description="No matching reservations found with the applied filters."
+            description={
+              (isStandardMode ? standardReservations : adhocReservations).length === 0 
+                ? "No reservations data available." 
+                : "No matching reservations found with the applied filters."
+            }
             icon="inbox"
+            showRefresh
+            onRefresh={refreshData}
           />
         )}
       </div>

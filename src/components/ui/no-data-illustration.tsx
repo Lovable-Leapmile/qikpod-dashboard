@@ -24,7 +24,7 @@ const NoDataIllustration: React.FC<NoDataIllustrationProps> = ({
   const IconComponent = icon === 'file' ? FileX : icon === 'package' ? Package : icon === 'map-pin' ? MapPin : Inbox;
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
       <div className="w-16 h-16 mb-4 text-muted-foreground/40">
         <IconComponent className="w-full h-full" />
       </div>
