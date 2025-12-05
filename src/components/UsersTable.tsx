@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { useUsersData } from '@/hooks/useUsersData';
-import UsersTableHeader from './UsersTableHeader';
-import UsersTableControls from './UsersTableControls';
-import UsersGrid from './UsersGrid';
-import AddUserPopup from './AddUserPopup';
+import React, { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useUsersData } from "@/hooks/useUsersData";
+import UsersTableHeader from "./UsersTableHeader";
+import UsersTableControls from "./UsersTableControls";
+import UsersGrid from "./UsersGrid";
+import AddUserPopup from "./AddUserPopup";
 
 interface UsersTableProps {
   onBack: () => void;
@@ -13,12 +13,12 @@ interface UsersTableProps {
 const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
   const { toast } = useToast();
   const { users, loading, refetchUsers } = useUsersData();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [pageSize, setPageSize] = useState(25);
   const [showAddUserPopup, setShowAddUserPopup] = useState(false);
 
   const handleUserClick = (userId: number) => {
-    console.log('Navigate to user detail:', userId);
+    console.log("Navigate to user detail:", userId);
     // TODO: Implement user detail navigation (e.g., navigate(`/user/${userId}`))
   };
 
@@ -26,13 +26,13 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
     refetchUsers();
     setShowAddUserPopup(false);
     toast({
-      title: 'Success',
-      description: 'User added successfully',
+      title: "Success",
+      description: "User added successfully",
     });
   };
 
   return (
-    <div className="space-y-4 px-4 py-4 w-full max-w-screen-xl mx-auto">
+    <div className="space-y-4 px-3 py-4 w-full max-w-screen-xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <UsersTableHeader onAddUser={() => setShowAddUserPopup(true)} />
@@ -60,11 +60,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
       </div>
 
       {/* Popup */}
-      <AddUserPopup
-        open={showAddUserPopup}
-        onOpenChange={setShowAddUserPopup}
-        onSuccess={handleAddUserSuccess}
-      />
+      <AddUserPopup open={showAddUserPopup} onOpenChange={setShowAddUserPopup} onSuccess={handleAddUserSuccess} />
     </div>
   );
 };
