@@ -241,7 +241,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({ users, loading, onBack, onUse
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-210px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={filteredData}
