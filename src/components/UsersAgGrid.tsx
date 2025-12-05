@@ -71,6 +71,10 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
     'user_type',
     undefined
   );
+
+  const handleAddUserClick = () => {
+    setShowAddUserPopup(true);
+  };
   const columnDefs: ColDef[] = [{
     field: 'id',
     headerName: 'ID',
@@ -171,32 +175,25 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
 
   const hasData = filteredData.length > 0;
   return <div className="w-full h-full flex flex-col animate-fade-in px-4">
-      {/* Top Navigation Row */}
-      <div className="flex flex-row items-center justify-between gap-4 w-full mb-4 sm:mb-6">
-        
-
-        <Button onClick={() => setShowAddUserPopup(true)} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2 h-9 px-3">
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Add User</span>
-          <span className="sm:hidden">Add</span>
-        </Button>
-      </div>
-
       {/* Users Card Section - Compact */}
-      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4 sm:mb-6">
+      <div className="border border-gray-200 rounded-lg lg:rounded-xl bg-white overflow-hidden shadow-sm mb-4">
         <div className="p-3 border-b border-gray-200 bg-gray-100 py-[12px]">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <Users className="h-3.5 w-3.5 text-gray-900" />
-              <h2 className="text-sm font-semibold text-gray-900">Users</h2>
+              <Users className="h-4 w-4 text-gray-900" />
+              <h2 className="text-lg font-semibold text-gray-900">Users</h2>
             </div>
 
             <div className="flex items-center space-x-2">
+              <Button onClick={handleAddUserClick} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2 h-8 px-3">
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Add User</span>
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="h-8 px-2 text-xs">
                     <Download className="w-3 h-3 mr-1" />
-                    Export
+                    <span className="hidden sm:inline">Export</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white">
@@ -237,7 +234,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
           </div> : hasData ? <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-200px)] sm:h-[calc(100vh-360px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-220px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact ref={gridRef} rowData={filteredData} columnDefs={columnDefs} defaultColDef={{
               resizable: true,
               sortable: true,
@@ -280,7 +277,13 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({
                   </Card>)}
               </div>
             </div>
-          </> : <NoDataIllustration title="No users found" description="No matching users found with the applied filters." icon="inbox" />}
+          </> : <NoDataIllustration 
+            title="No users found" 
+            description={users.length === 0 ? "No users data available." : "No matching users found with the applied filters."} 
+            icon="inbox" 
+            showRefresh
+            onRefresh={refreshData}
+          />}
       </div>
 
       {/* Add User Popup */}
