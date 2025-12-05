@@ -58,15 +58,23 @@ export function usePullToRefresh({
     }
   }, [isPulling, isRefreshing, maxPull]);
 
+  const triggerHapticFeedback = useCallback(() => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(50);
+    }
+  }, []);
+
   const onTouchEnd = useCallback(async () => {
     setIsPulling(false);
     
     if (pullDistance >= threshold && !isRefreshing) {
       setIsRefreshing(true);
       setPullDistance(threshold / 2);
+      triggerHapticFeedback();
       
       try {
         await onRefresh();
+        triggerHapticFeedback();
       } finally {
         setIsRefreshing(false);
         setPullDistance(0);
@@ -74,7 +82,7 @@ export function usePullToRefresh({
     } else {
       setPullDistance(0);
     }
-  }, [pullDistance, threshold, isRefreshing, onRefresh]);
+  }, [pullDistance, threshold, isRefreshing, onRefresh, triggerHapticFeedback]);
 
   return {
     pullDistance,
