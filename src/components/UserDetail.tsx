@@ -244,42 +244,73 @@ const UserDetail: React.FC<UserDetailProps> = ({
       {/* User Locations */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-gray-900">Locations</h3>
-        {userLocations.length > 0 ? <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-            {isMobile ? <div className="space-y-3 p-4">
-                {userLocations.map(location => <Card key={location.id} className="border border-gray-200 rounded-lg">
+        {userLocations.length > 0 ? (
+          <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            {isMobile ? (
+              <div className="space-y-3 p-4">
+                {userLocations.map(location => (
+                  <Card key={location.id} className="border border-gray-200 rounded-lg">
                     <CardContent className="p-4">
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex justify-between items-start">
-                          <h4 className="font-semibold text-gray-900">{location.location_name}</h4>
+                          <h4 className="font-semibold text-gray-900">{formatValue(location.location_name)}</h4>
                           <span className="text-sm text-gray-500">#{location.id}</span>
                         </div>
-                        <p className="text-sm text-gray-600">{location.location_address}</p>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Primary: {location.primary_name}</span>
-                          <span className="text-gray-500">Pincode: {location.location_pincode}</span>
+                        <div className="grid grid-cols-1 gap-2 text-sm">
+                          <div className="flex">
+                            <span className="text-gray-500 w-24">Address:</span>
+                            <span className="text-gray-900">{formatValue(location.location_address)}</span>
+                          </div>
+                          <div className="flex">
+                            <span className="text-gray-500 w-24">Pincode:</span>
+                            <span className="text-gray-900">{formatValue(location.location_pincode)}</span>
+                          </div>
+                          <div className="flex">
+                            <span className="text-gray-500 w-24">Primary:</span>
+                            <span className="text-gray-900">{formatValue(location.primary_name)}</span>
+                          </div>
+                          <div className="flex">
+                            <span className="text-gray-500 w-24">Contact:</span>
+                            <span className="text-gray-900">{formatValue(location.primary_contact)}</span>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
-                  </Card>)}
-              </div> : <div className="overflow-x-auto">
-                <table className="w-full">
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Address</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Pincode</th>
+                      <th className="w-[10%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                      <th className="w-[20%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                      <th className="w-[30%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Address</th>
+                      <th className="w-[10%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Pincode</th>
+                      <th className="w-[15%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Primary Name</th>
+                      <th className="w-[15%] px-4 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Primary Contact</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {userLocations.map((location, index) => <tr key={location.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50/50 transition-colors`}>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-medium">{location.location_name}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{location.location_address}</td>
-                        <td className="px-6 py-4 text-sm text-gray-700">{location.location_pincode}</td>
-                      </tr>)}
+                    {userLocations.map((location, index) => (
+                      <tr key={location.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50/50 transition-colors`}>
+                        <td className="px-4 py-4 text-sm text-gray-700">{location.id}</td>
+                        <td className="px-4 py-4 text-sm text-gray-900 font-medium">{formatValue(location.location_name)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{formatValue(location.location_address)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{formatValue(location.location_pincode)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{formatValue(location.primary_name)}</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{formatValue(location.primary_contact)}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
-              </div>}
-          </div> : <NoDataIllustration title="No locations found" description="This user has no associated locations." />}
+              </div>
+            )}
+          </div>
+        ) : (
+          <NoDataIllustration title="No locations found" description="This user has no associated locations." />
+        )}
       </div>
 
       {/* User Reservations */}
