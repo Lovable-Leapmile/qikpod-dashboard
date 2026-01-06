@@ -70,11 +70,9 @@ const DashboardPage: React.FC = () => {
   };
   if (currentView === "locationDetail" && selectedLocationId) {
     return (
-      <div className="w-full max-w-[150px]">
-        <Layout title="Location Details" breadcrumb="Dashboard / Location Details">
-          <LocationDetail locationId={selectedLocationId} onBack={handleBackToDashboard} />
-        </Layout>
-      </div>
+      <Layout title="Location Details" breadcrumb="Dashboard / Location Details">
+        <LocationDetail locationId={selectedLocationId} onBack={handleBackToDashboard} />
+      </Layout>
     );
   }
   if (currentView === "podDetail" && selectedPodId) {
