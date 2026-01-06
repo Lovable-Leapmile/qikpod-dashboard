@@ -556,9 +556,12 @@ export const dashboardApi = {
   },
 
   getUserReservations: async (token: string, phoneNum: string): Promise<UserReservation[]> => {
-    const response = await fetch(`${getBaseUrl()}/reservations/?phone_num=${phoneNum}`, {
+    const response = await fetch(`${getBaseUrl()}/reservations/?phone_num=${phoneNum}&order_by_field=updated_at&order_by_type=DESC`, {
       headers: getAuthHeaders(token),
     });
+    if (!response.ok) {
+      return [];
+    }
     const data: ApiResponse<UserReservation> = await response.json();
     return data.records || [];
   },
