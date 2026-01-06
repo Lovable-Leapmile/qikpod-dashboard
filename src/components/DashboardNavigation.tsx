@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LogOut, Menu, X, ChevronDown } from 'lucide-react';
+import { LogOut, Menu, X, ChevronDown, ArrowLeft } from 'lucide-react';
 import { NavigationItem } from './NavigationItems';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface DashboardNavigationProps {
   navigationItems: NavigationItem[];
@@ -20,19 +20,36 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   setShowLogoutDialog
 }) => {
   const { user } = useAuth();
-  
   const navigate = useNavigate();
+  const location = useLocation();
   
   const handleLogoClick = () => {
     navigate('/dashboard');
   };
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+  // Show back button on all pages except dashboard
+  const showBackButton = location.pathname !== '/dashboard';
+
   return (
     <nav className="bg-[#FDDC4E] fixed top-0 left-0 right-0 z-50 border-b border-yellow-300">
       <div className="w-full px-3 sm:px-4 lg:px-6">
         <div className="flex justify-between items-center h-12">
-          {/* Logo */}
-          <div className="flex items-center">
+          {/* Back Button and Logo */}
+          <div className="flex items-center gap-2">
+            {showBackButton && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackClick}
+                className="h-8 w-8 p-0 text-black hover:bg-yellow-400"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            )}
             <div 
               className="flex-shrink-0 cursor-pointer" 
               onClick={handleLogoClick}
