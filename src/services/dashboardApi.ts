@@ -548,7 +548,7 @@ export const dashboardApi = {
   },
 
   getUserLocations: async (token: string, userId: number): Promise<UserLocation[]> => {
-    const response = await fetch(`${getBaseUrl()}/users/locations/?user_id=${userId}`, {
+    const response = await fetch(`${getBaseUrl()}/users/locations/?user_id=${userId}&order_by_field=updated_at&order_by_type=DESC`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<UserLocation> = await response.json();
@@ -556,7 +556,7 @@ export const dashboardApi = {
   },
 
   getUserReservations: async (token: string, phoneNum: string): Promise<UserReservation[]> => {
-    const response = await fetch(`${getBaseUrl()}/reservations/?phone_num=${phoneNum}`, {
+    const response = await fetch(`${getBaseUrl()}/reservations/?phone_num=${phoneNum}&order_by_field=updated_at&order_by_type=DESC`, {
       headers: getAuthHeaders(token),
     });
     const data: ApiResponse<UserReservation> = await response.json();
