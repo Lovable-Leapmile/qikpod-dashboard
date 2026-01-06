@@ -98,8 +98,15 @@ const UserDetail: React.FC<UserDetailProps> = ({
     fetchUserDetails();
   };
 
-  const handleRemoveSuccess = () => {
-    onBack(); // Go back to users list after successful removal
+  const handleRemoveSuccess = async () => {
+    // Refresh user locations after successful removal
+    if (!accessToken) return;
+    try {
+      const locationsData = await dashboardApi.getUserLocations(accessToken, userId);
+      setUserLocations(locationsData);
+    } catch (error) {
+      console.error('Error fetching user locations:', error);
+    }
   };
 
   const handleDeleteSuccess = () => {
@@ -377,6 +384,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
             open={showRemovePopup} 
             onOpenChange={setShowRemovePopup} 
             user={userDetail}
+            locations={userLocations}
             onSuccess={handleRemoveSuccess}
           />
           <DeleteUserPopup 

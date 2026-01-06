@@ -12,27 +12,30 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useApiUrl } from "@/hooks/useApiUrl";
-import { UserDetail } from "@/services/dashboardApi";
+import { UserDetail, UserLocation } from "@/services/dashboardApi";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RemoveUserPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: UserDetail;
+  locations: UserLocation[];
   onSuccess: () => void;
 }
 
-const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
+const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, user, locations, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const { podcore } = useApiUrl();
   const [loading, setLoading] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState<string>("");
 
   const handleRemove = async () => {
-    if (!accessToken) return;
+    if (!accessToken || !selectedLocationId) return;
 
     setLoading(true);
     try {
-      const response = await fetch(`${podcore}/users/locations/${user.id}`, {
+      const response = await fetch(`${podcore}/users/locations/${selectedLocationId}`, {
         method: "DELETE",
         headers: {
           accept: "application/json",
@@ -47,6 +50,7 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, u
         });
         onSuccess();
         onOpenChange(false);
+        setSelectedLocationId("");
       } else {
         throw new Error("Failed to remove user from location");
       }
@@ -62,20 +66,46 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, u
     }
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setSelectedLocationId("");
+    }
+    onOpenChange(isOpen);
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove User</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>Are you sure you want to remove this user from the location?</p>
-            <p className="font-medium text-gray-900">{user.user_name}</p>
+          <AlertDialogTitle>Remove User from Location</AlertDialogTitle>
+          <AlertDialogDescription className="space-y-4">
+            <p>Select the location to remove <span className="font-medium text-gray-900">{user.user_name}</span> from:</p>
+            {locations.length > 0 ? (
+              <Select value={selectedLocationId} onValueChange={setSelectedLocationId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locations.map((location) => (
+                    <SelectItem key={location.id} value={location.id.toString()}>
+                      {location.location_name} - {location.primary_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <p className="text-sm text-gray-500">No locations associated with this user.</p>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>No</AlertDialogCancel>
-          <AlertDialogAction onClick={handleRemove} disabled={loading} className="bg-red-600 hover:bg-red-700">
-            {loading ? "Removing..." : "Yes"}
+          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={handleRemove} 
+            disabled={loading || !selectedLocationId || locations.length === 0} 
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {loading ? "Removing..." : "Remove"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
