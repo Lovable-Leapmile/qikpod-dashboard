@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useApiUrl } from "@/hooks/useApiUrl";
 import { UserDetail } from "@/services/dashboardApi";
 
 interface RemoveUserPopupProps {
@@ -23,6 +24,7 @@ interface RemoveUserPopupProps {
 const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
+  const { podcore } = useApiUrl();
   const [loading, setLoading] = useState(false);
 
   const handleRemove = async () => {
@@ -30,7 +32,7 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, u
 
     setLoading(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/locations/${user.id}`, {
+      const response = await fetch(`${podcore}/users/locations/${user.id}`, {
         method: "DELETE",
         headers: {
           accept: "application/json",
