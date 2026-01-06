@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useApiUrl } from "@/hooks/useApiUrl";
 import { UserDetail } from "@/services/dashboardApi";
 
 interface EditUserPopupProps {
@@ -19,6 +20,7 @@ interface EditUserPopupProps {
 const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
+  const { podcore } = useApiUrl();
   const [formData, setFormData] = useState({
     user_type: "",
     user_name: "",
@@ -48,7 +50,7 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
 
     setLoading(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/${user.id}`, {
+      const response = await fetch(`${podcore}/users/${user.id}`, {
         method: "PATCH",
         headers: {
           accept: "application/json",
