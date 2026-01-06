@@ -12,25 +12,16 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useApiUrl } from "@/hooks/useApiUrl";
-
-interface LocationMapping {
-  id: number;
-  location_name: string;
-}
+import { UserDetail } from "@/services/dashboardApi";
 
 interface RemoveUserPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  locationMapping: LocationMapping;
+  user: UserDetail;
   onSuccess: () => void;
 }
 
-const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({
-  open,
-  onOpenChange,
-  locationMapping,
-  onSuccess,
-}) => {
+const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({ open, onOpenChange, user, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
   const { podcore } = useApiUrl();
@@ -41,7 +32,7 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`${podcore}/users/locations/${locationMapping.id}`, {
+      const response = await fetch(`${podcore}/users/locations/${user.id}`, {
         method: "DELETE",
         headers: {
           accept: "application/json",
@@ -52,19 +43,18 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({
       if (response.ok) {
         toast({
           title: "Success",
-          description: `User removed from ${locationMapping.location_name} successfully`,
+          description: "User removed from location successfully",
         });
         onSuccess();
         onOpenChange(false);
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to remove user from location");
+        throw new Error("Failed to remove user from location");
       }
     } catch (error) {
       console.error("Error removing user from location:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to remove user from location",
+        description: "Failed to remove user from location",
         variant: "destructive",
       });
     } finally {
@@ -76,20 +66,16 @@ const RemoveUserPopup: React.FC<RemoveUserPopupProps> = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove User from Location</AlertDialogTitle>
+          <AlertDialogTitle>Remove User</AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
             <p>Are you sure you want to remove this user from the location?</p>
-            <p className="font-medium text-foreground">{locationMapping.location_name}</p>
+            <p className="font-medium text-gray-900">{user.user_name}</p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleRemove}
-            disabled={loading}
-            className="bg-destructive hover:bg-destructive/90"
-          >
-            {loading ? "Removing..." : "Remove"}
+          <AlertDialogCancel disabled={loading}>No</AlertDialogCancel>
+          <AlertDialogAction onClick={handleRemove} disabled={loading} className="bg-red-600 hover:bg-red-700">
+            {loading ? "Removing..." : "Yes"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

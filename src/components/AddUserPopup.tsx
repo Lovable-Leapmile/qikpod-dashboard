@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,19 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { dashboardApi } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
-import { useApiUrl } from '@/hooks/useApiUrl';
 
 interface AddUserPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-}
-
-interface LocationOption {
-  id: number;
-  location_name: string;
-  location_address: string;
 }
 
 interface UserFormData {
@@ -27,25 +22,20 @@ interface UserFormData {
   user_phone: string;
   user_email: string;
   user_flatno: string;
-  user_address: string;
-  location_id: string;
+  location_address: string;
 }
 
 const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
-  const { podcore } = useApiUrl();
   const [loading, setLoading] = useState(false);
-  const [locations, setLocations] = useState<LocationOption[]>([]);
-  const [loadingLocations, setLoadingLocations] = useState(false);
   const [formData, setFormData] = useState<UserFormData>({
     user_name: '',
     user_type: '',
     user_phone: '',
     user_email: '',
     user_flatno: '',
-    user_address: '',
-    location_id: '',
+    location_address: '',
   });
 
   const userTypeOptions = [
@@ -55,37 +45,6 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
     'SiteAdmin',
     'DeliveryExec',
   ];
-
-  // Fetch locations when popup opens
-  useEffect(() => {
-    if (open && accessToken) {
-      fetchLocations();
-    }
-  }, [open, accessToken]);
-
-  const fetchLocations = async () => {
-    if (!accessToken) return;
-    setLoadingLocations(true);
-    try {
-      const response = await fetch(
-        `${podcore}/locations/?order_by_field=updated_at&order_by_type=DESC`,
-        {
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setLocations(data.records || []);
-      }
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    } finally {
-      setLoadingLocations(false);
-    }
-  };
 
   const handleInputChange = (field: keyof UserFormData, value: string) => {
     setFormData(prev => ({
@@ -113,9 +72,9 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
   };
 
   const handleFlatNoChange = (value: string) => {
-    // Only allow alphanumeric input
-    const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, '');
-    handleInputChange('user_flatno', alphanumericValue);
+    // Only allow numeric input
+    const numericValue = value.replace(/\D/g, '');
+    handleInputChange('user_flatno', numericValue);
   };
 
   const isFormValid = () => {
@@ -125,7 +84,7 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
       formData.user_phone.trim() &&
       formData.user_email.trim() &&
       formData.user_flatno.trim() &&
-      formData.location_id
+      formData.location_address.trim()
     );
   };
 
@@ -134,50 +93,26 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
 
     setLoading(true);
     try {
-      const payload = {
-        user_name: formData.user_name,
-        user_type: formData.user_type,
-        user_phone: formData.user_phone,
-        user_email: formData.user_email.includes('@') ? formData.user_email : `${formData.user_email}@gmail.com`,
-        user_flatno: formData.user_flatno,
-        user_address: formData.user_address,
-      };
-
-      const response = await fetch(`${podcore}/users/locations/${formData.location_id}`, {
-        method: 'PATCH',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      await dashboardApi.createUser(accessToken, formData);
+      toast({
+        title: "Success",
+        description: "User created successfully",
       });
-
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User created successfully",
-        });
-        onSuccess();
-        // Reset form
-        setFormData({
-          user_name: '',
-          user_type: '',
-          user_phone: '',
-          user_email: '',
-          user_flatno: '',
-          user_address: '',
-          location_id: '',
-        });
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create user');
-      }
+      onSuccess();
+      // Reset form
+      setFormData({
+        user_name: '',
+        user_type: '',
+        user_phone: '',
+        user_email: '',
+        user_flatno: '',
+        location_address: '',
+      });
     } catch (error) {
       console.error('Error creating user:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create user",
+        description: "Failed to create user",
         variant: "destructive",
       });
     } finally {
@@ -193,32 +128,9 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
         </DialogHeader>
         
         <div className="space-y-4">
-          {/* Location */}
-          <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-              Location *
-            </Label>
-            <Select 
-              value={formData.location_id} 
-              onValueChange={(value) => handleInputChange('location_id', value)}
-              disabled={loadingLocations}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={loadingLocations ? "Loading locations..." : "Select location"} />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((location) => (
-                  <SelectItem key={location.id} value={location.id.toString()}>
-                    {location.location_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* User Type */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
               User Type
             </Label>
             <Select value={formData.user_type} onValueChange={(value) => handleInputChange('user_type', value)}>
@@ -237,7 +149,7 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
 
           {/* Name */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Name
             </Label>
             <Input
@@ -249,7 +161,7 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
 
           {/* Email */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Email
             </Label>
             <Input
@@ -258,12 +170,12 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
               value={formData.user_email}
               onChange={(e) => handleEmailChange(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground mt-1">Hint: Adds @gmail.com suffix while typing</p>
+            <p className="text-xs text-gray-500 mt-1">Hint: Adds @gmail.com suffix while typing</p>
           </div>
 
           {/* Phone */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Phone
             </Label>
             <Input
@@ -275,7 +187,7 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
 
           {/* Flat No */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
               Flat No
             </Label>
             <Input
@@ -285,15 +197,15 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
             />
           </div>
 
-          {/* Address */}
+          {/* Address / Company Name */}
           <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-              Address
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              Address / Company Name
             </Label>
             <Input
-              placeholder="Enter address"
-              value={formData.user_address}
-              onChange={(e) => handleInputChange('user_address', e.target.value)}
+              placeholder="Enter address or company name"
+              value={formData.location_address}
+              onChange={(e) => handleInputChange('location_address', e.target.value)}
             />
           </div>
           
@@ -304,7 +216,7 @@ const AddUserPopup: React.FC<AddUserPopupProps> = ({ open, onOpenChange, onSucce
             <Button 
               onClick={handleSubmit} 
               disabled={loading || !isFormValid()}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center space-x-2"
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>{loading ? 'Creating...' : 'Submit'}</span>
