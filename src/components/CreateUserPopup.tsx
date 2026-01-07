@@ -83,39 +83,62 @@ const CreateUserPopup: React.FC<CreateUserPopupProps> = ({ open, onOpenChange, l
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/podcore/users/${locationId}`, {
-        method: "PATCH",
+      // First create the user
+      const baseUrl = localStorage.getItem("api_base_url")?.replace("/podcore", "") || "https://productionv36.qikpod.com";
+      const createResponse = await fetch(`${baseUrl}/podcore/users/`, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         body: JSON.stringify({
-          user_name: formData.name,
-          user_email: formData.email,
           user_phone: formData.phone,
+          user_name: formData.name,
           user_type: formData.userType,
-          location_address: formData.address,
-          user_flatno: formData.flatNo,
+          user_flatno: formData.flatNo || "1234",
+          user_email: formData.email,
+          user_address: formData.address || "N/A",
         }),
       });
 
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "User created successfully",
-        });
-        onSuccess();
-        onOpenChange(false);
-        clearAll();
-      } else {
-        throw new Error("Failed to create user");
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json().catch(() => ({}));
+        throw new Error(errorData.detail || "Failed to create user");
       }
+
+      const newUser = await createResponse.json();
+      
+      // Then associate the user with the location
+      const associateResponse = await fetch(`${baseUrl}/podcore/users/locations/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          user_id: newUser.id,
+          location_id: locationId,
+        }),
+      });
+
+      if (!associateResponse.ok) {
+        console.warn("User created but failed to associate with location");
+      }
+
+      toast({
+        title: "Success",
+        description: "User created successfully",
+      });
+      onSuccess();
+      onOpenChange(false);
+      clearAll();
     } catch (error) {
       console.error("Error creating user:", error);
       toast({
         title: "Error",
-        description: "Failed to create user",
+        description: error instanceof Error ? error.message : "Failed to create user",
         variant: "destructive",
       });
     } finally {
