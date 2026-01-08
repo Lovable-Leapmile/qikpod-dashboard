@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import Login from '@/components/Login';
-import { useAuth } from '@/contexts/AuthContext';
-import { useApiConfig } from '@/contexts/ApiConfigContext';
-import { ApiConfigPopup } from '@/components/ApiConfigPopup';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import Login from "@/components/Login";
+import { useAuth } from "@/contexts/AuthContext";
+import { useApiConfig } from "@/contexts/ApiConfigContext";
+import { ApiConfigPopup } from "@/components/ApiConfigPopup";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -13,7 +13,7 @@ const Index = () => {
   useEffect(() => {
     // Redirect to dashboard after successful authentication
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
 
