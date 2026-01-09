@@ -96,6 +96,17 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
   return (
     <div className="space-y-4 p-4 md:p-4">
+      {/* Back Button */}
+      <Button
+        onClick={onBack}
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2 mb-2"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Locations
+      </Button>
+
       {/* Location Details Card - Made more compact */}
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-3 pt-4">

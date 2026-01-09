@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import { useApiUrl } from "@/hooks/useApiUrl";
 
 interface SMSDetailRecord {
   id: number;
@@ -31,6 +32,7 @@ const SMSDetailsPage: React.FC = () => {
   const { recordId } = useParams<{ recordId: string }>();
   const navigate = useNavigate();
   const { accessToken } = useAuth();
+  const apiUrl = useApiUrl();
   const [smsDetailData, setSmsDetailData] = useState<SMSDetailRecord[]>([]);
   const [smsAttemptData, setSmsAttemptData] = useState<SMSAttemptRecord[]>([]);
   const [loading, setLoading] = useState(false);
@@ -43,9 +45,9 @@ const SMSDetailsPage: React.FC = () => {
 
     try {
       setLoading(true);
-      // Fetch SMS Info details using the provided API URL
+      // Fetch SMS Info details using the dynamic API URL
       const smsResponse = await fetch(
-        `https://productionv36.qikpod.com/notifications/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
+        `${apiUrl.notifications}/notifications/sms/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -63,7 +65,7 @@ const SMSDetailsPage: React.FC = () => {
 
       // Fetch SMS Attempts
       const attemptsResponse = await fetch(
-        `https://productionv36.qikpod.com/notifications/notifications/sms/${recordId}/attempts/`,
+        `${apiUrl.notifications}/notifications/sms/${recordId}/attempts/`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -84,7 +86,7 @@ const SMSDetailsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, recordId]);
+  }, [accessToken, recordId, apiUrl.notifications]);
 
   const refreshData = useCallback(async () => {
     await fetchSMSDetails();

@@ -173,6 +173,17 @@ const LogsAgGrid = () => {
   const hasData = rowData.length > 0;
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
+      {/* Back Button */}
+      <Button
+        onClick={() => navigate(-1)}
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2 mb-3 w-fit"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back
+      </Button>
+
       {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
         {/* Table Title and Controls */}
@@ -259,6 +270,7 @@ const LogsAgGrid = () => {
                   }}
                   pagination={true}
                   paginationPageSize={pageSize}
+                  paginationPageSizeSelector={[10, 25, 50, 100]}
                   loading={loading}
                   suppressRowHoverHighlight={false}
                   suppressCellFocus={true}

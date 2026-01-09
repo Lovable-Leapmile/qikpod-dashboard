@@ -13,6 +13,7 @@ import { ColDef, GridApi, GridReadyEvent } from "ag-grid-community";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useApiUrl } from "@/hooks/useApiUrl";
 import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { MobileCardSkeleton } from "@/components/ui/mobile-card-skeleton";
@@ -64,6 +65,7 @@ const ActionButtonRenderer = ({ data, refresh }: { data: any; refresh: () => voi
 };
 const NotificationsPage: React.FC = () => {
   const { accessToken } = useAuth();
+  const apiUrl = useApiUrl();
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [smsData, setSmsData] = useState<SMSRecord[]>([]);
@@ -85,7 +87,7 @@ const NotificationsPage: React.FC = () => {
     if (!accessToken) return;
     try {
       const response = await fetch(
-        "https://productionv36.qikpod.com/notifications/notifications/sms/?order_by_field=updated_at&order_by_type=DESC",
+        `${apiUrl.notifications}/notifications/sms/?order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -103,12 +105,12 @@ const NotificationsPage: React.FC = () => {
       console.error("SMS fetch error:", error);
       toast.error("Error fetching SMS data");
     }
-  }, [accessToken]);
+  }, [accessToken, apiUrl.notifications]);
   const fetchEmailData = useCallback(async () => {
     if (!accessToken) return;
     try {
       const response = await fetch(
-        "https://productionv36.qikpod.com/notifications/notifications/email/?order_by_field=updated_at&order_by_type=DESC",
+        `${apiUrl.notifications}/notifications/email/?order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -126,7 +128,7 @@ const NotificationsPage: React.FC = () => {
       console.error("Email fetch error:", error);
       toast.error("Error fetching Email data");
     }
-  }, [accessToken]);
+  }, [accessToken, apiUrl.notifications]);
   const refreshData = useCallback(async () => {
     setLoading(true);
     await Promise.all([fetchSMSData(), fetchEmailData()]);
