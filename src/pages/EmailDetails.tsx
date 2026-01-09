@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import { useApiUrl } from "@/hooks/useApiUrl";
 
 interface EmailDetailRecord {
   id: number;
@@ -27,6 +28,7 @@ const EmailDetailsPage: React.FC = () => {
   const { recordId } = useParams<{ recordId: string }>();
   const navigate = useNavigate();
   const { accessToken } = useAuth();
+  const apiUrl = useApiUrl();
   const [emailDetailData, setEmailDetailData] = useState<EmailDetailRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [detailGridApi, setDetailGridApi] = useState<GridApi | null>(null);
@@ -38,7 +40,7 @@ const EmailDetailsPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://productionv36.qikpod.com/notifications/notifications/email/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
+        `${apiUrl.notifications}/notifications/email/?record_id=${recordId}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -59,7 +61,7 @@ const EmailDetailsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, recordId]);
+  }, [accessToken, recordId, apiUrl.notifications]);
 
   const refreshData = useCallback(async () => {
     await fetchEmailDetails();
