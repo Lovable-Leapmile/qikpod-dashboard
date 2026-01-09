@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RefreshCw, Search, Download, Eye, ArrowLeft } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
+import { useApiUrl } from "@/hooks/useApiUrl";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -27,9 +28,8 @@ interface LogData {
   status: string | null;
 }
 const LogsAgGrid = () => {
-  const {
-    accessToken
-  } = useAuth();
+  const { accessToken } = useAuth();
+  const apiUrl = useApiUrl();
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<LogData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,7 @@ const LogsAgGrid = () => {
     if (!accessToken) return;
     setLoading(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/logstore/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
+      const response = await fetch(`${apiUrl.logstore}/logs/?order_by_field=updated_at&order_by_type=DESC&num_records=${pageSize}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/json"
@@ -59,7 +59,7 @@ const LogsAgGrid = () => {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, pageSize]);
+  }, [accessToken, pageSize, apiUrl.logstore]);
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
