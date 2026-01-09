@@ -31,7 +31,6 @@ const Index = () => {
       </div>
     );
   }
-
   // Show API config popup if not configured (staging only)
   if (!isConfigured) {
     return <ApiConfigPopup open={true} onConfigSubmit={handleApiConfigSubmit} />;
