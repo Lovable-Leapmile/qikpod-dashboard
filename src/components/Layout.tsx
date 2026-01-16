@@ -36,8 +36,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
-      {/* Desktop Layout - Sidebar + Content */}
-      <div className="hidden lg:flex min-h-screen">
+      {/* Desktop & Tablet Layout - Sidebar + Content */}
+      <div className="hidden md:flex min-h-screen">
         {/* Fixed Desktop Sidebar */}
         <div className="fixed left-0 top-0 h-screen z-40">
           <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
@@ -55,7 +55,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       </div>
 
       {/* Mobile Layout - Header + Content */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         {/* Mobile Header */}
         <MobileHeader isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
