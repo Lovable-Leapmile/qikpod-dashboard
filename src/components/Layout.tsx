@@ -22,7 +22,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSupportPopup, setShowSupportPopup] = useState(false);
@@ -38,24 +38,28 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
     <div className="min-h-screen bg-gray-50 w-full">
       {/* Desktop & Tablet Layout - Header on top, Sidebar below */}
       <div className="hidden md:flex flex-col min-h-screen">
-        {/* Fixed Desktop Header with Logo */}
-        <header className="h-14 bg-amber-100 border-amber-200 border-b flex items-center px-6 sticky top-0 z-50">
-          <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
-            <img 
-              src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
-              alt="QikPod Logo" 
-              className="h-6 w-auto" 
-            />
+        {/* Fixed Desktop Header with Logo - matching sidebar color */}
+        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 sticky top-0 z-50">
+          <div className="flex items-center">
+            <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+              <img 
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                alt="QikPod Logo" 
+                className="h-6 w-auto" 
+              />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 ml-4">QikPod Portal</h1>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 ml-4">QikPod Portal</h1>
+          {/* Welcome message on the right */}
+          <div className="text-sm font-medium text-black">
+            Welcome, {user?.user_name || 'User'}
+          </div>
         </header>
 
         {/* Content area with sidebar */}
         <div className="flex flex-1">
-          {/* Sidebar below header */}
-          <div className="bg-[#FDDC4E] z-40">
-            <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
-          </div>
+          {/* Fixed Sidebar below header */}
+          <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
 
           {/* Main Content */}
           <main className="flex-1 p-4 overflow-auto">{children}</main>
