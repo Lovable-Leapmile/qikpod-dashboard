@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, User, Eye, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Eye, Edit, Trash2, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { dashboardApi, UserDetail as UserDetailType, UserLocation, UserReservation } from '@/services/dashboardApi';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,7 @@ import NoDataIllustration from '@/components/ui/no-data-illustration';
 import EditUserPopup from './EditUserPopup';
 import RemoveUserPopup from './RemoveUserPopup';
 import DeleteUserPopup from './DeleteUserPopup';
+import AddLocationToUserPopup from './AddLocationToUserPopup';
 
 interface UserDetailProps {
   userId: number;
@@ -29,6 +30,7 @@ const UserDetail: React.FC<UserDetailProps> = ({
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showRemovePopup, setShowRemovePopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showAddLocationPopup, setShowAddLocationPopup] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -242,6 +244,14 @@ const UserDetail: React.FC<UserDetailProps> = ({
                   <Trash2 className="w-4 h-4" />
                   <span>Delete</span>
                 </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex items-center space-x-2 bg-[#FDDC4E] hover:bg-yellow-400 text-black border-yellow-400"
+                  onClick={() => setShowAddLocationPopup(true)}
+                >
+                  <MapPin className="w-4 h-4" />
+                  <span>Add Location</span>
+                </Button>
               </div>
             </div>
           </div>
@@ -392,6 +402,12 @@ const UserDetail: React.FC<UserDetailProps> = ({
             onOpenChange={setShowDeletePopup} 
             user={userDetail}
             onSuccess={handleDeleteSuccess}
+          />
+          <AddLocationToUserPopup
+            isOpen={showAddLocationPopup}
+            onClose={() => setShowAddLocationPopup(false)}
+            userId={userId}
+            onSuccess={handleRemoveSuccess}
           />
         </>
       )}

@@ -70,7 +70,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
   };
 
   return (
-    <aside className="w-56 bg-[#FDDC4E] h-screen flex flex-col border-r border-yellow-300">
+    <aside className="w-56 bg-[#FDDC4E] h-screen flex flex-col border-r border-yellow-300 overflow-y-auto">
       {/* Logo */}
       <div className="h-14 flex items-center px-4 border-b border-yellow-300">
         <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
