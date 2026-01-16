@@ -55,7 +55,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       </div>
 
       {/* Mobile Layout - Header + Content */}
-      <div>
+      <div className="md:hidden">
         {/* Mobile Header */}
         <MobileHeader isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
       {/* Logout Confirmation Dialog */}
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent>
+        <DialogContent classname="[&>button]:hidden">
           <DialogHeader>
             <DialogTitle>Confirm Logout</DialogTitle>
             <DialogDescription>Are you sure you want to logout?</DialogDescription>
