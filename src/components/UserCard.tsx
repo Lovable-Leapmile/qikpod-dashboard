@@ -19,7 +19,13 @@ const UserCard: React.FC<UserCardProps> = ({ user, onUserClick }) => {
     <Card className="mb-3 bg-white shadow-sm hover:shadow-md transition-shadow rounded-xl">
       <CardContent className="p-3">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3 min-w-0 flex-1"></div>
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
+            <span className="text-xs text-gray-500 shrink-0">#{user.id}</span>
+            <h3 className="font-semibold text-sm text-gray-900 truncate">{user.user_name}</h3>
+            <div className="px-2 py-0.5 bg-gray-100 rounded text-xs font-medium text-gray-700 shrink-0">
+              {user.user_type}
+            </div>
+          </div>
           <Button
             variant="ghost"
             size="sm"
