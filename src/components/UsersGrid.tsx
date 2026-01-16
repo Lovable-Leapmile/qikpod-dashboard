@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Eye } from 'lucide-react';
-import { User } from '@/services/dashboardApi';
+import React, { useState, useMemo } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { User } from "@/services/dashboardApi";
 
 interface UsersGridProps {
   users: User[];
@@ -12,27 +12,19 @@ interface UsersGridProps {
   onUserClick: (userId: number) => void;
 }
 
-const UsersGrid: React.FC<UsersGridProps> = ({
-  users,
-  loading,
-  searchText,
-  pageSize,
-  onUserClick,
-}) => {
+const UsersGrid: React.FC<UsersGridProps> = ({ users, loading, searchText, pageSize, onUserClick }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User;
-    direction: 'asc' | 'desc';
+    direction: "asc" | "desc";
   } | null>(null);
 
   // Filter users based on search text
   const filteredUsers = useMemo(() => {
     if (!searchText) return users;
-    
+
     return users.filter((user) =>
-      Object.values(user).some((value) =>
-        value?.toString().toLowerCase().includes(searchText.toLowerCase())
-      )
+      Object.values(user).some((value) => value?.toString().toLowerCase().includes(searchText.toLowerCase())),
     );
   }, [users, searchText]);
 
@@ -45,10 +37,10 @@ const UsersGrid: React.FC<UsersGridProps> = ({
       const bValue = b[sortConfig.key];
 
       if (aValue < bValue) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
+        return sortConfig.direction === "asc" ? -1 : 1;
       }
       if (aValue > bValue) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
+        return sortConfig.direction === "asc" ? 1 : -1;
       }
       return 0;
     });
@@ -65,15 +57,15 @@ const UsersGrid: React.FC<UsersGridProps> = ({
       if (prevConfig?.key === key) {
         return {
           key,
-          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
+          direction: prevConfig.direction === "asc" ? "desc" : "asc",
         };
       }
-      return { key, direction: 'asc' };
+      return { key, direction: "asc" };
     });
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -90,76 +82,62 @@ const UsersGrid: React.FC<UsersGridProps> = ({
       <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50 hover:bg-gray-50">
-              <TableHead 
+            <TableRow className="bg-amber-100 hover:bg-gray-50">
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('user_name')}
+                onClick={() => handleSort("user_name")}
               >
                 NAME
-                {sortConfig?.key === 'user_name' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "user_name" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('user_type')}
+                onClick={() => handleSort("user_type")}
               >
                 TYPE
-                {sortConfig?.key === 'user_type' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "user_type" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('user_phone')}
+                onClick={() => handleSort("user_phone")}
               >
                 PHONE
-                {sortConfig?.key === 'user_phone' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "user_phone" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('user_email')}
+                onClick={() => handleSort("user_email")}
               >
                 EMAIL
-                {sortConfig?.key === 'user_email' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "user_email" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('user_flatno')}
+                onClick={() => handleSort("user_flatno")}
               >
                 FLAT NO
-                {sortConfig?.key === 'user_flatno' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "user_flatno" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="px-4 py-5 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:text-gray-900 transition-colors"
-                onClick={() => handleSort('created_at')}
+                onClick={() => handleSort("created_at")}
               >
                 CREATED DATE
-                {sortConfig?.key === 'created_at' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
+                {sortConfig?.key === "created_at" && (
+                  <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead className="px-4 py-5 text-left text-sm font-semibold text-gray-600">
-                ACTION
-              </TableHead>
+              <TableHead className="px-4 py-5 text-left text-sm font-semibold text-gray-600">ACTION</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -167,28 +145,16 @@ const UsersGrid: React.FC<UsersGridProps> = ({
               <TableRow
                 key={user.id}
                 className={`
-                  ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} 
+                  ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} 
                   hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-b-0
                 `}
               >
-                <TableCell className="px-4 py-5 text-sm text-gray-900 font-medium">
-                  {user.user_name}
-                </TableCell>
-                <TableCell className="px-4 py-5 text-sm text-gray-700">
-                  {user.user_type}
-                </TableCell>
-                <TableCell className="px-4 py-5 text-sm text-gray-700">
-                  {user.user_phone}
-                </TableCell>
-                <TableCell className="px-4 py-5 text-sm text-gray-700">
-                  {user.user_email}
-                </TableCell>
-                <TableCell className="px-4 py-5 text-sm text-gray-700">
-                  {user.user_flatno}
-                </TableCell>
-                <TableCell className="px-4 py-5 text-sm text-gray-700">
-                  {formatDate(user.created_at)}
-                </TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-900 font-medium">{user.user_name}</TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-700">{user.user_type}</TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-700">{user.user_phone}</TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-700">{user.user_email}</TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-700">{user.user_flatno}</TableCell>
+                <TableCell className="px-4 py-5 text-sm text-gray-700">{formatDate(user.created_at)}</TableCell>
                 <TableCell className="px-4 py-5">
                   <Button
                     variant="ghost"
