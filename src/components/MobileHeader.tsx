@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, ArrowLeft } from "lucide-react";
+import { Menu, X, ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface MobileHeaderProps {
