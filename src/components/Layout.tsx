@@ -36,20 +36,28 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
-      {/* Desktop & Tablet Layout - Sidebar + Content */}
-      <div className="hidden md:flex min-h-screen">
-        {/* Fixed Desktop Sidebar */}
-        <div className="fixed left-0 top-0 h-screen z-40">
-          <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
-        </div>
+      {/* Desktop & Tablet Layout - Header on top, Sidebar below */}
+      <div className="hidden md:flex flex-col min-h-screen">
+        {/* Fixed Desktop Header with Logo */}
+        <header className="h-14 bg-amber-100 border-amber-200 border-b flex items-center px-6 sticky top-0 z-50">
+          <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <img 
+              src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+              alt="QikPod Logo" 
+              className="h-6 w-auto" 
+            />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 ml-4">QikPod Portal</h1>
+        </header>
 
-        {/* Main Content with left margin for fixed sidebar */}
-        <div className="ml-56 flex-1 flex flex-col min-h-screen">
-          {/* Desktop Header */}
-          <header className="h-14 bg-amber-100 border-amber-200 border-b  flex items-center px-6 sticky top-0 z-30">
-            <h1 className="text-xl font-bold text-gray-900">QikPod Portal</h1>
-          </header>
+        {/* Content area with sidebar */}
+        <div className="flex flex-1">
+          {/* Sidebar below header */}
+          <div className="bg-[#FDDC4E] z-40">
+            <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
+          </div>
 
+          {/* Main Content */}
           <main className="flex-1 p-4 overflow-auto">{children}</main>
         </div>
       </div>
