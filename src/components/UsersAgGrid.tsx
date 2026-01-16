@@ -294,7 +294,16 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({ users, loading, onBack, onUse
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+                      <div className="space-y-2">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Phone:</span> {user.user_phone || "N/A"}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Email:</span> {user.user_email || "N/A"}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Flat No:</span> {user.user_flatno || "N/A"}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
