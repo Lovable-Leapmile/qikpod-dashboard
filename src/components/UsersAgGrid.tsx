@@ -241,7 +241,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({ users, loading, onBack, onUse
           <>
             {/* Desktop view - AG Grid */}
             <div className="hidden md:block">
-              <div className="ag-theme-alpine h-[calc(100vh-210px)] bg-amber-100 w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <div className="ag-theme-alpine h-[calc(100vh-210px)] w-full rounded-lg lg:rounded-xl overflow-hidden border border-gray-200 shadow-sm">
                 <AgGridReact
                   ref={gridRef}
                   rowData={filteredData}
@@ -294,16 +294,7 @@ const UsersAgGrid: React.FC<UsersAgGridProps> = ({ users, loading, onBack, onUse
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="space-y-2">
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Phone:</span> {user.user_phone || "N/A"}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Email:</span> {user.user_email || "N/A"}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-gray-700">Flat No:</span> {user.user_flatno || "N/A"}
-                        </div>
+                      
                       </div>
                     </CardContent>
                   </Card>
