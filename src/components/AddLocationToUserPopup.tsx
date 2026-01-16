@@ -67,12 +67,14 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
         
         if (locationsResponse.ok) {
           const locationsData = await locationsResponse.json();
-          setLocations(locationsData);
+          // API returns { records: [...] } format
+          setLocations(locationsData.records || []);
         }
         
         if (usersResponse.ok) {
           const usersData = await usersResponse.json();
-          setUsers(usersData);
+          // API returns { records: [...] } format
+          setUsers(usersData.records || []);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
