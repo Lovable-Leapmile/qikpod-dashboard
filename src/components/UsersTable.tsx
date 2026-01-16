@@ -34,7 +34,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ onBack }) => {
   return (
     <div className="space-y-4 px-3 py-4 w-full max-w-screen-xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="bg-amber-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <UsersTableHeader onAddUser={() => setShowAddUserPopup(true)} />
       </div>
 
