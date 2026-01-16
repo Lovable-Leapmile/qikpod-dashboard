@@ -147,109 +147,118 @@ const UserDetail: React.FC<UserDetailProps> = ({
       {/* User Details Card */}
       <Card className="rounded-xl border border-gray-200 shadow-sm">
         <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* User Avatar/Icon */}
-            <div className="flex-shrink-0">
-              <div className="w-24 h-24 bg-[#FDDC4E] rounded-lg flex items-center justify-center">
-                <User className="w-12 h-12 text-gray-600" />
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+            {/* User Avatar/Icon - smaller on mobile */}
+            <div className="flex items-center gap-3 md:block md:flex-shrink-0">
+              <div className="w-12 h-12 md:w-24 md:h-24 bg-[#FDDC4E] rounded-lg flex items-center justify-center shrink-0">
+                <User className="w-6 h-6 md:w-12 md:h-12 text-gray-600" />
               </div>
+              {/* Mobile: Title next to icon */}
+              <h2 className="text-lg font-bold text-gray-900 md:hidden">
+                {userDetail.user_name}
+              </h2>
             </div>
 
             {/* User Information */}
-            <div className="flex-grow">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="flex-grow min-w-0">
+              {/* Desktop: Title */}
+              <h2 className="hidden md:block text-2xl font-bold text-gray-900 mb-6">
                 User Details: {userDetail.user_name}
               </h2>
               
               {/* Display information in rows */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Name:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_name)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Name:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_name)}</p>
                   </div>
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Phone:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_phone)}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Email:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_email)}</p>
-                  </div>
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Type:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_type)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Phone:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_phone)}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Flat No:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_flatno)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Email:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-all min-w-0">{formatValue(userDetail.user_email)}</p>
                   </div>
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Status:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.status)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Type:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_type)}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Credit Limit:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_limit)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Flat No:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_flatno)}</p>
                   </div>
-                  <div className="flex">
-                    <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Credit Used:</span>
-                    <p className="text-gray-900 font-medium">{formatValue(userDetail.user_credit_used)}</p>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Status:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.status)}</p>
                   </div>
                 </div>
                 
-                <div className="flex">
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Created:</span>
-                  <p className="text-gray-900 font-medium">{formatDate(userDetail.created_at)}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Credit Limit:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_credit_limit)}</p>
+                  </div>
+                  <div className="flex flex-wrap">
+                    <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Credit Used:</span>
+                    <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_credit_used)}</p>
+                  </div>
                 </div>
                 
-                <div className="flex">
-                  <span className="text-sm font-medium text-gray-600 uppercase tracking-wider w-24">Address:</span>
-                  <p className="text-gray-900 font-medium">{formatValue(userDetail.user_address)}</p>
+                <div className="flex flex-wrap">
+                  <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Created:</span>
+                  <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatDate(userDetail.created_at)}</p>
+                </div>
+                
+                <div className="flex flex-wrap">
+                  <span className="text-xs md:text-sm font-medium text-gray-600 uppercase tracking-wider w-20 md:w-24 shrink-0">Address:</span>
+                  <p className="text-gray-900 font-medium text-sm md:text-base break-words min-w-0">{formatValue(userDetail.user_address)}</p>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
+              {/* Action Buttons - Delete and Add Location on same line for mobile */}
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 <Button 
                   variant="outline" 
-                  className="flex items-center space-x-2"
+                  size="sm"
+                  className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm"
                   onClick={() => setShowEditPopup(true)}
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className="w-3 h-3 md:w-4 md:h-4" />
                   <span>Edit</span>
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="flex items-center space-x-2"
+                  size="sm"
+                  className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm"
                   onClick={() => setShowRemovePopup(true)}
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-3 h-3 md:w-4 md:h-4" />
                   <span>Remove</span>
                 </Button>
                 <Button 
                   variant="destructive" 
-                  className="flex items-center space-x-2"
+                  size="sm"
+                  className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm"
                   onClick={() => setShowDeletePopup(true)}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
                   <span>Delete</span>
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="flex items-center space-x-2 bg-[#FDDC4E] hover:bg-yellow-400 text-black border-yellow-400"
+                  size="sm"
+                  className="flex items-center space-x-1 md:space-x-2 bg-[#FDDC4E] hover:bg-yellow-400 text-black border-yellow-400 text-xs md:text-sm"
                   onClick={() => setShowAddLocationPopup(true)}
                 >
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-3 h-3 md:w-4 md:h-4" />
                   <span>Add Location</span>
                 </Button>
               </div>
