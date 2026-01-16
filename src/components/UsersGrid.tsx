@@ -137,7 +137,7 @@ const UsersGrid: React.FC<UsersGridProps> = ({ users, loading, searchText, pageS
                   <span className="ml-1">{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
                 )}
               </TableHead>
-              <TableHead className="px-4 py-5 text-left text-sm font-semibold text-gray-600">ACTION</TableHead>
+              <TableHead className="px-4 py-5 text-left text-sm font-semibold text-gray-600">MORE</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
