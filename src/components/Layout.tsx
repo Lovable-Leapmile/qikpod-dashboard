@@ -46,7 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         {/* Main Content with left margin for fixed sidebar */}
         <div className="ml-56 flex-1 flex flex-col min-h-screen">
           {/* Desktop Header */}
-          <header className="h-14 bg-amber-50 border-amber-200 border-b  flex items-center px-6 sticky top-0 z-30">
+          <header className="h-14 bg-amber-100 border-amber-200 border-b  flex items-center px-6 sticky top-0 z-30">
             <h1 className="text-xl font-bold text-gray-900">Qikpod Portal</h1>
           </header>
 
