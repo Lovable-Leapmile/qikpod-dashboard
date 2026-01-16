@@ -49,8 +49,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
           <header className="h-14 bg-amber-100 border-amber-200 border-b  flex items-center px-6 sticky top-0 z-30">
             <h1 className="text-xl font-bold text-gray-900">QikPod Portal</h1>
           </header>
-
-          <main className="flex-1 p-4 overflow-auto">{children}</main>
         </div>
       </div>
 
