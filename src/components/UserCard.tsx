@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Eye, User, Phone, Mail, Building } from 'lucide-react';
-import { User as UserType } from '@/services/dashboardApi';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Eye, User, Phone, Mail, Building } from "lucide-react";
+import { User as UserType } from "@/services/dashboardApi";
 
 interface UserCardProps {
   user: UserType;
@@ -10,7 +10,7 @@ interface UserCardProps {
 }
 
 const formatDate = (dateString: string) => {
-  if (!dateString) return '';
+  if (!dateString) return "";
   return new Date(dateString).toLocaleDateString();
 };
 
