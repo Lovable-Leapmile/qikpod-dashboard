@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
       {/* Logout Confirmation Dialog */}
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent classname="[&>button]:hidden">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Logout</DialogTitle>
             <DialogDescription>Are you sure you want to logout?</DialogDescription>
