@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import AppSidebar from './AppSidebar';
-import MobileHeader from './MobileHeader';
-import MobileSidebar from './MobileSidebar';
-import SupportPopup from './SupportPopup';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import AppSidebar from "./AppSidebar";
+import MobileHeader from "./MobileHeader";
+import MobileSidebar from "./MobileSidebar";
+import SupportPopup from "./SupportPopup";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,11 +21,7 @@ interface LayoutProps {
   breadcrumb: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({
-  children,
-  title,
-  breadcrumb
-}) => {
+const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -28,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({
   const handleLogout = () => {
     logout();
     setShowLogoutDialog(false);
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -37,45 +40,35 @@ const Layout: React.FC<LayoutProps> = ({
       <div className="hidden lg:flex min-h-screen">
         {/* Fixed Desktop Sidebar */}
         <div className="fixed left-0 top-0 h-screen z-40">
-          <AppSidebar 
-            setShowLogoutDialog={setShowLogoutDialog}
-            setShowSupportPopup={setShowSupportPopup}
-          />
+          <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
         </div>
-        
+
         {/* Main Content with left margin for fixed sidebar */}
         <div className="ml-56 flex-1 flex flex-col min-h-screen">
           {/* Desktop Header */}
-          <header className="h-14 bg-yellow-50 border-b border-yellow-200 flex items-center px-6 sticky top-0 z-30">
+          <header className="h-14 bg-yellow-50 border-b border-yellow-300 flex items-center px-6 sticky top-0 z-30">
             <h1 className="text-xl font-bold text-gray-900">Qikpod Portal</h1>
           </header>
-          
-          <main className="flex-1 p-4 overflow-auto">
-            {children}
-          </main>
+
+          <main className="flex-1 p-4 overflow-auto">{children}</main>
         </div>
       </div>
 
       {/* Mobile Layout - Header + Content */}
       <div className="lg:hidden">
         {/* Mobile Header */}
-        <MobileHeader 
-          isMobileMenuOpen={isMobileMenuOpen}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
-        />
-        
+        <MobileHeader isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+
         {/* Mobile Sidebar */}
-        <MobileSidebar 
+        <MobileSidebar
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
           setShowLogoutDialog={setShowLogoutDialog}
           setShowSupportPopup={setShowSupportPopup}
         />
-        
+
         {/* Main Content with top padding for fixed header */}
-        <main className="pt-14 pb-4 px-4">
-          {children}
-        </main>
+        <main className="pt-14 pb-4 px-4">{children}</main>
       </div>
 
       {/* Logout Confirmation Dialog */}
@@ -83,9 +76,7 @@ const Layout: React.FC<LayoutProps> = ({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Logout</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to logout?
-            </DialogDescription>
+            <DialogDescription>Are you sure you want to logout?</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
