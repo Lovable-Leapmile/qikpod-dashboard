@@ -61,7 +61,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
         {/* Mobile Sidebar */}
         <MobileSidebar
-          isOpen={isMobileMenuOpen}
+              isOpen={isMobileMenuOpen}
+              onClose={() => setIsMobileMenuOpen(false)}
           //onClose={() => setIsMobileMenuOpen(false)}
           setShowLogoutDialog={setShowLogoutDialog}
           setShowSupportPopup={setShowSupportPopup}
