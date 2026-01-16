@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, LogOut, HelpCircle, Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, CreditCard, FileText } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronLeft, LogOut, HelpCircle, Activity, Settings, MapPin, Package, Calendar, Users, UserPlus, Bell, CreditCard, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -72,7 +72,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
     if (!isExpanded) setIsExpanded(false);
   };
 
-  const handleSidebarClick = () => {
+  const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
 
@@ -80,10 +80,25 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
     <TooltipProvider delayDuration={100}>
       <aside 
         className={cn(
-          "bg-[#FDDC4E] h-full flex flex-col border-r border-yellow-300 overflow-y-auto transition-all duration-300",
+          "bg-[#FDDC4E] h-[calc(100vh-3.5rem)] sticky top-14 flex flex-col border-r border-yellow-300 overflow-hidden transition-all duration-300",
           isExpanded ? "w-56" : "w-14"
         )}
       >
+        {/* Toggle Button */}
+        <div className="flex justify-end p-2 border-b border-yellow-300">
+          <button
+            onClick={toggleSidebar}
+            className="p-1.5 rounded-md hover:bg-yellow-400 transition-colors"
+            title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {isExpanded ? (
+              <ChevronLeft className="w-5 h-5 text-black" />
+            ) : (
+              <ChevronRight className="w-5 h-5 text-black" />
+            )}
+          </button>
+        </div>
+
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4 px-2">
           <div className="space-y-1">
@@ -115,7 +130,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={handleSidebarClick}
+                            onClick={toggleSidebar}
                             className={cn(
                               "w-full flex items-center justify-center p-2 rounded-md transition-colors",
                               isGroupActive(item)
