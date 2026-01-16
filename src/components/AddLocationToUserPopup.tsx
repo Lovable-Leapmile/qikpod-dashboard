@@ -39,7 +39,7 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
       
       try {
         setFetchingLocations(true);
-        const response = await fetch(`${apiUrl.podcore}/locations/`, {
+        const response = await fetch(`${apiUrl.podcore}/locations/?order_by_field=updated_at&order_by_type=DESC`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Accept': 'application/json'
