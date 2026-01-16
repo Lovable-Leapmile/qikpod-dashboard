@@ -95,16 +95,19 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose, setShowL
       <aside className="fixed top-0 left-0 w-64 h-full bg-[#FDDC4E] z-50 flex flex-col shadow-xl lg:hidden transform transition-transform duration-300 ease-in-out">
         {/* Header with close button */}
         <div className="h-14 flex items-center justify-between px-4 border-b border-yellow-300">
-          <div>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/dashboard");
+              onClose();
+            }}
+          >
             <img
               src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
               alt="QikPod Logo"
               className="h-6 w-auto"
             />
           </div>
-          <button onClick={onClose} className="p-1 rounded-md hover:bg-yellow-400 transition-colors">
-            <X className="w-5 h-5 text-black" />
-          </button>
         </div>
 
         {/* Navigation */}
