@@ -55,7 +55,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       </div>
 
       {/* Mobile Layout - Header + Content */}
-      <div className="md:hidden">
+      <div>
         {/* Mobile Header */}
         <MobileHeader isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
