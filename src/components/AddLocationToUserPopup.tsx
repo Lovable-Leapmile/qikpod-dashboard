@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApiUrl } from '@/hooks/useApiUrl';
 import { useToast } from '@/hooks/use-toast';
@@ -12,10 +13,16 @@ interface Location {
   location_name: string;
 }
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface AddLocationToUserPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  userId: number;
+  userId?: number;
   onSuccess: () => void;
 }
 
@@ -29,42 +36,75 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
   const apiUrl = useApiUrl();
   const { toast } = useToast();
   const [locations, setLocations] = useState<Location[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<string>('');
+  const [selectedUserId, setSelectedUserId] = useState<string>(userId ? userId.toString() : '');
   const [loading, setLoading] = useState(false);
-  const [fetchingLocations, setFetchingLocations] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
 
   useEffect(() => {
-    const fetchLocations = async () => {
+    const fetchData = async () => {
       if (!accessToken || !isOpen) return;
       
       try {
-        setFetchingLocations(true);
-        const response = await fetch(`${apiUrl.podcore}/locations/?order_by_field=updated_at&order_by_type=DESC`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/json'
-          }
-        });
+        setFetchingData(true);
         
-        if (response.ok) {
-          const data = await response.json();
-          setLocations(data);
+        // Fetch both locations and users in parallel
+        const [locationsResponse, usersResponse] = await Promise.all([
+          fetch(`${apiUrl.podcore}/locations/?order_by_field=updated_at&order_by_type=DESC`, {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Accept': 'application/json'
+            }
+          }),
+          fetch(`${apiUrl.podcore}/users/?order_by_field=updated_at&order_by_type=DESC`, {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Accept': 'application/json'
+            }
+          })
+        ]);
+        
+        if (locationsResponse.ok) {
+          const locationsData = await locationsResponse.json();
+          setLocations(locationsData);
+        }
+        
+        if (usersResponse.ok) {
+          const usersData = await usersResponse.json();
+          setUsers(usersData);
         }
       } catch (error) {
-        console.error('Error fetching locations:', error);
+        console.error('Error fetching data:', error);
       } finally {
-        setFetchingLocations(false);
+        setFetchingData(false);
       }
     };
 
-    fetchLocations();
+    fetchData();
   }, [accessToken, apiUrl.podcore, isOpen]);
+
+  // Update selected user when userId prop changes
+  useEffect(() => {
+    if (userId) {
+      setSelectedUserId(userId.toString());
+    }
+  }, [userId]);
 
   const handleSubmit = async () => {
     if (!selectedLocationId) {
       toast({
         title: "Error",
         description: "Please select a location",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedUserId) {
+      toast({
+        title: "Error",
+        description: "Please select a user",
         variant: "destructive"
       });
       return;
@@ -80,7 +120,7 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: parseInt(selectedUserId),
           location_id: parseInt(selectedLocationId)
         })
       });
@@ -123,19 +163,42 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4">
-          <Select value={selectedLocationId} onValueChange={setSelectedLocationId}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={fetchingLocations ? "Loading locations..." : "Select a location"} />
-            </SelectTrigger>
-            <SelectContent>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id.toString()}>
-                  {location.location_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="py-4 space-y-4">
+          {/* User Selection - only show if userId is not provided */}
+          {!userId && (
+            <div className="space-y-2">
+              <Label htmlFor="user-select">Select User</Label>
+              <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                <SelectTrigger id="user-select" className="w-full">
+                  <SelectValue placeholder={fetchingData ? "Loading users..." : "Select a user"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.id.toString()}>
+                      {user.name} ({user.email})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Location Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="location-select">Select Location</Label>
+            <Select value={selectedLocationId} onValueChange={setSelectedLocationId}>
+              <SelectTrigger id="location-select" className="w-full">
+                <SelectValue placeholder={fetchingData ? "Loading locations..." : "Select a location"} />
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((location) => (
+                  <SelectItem key={location.id} value={location.id.toString()}>
+                    {location.location_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <DialogFooter>
@@ -144,7 +207,7 @@ const AddLocationToUserPopup: React.FC<AddLocationToUserPopupProps> = ({
           </Button>
           <Button 
             onClick={handleSubmit} 
-            disabled={loading || !selectedLocationId}
+            disabled={loading || !selectedLocationId || !selectedUserId}
             className="bg-[#FDDC4E] hover:bg-yellow-400 text-black"
           >
             {loading ? (
