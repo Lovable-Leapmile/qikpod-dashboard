@@ -36,6 +36,15 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
+    const saved = localStorage.getItem('sidebarExpanded');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  // Persist sidebar state
+  React.useEffect(() => {
+    localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
+  }, [isSidebarExpanded]);
 
   const handleLogout = () => {
     logout();
@@ -48,7 +57,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       {/* Desktop & Tablet Layout - Header on top, Sidebar below */}
       <div className="hidden md:flex flex-col min-h-screen">
         {/* Fixed Desktop Header with Logo - matching sidebar color */}
-        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 sticky top-0 z-50">
+        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50">
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
               <img
@@ -85,13 +94,23 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
           </div>
         </header>
 
-        {/* Content area with sidebar */}
-        <div className="flex flex-1">
+        {/* Content area with sidebar - add top padding for fixed header */}
+        <div className="flex flex-1 pt-14">
           {/* Fixed Sidebar below header */}
-          <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
+          <AppSidebar 
+            setShowLogoutDialog={setShowLogoutDialog} 
+            setShowSupportPopup={setShowSupportPopup}
+            isExpanded={isSidebarExpanded}
+            setIsExpanded={setIsSidebarExpanded}
+          />
 
-          {/* Main Content - with left margin to account for fixed sidebar */}
-          <main className="flex-1 p-4 overflow-auto ml-14">{children}</main>
+          {/* Main Content - with dynamic margin to account for sidebar */}
+          <main 
+            className="flex-1 p-4 overflow-auto transition-all duration-300"
+            style={{ marginLeft: isSidebarExpanded ? '14rem' : '3.5rem' }}
+          >
+            {children}
+          </main>
         </div>
       </div>
 
