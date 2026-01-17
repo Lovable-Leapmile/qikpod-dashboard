@@ -41,19 +41,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         {/* Fixed Desktop Header with Logo - matching sidebar color */}
         <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 sticky top-0 z-50">
           <div className="flex items-center">
-            <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
-              <img 
-                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
-                alt="QikPod Logo" 
-                className="h-6 w-auto" 
+            <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
+              <img
+                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
+                alt="QikPod Logo"
+                className="h-6 w-auto"
               />
             </div>
-            <h1 className="text-xl font-bold text-gray-900 ml-4">QikPod Portal</h1>
+            <h1 className="text-xl font-bold italic text-gray-900 ml-4">QikPod Portal</h1>
           </div>
           {/* Welcome message on the right */}
-          <div className="text-sm font-medium text-black">
-            Welcome, {user?.user_name || 'User'}
-          </div>
+          <div className="text-sm font-medium text-black">Welcome, {user?.user_name || "User"}</div>
         </header>
 
         {/* Content area with sidebar */}
@@ -73,8 +71,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
 
         {/* Mobile Sidebar */}
         <MobileSidebar
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
           //onClose={() => setIsMobileMenuOpen(false)}
           setShowLogoutDialog={setShowLogoutDialog}
           setShowSupportPopup={setShowSupportPopup}
