@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,16 +36,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  // Persist sidebar state in localStorage
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-    const saved = localStorage.getItem('sidebarExpanded');
-    return saved ? JSON.parse(saved) : false;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
-  }, [isSidebarExpanded]);
 
   const handleLogout = () => {
     logout();
@@ -57,8 +47,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
     <div className="min-h-screen bg-gray-50 w-full">
       {/* Desktop & Tablet Layout - Header on top, Sidebar below */}
       <div className="hidden md:flex flex-col min-h-screen">
-        {/* Fixed Desktop Header with Logo */}
-        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50">
+        {/* Fixed Desktop Header with Logo - matching sidebar color */}
+        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 sticky top-0 z-50">
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
               <img
@@ -95,23 +85,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
           </div>
         </header>
 
-        {/* Content area with sidebar - add top margin for fixed header */}
-        <div className="flex flex-1 mt-14">
+        {/* Content area with sidebar */}
+        <div className="flex flex-1">
           {/* Fixed Sidebar below header */}
-          <AppSidebar 
-            setShowLogoutDialog={setShowLogoutDialog} 
-            setShowSupportPopup={setShowSupportPopup}
-            isExpanded={isSidebarExpanded}
-            setIsExpanded={setIsSidebarExpanded}
-          />
+          <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
 
-          {/* Main Content - dynamic margin based on sidebar state */}
-          <main 
-            className="flex-1 p-4 overflow-auto transition-all duration-300"
-            style={{ marginLeft: isSidebarExpanded ? '14rem' : '3.5rem' }}
-          >
-            {children}
-          </main>
+          {/* Main Content - with left margin to account for fixed sidebar */}
+          <main className="flex-1 p-4 overflow-auto ml-14">{children}</main>
         </div>
       </div>
 
@@ -124,6 +104,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         <MobileSidebar
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
+          //onClose={() => setIsMobileMenuOpen(false)}
           setShowLogoutDialog={setShowLogoutDialog}
           setShowSupportPopup={setShowSupportPopup}
         />
