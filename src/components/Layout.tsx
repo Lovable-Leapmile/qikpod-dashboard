@@ -8,6 +8,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
@@ -50,8 +59,30 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
             </div>
             <h1 className="text-xl font-bold italic text-gray-900 ml-4"> Portal</h1>
           </div>
-          {/* Welcome message on the right */}
-          <div className="text-sm font-medium text-black">Welcome, {user?.user_name || "User"}</div>
+          {/* Welcome message and profile on the right */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-black">Welcome, {user?.user_name || "User"}</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 rounded-full hover:bg-yellow-400 transition-colors">
+                  <User className="w-5 h-5 text-black" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Profile</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex flex-col items-start gap-1">
+                  <span className="font-medium">{user?.user_name || "User"}</span>
+                  <span className="text-xs text-muted-foreground">Type: {user?.user_type || "N/A"}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600 cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
 
         {/* Content area with sidebar */}
@@ -59,8 +90,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
           {/* Fixed Sidebar below header */}
           <AppSidebar setShowLogoutDialog={setShowLogoutDialog} setShowSupportPopup={setShowSupportPopup} />
 
-          {/* Main Content */}
-          <main className="flex-1 p-4 overflow-auto">{children}</main>
+          {/* Main Content - with left margin to account for fixed sidebar */}
+          <main className="flex-1 p-4 overflow-auto ml-14">{children}</main>
         </div>
       </div>
 
