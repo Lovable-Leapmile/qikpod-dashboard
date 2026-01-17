@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 interface AppSidebarProps {
   setShowLogoutDialog: (show: boolean) => void;
   setShowSupportPopup: (show: boolean) => void;
+  isExpanded: boolean;
+  setIsExpanded: (expanded: boolean) => void;
 }
 
 interface NavItem {
@@ -45,11 +47,10 @@ const navItems: NavItem[] = [
   }
 ];
 
-const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSupportPopup }) => {
+const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSupportPopup, isExpanded, setIsExpanded }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['Operations', 'Users & Network']);
 
   const isActive = (path: string) => location.pathname === path;
@@ -69,7 +70,6 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
 
   const handleNavClick = (path: string) => {
     navigate(path);
-    if (!isExpanded) setIsExpanded(false);
   };
 
   const toggleSidebar = () => {
