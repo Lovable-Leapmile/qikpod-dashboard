@@ -39,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
       {/* Desktop & Tablet Layout - Header on top, Sidebar below */}
       <div className="hidden md:flex flex-col min-h-screen">
         {/* Fixed Desktop Header with Logo - matching sidebar color */}
-        <header className="h-14 bg-[#FDDC4E] border-yellow-300 border-b flex items-center justify-between px-6 sticky top-0 z-50">
+        <header className="h-14 bg-amber-100 border-amber-200 border-b flex items-center justify-between px-6 sticky top-0 z-50">
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
               <img 
@@ -95,7 +95,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
             <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleLogout} className="bg-[#FDDC4E] hover:bg-yellow-400 text-black">
+            <Button onClick={handleLogout} className="bg-amber-100 hover:bg-amber-200 text-black">
               Logout
             </Button>
           </DialogFooter>
