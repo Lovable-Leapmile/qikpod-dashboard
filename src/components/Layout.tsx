@@ -48,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
                 className="h-6 w-auto"
               />
             </div>
-            <h1 className="text-xl font-bold italic text-gray-900 ml-4">QikPod Portal</h1>
+            <h1 className="text-xl font-bold italic text-gray-900 ml-4"> Portal</h1>
           </div>
           {/* Welcome message on the right */}
           <div className="text-sm font-medium text-black">Welcome, {user?.user_name || "User"}</div>
