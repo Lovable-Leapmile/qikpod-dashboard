@@ -80,7 +80,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ setShowLogoutDialog, setShowSup
     <TooltipProvider delayDuration={100}>
       <aside 
         className={cn(
-          "bg-amber-100 h-[calc(100vh-3.5rem)] sticky top-14 flex flex-col border-r border-amber-200 overflow-hidden transition-all duration-300",
+          "bg-amber-100 h-[calc(100vh-3.5rem)] fixed top-14 left-0 flex flex-col border-r border-amber-200 overflow-hidden transition-all duration-300 z-40",
           isExpanded ? "w-56" : "w-14"
         )}
       >
