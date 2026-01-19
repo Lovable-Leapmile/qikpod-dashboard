@@ -237,9 +237,24 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
     },
   ];
 
-  const onGridReady = (params: any) => {
+  const onGridReady = useCallback((params: any) => {
     params.api.sizeColumnsToFit();
-  };
+    // Listen for window resize to re-fit columns
+    const handleResize = () => {
+      setTimeout(() => {
+        params.api.sizeColumnsToFit();
+      }, 300);
+    };
+    window.addEventListener('resize', handleResize);
+    // Also observe container resize for sidebar toggle
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    const gridElement = document.querySelector('.ag-theme-alpine');
+    if (gridElement) {
+      resizeObserver.observe(gridElement);
+    }
+  }, []);
 
   const refreshData = useCallback(() => {
     if (isStandardMode) {
