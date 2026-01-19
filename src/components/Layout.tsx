@@ -37,13 +37,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-    const saved = localStorage.getItem('sidebarExpanded');
+    const saved = localStorage.getItem("sidebarExpanded");
     return saved !== null ? JSON.parse(saved) : true;
   });
 
   // Persist sidebar state
   React.useEffect(() => {
-    localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
+    localStorage.setItem("sidebarExpanded", JSON.stringify(isSidebarExpanded));
   }, [isSidebarExpanded]);
 
   const handleLogout = () => {
@@ -66,7 +66,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
                 className="h-6 w-auto"
               />
             </div>
-            <h1 className="text-xl font-bold italic text-gray-900 ml-4"> Portal</h1>
           </div>
           {/* Welcome message and profile on the right */}
           <div className="flex items-center gap-3">
@@ -97,17 +96,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
         {/* Content area with sidebar - add top padding for fixed header */}
         <div className="flex flex-1 pt-14">
           {/* Fixed Sidebar below header */}
-          <AppSidebar 
-            setShowLogoutDialog={setShowLogoutDialog} 
+          <AppSidebar
+            setShowLogoutDialog={setShowLogoutDialog}
             setShowSupportPopup={setShowSupportPopup}
             isExpanded={isSidebarExpanded}
             setIsExpanded={setIsSidebarExpanded}
           />
 
           {/* Main Content - with dynamic margin to account for sidebar */}
-          <main 
+          <main
             className="flex-1 p-4 overflow-auto transition-all duration-300"
-            style={{ marginLeft: isSidebarExpanded ? '14rem' : '3.5rem' }}
+            style={{ marginLeft: isSidebarExpanded ? "14rem" : "3.5rem" }}
           >
             {children}
           </main>
