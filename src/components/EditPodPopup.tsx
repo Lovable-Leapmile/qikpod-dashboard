@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useApiUrl } from "@/hooks/useApiUrl";
 import { PodDetail } from "@/services/dashboardApi";
 
 interface EditPodPopupProps {
@@ -27,6 +28,7 @@ interface PodUpdateData {
 const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData, onSuccess }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
+  const apiUrl = useApiUrl();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState<PodUpdateData>({
@@ -57,7 +59,7 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData
 
     setLoading(true);
     try {
-      const response = await fetch(`https://productionv36.qikpod.com/podcore/pods/${podData.id}`, {
+      const response = await fetch(`${apiUrl.podcore}/pods/${podData.id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,
