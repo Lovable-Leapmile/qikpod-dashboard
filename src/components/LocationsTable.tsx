@@ -7,7 +7,8 @@ import "@/styles/ag-grid.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, MapPin, FileSpreadsheet, FileText, Eye, RefreshCw, ArrowLeft } from "lucide-react";
+import { Download, MapPin, FileSpreadsheet, FileText, Eye, RefreshCw, ArrowLeft, Plus } from "lucide-react";
+import AddLocationPopup from "./AddLocationPopup";
 import { exportTableData, ExportFormat } from "@/lib/tableExport";
 import {
   DropdownMenu,
@@ -33,6 +34,7 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(25);
+  const [showAddLocationPopup, setShowAddLocationPopup] = useState(false);
 
   // Advanced filtering
   const { filters, setFilters, filteredData, resetFilters } = useTableFilters<Location>(locations, [
@@ -189,6 +191,10 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                     <RefreshCw className="h-4 w-4 mr-1" />
                     <span className="hidden sm:inline">Refresh</span>
                   </Button>
+                  <Button variant="default" size="sm" onClick={() => setShowAddLocationPopup(true)}>
+                    <Plus className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Add Location</span>
+                  </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -321,6 +327,13 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
           )}
         </div>
       </div>
+
+      {/* Add Location Popup */}
+      <AddLocationPopup
+        open={showAddLocationPopup}
+        onOpenChange={setShowAddLocationPopup}
+        onSuccess={fetchData}
+      />
     </ErrorBoundary>
   );
 };

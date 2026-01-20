@@ -10,6 +10,8 @@ import CreateUserPopup from "./CreateUserPopup";
 import PaymentModePopup from "./PaymentModePopup";
 import EditLocationPopup from "./EditLocationPopup";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useApiUrl } from "@/hooks/useApiUrl";
+import { useToast } from "@/hooks/use-toast";
 
 interface LocationDetailProps {
   locationId: number;
@@ -25,8 +27,11 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   onAdhocReservationClick,
 }) => {
   const { accessToken } = useAuth();
+  const { toast } = useToast();
+  const apiUrl = useApiUrl();
   const [locationDetail, setLocationDetail] = useState<LocationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const [showHiddenSection, setShowHiddenSection] = useState(false);
   const [showAssignFeBdPopup, setShowAssignFeBdPopup] = useState(false);
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
@@ -60,6 +65,44 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
   const handlePopupSuccess = () => {
     fetchLocationDetail();
+  };
+
+  const handleDeleteLocation = async () => {
+    if (!accessToken) return;
+    
+    const confirmed = window.confirm(`Are you sure you want to delete location "${locationDetail?.location_name}"?`);
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const response = await fetch(`${apiUrl.podcore}/locations/${locationId}`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete location");
+      }
+
+      toast({
+        title: "Success",
+        description: "Location deleted successfully",
+      });
+
+      onBack();
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete location",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (loading) {
@@ -192,8 +235,13 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
             >
               Edit
             </Button>
-            <Button variant="destructive" className="rounded-lg text-xs md:text-sm h-8 px-2">
-              Delete
+            <Button 
+              variant="destructive" 
+              className="rounded-lg text-xs md:text-sm h-8 px-2"
+              onClick={handleDeleteLocation}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
             </Button>
           </div>
 
