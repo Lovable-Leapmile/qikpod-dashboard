@@ -5,6 +5,8 @@ import { ArrowLeft, MapPin, Users, Package, Eye, EyeOff, Smartphone } from "luci
 import { useAuth } from "@/contexts/AuthContext";
 import { dashboardApi, LocationDetail as LocationDetailType } from "@/services/dashboardApi";
 import LocationReservationsTable from "./LocationReservationsTable";
+import LocationPodsTable from "./LocationPodsTable";
+import LocationUsersTable from "./LocationUsersTable";
 import AssignFeBdPopup from "./AssignFeBdPopup";
 import CreateUserPopup from "./CreateUserPopup";
 import PaymentModePopup from "./PaymentModePopup";
@@ -18,6 +20,8 @@ interface LocationDetailProps {
   onBack: () => void;
   onStandardReservationClick?: (reservationId: number) => void;
   onAdhocReservationClick?: (reservationId: number) => void;
+  onPodClick?: (podId: number) => void;
+  onUserClick?: (userId: number) => void;
 }
 
 const LocationDetail: React.FC<LocationDetailProps> = ({
@@ -25,6 +29,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   onBack,
   onStandardReservationClick,
   onAdhocReservationClick,
+  onPodClick,
+  onUserClick,
 }) => {
   const { accessToken } = useAuth();
   const { toast } = useToast();
@@ -320,6 +326,18 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Pods Table */}
+      <LocationPodsTable
+        locationId={locationId}
+        onPodClick={onPodClick}
+      />
+
+      {/* Users Table */}
+      <LocationUsersTable
+        locationId={locationId}
+        onUserClick={onUserClick}
+      />
 
       {/* Reservations Tables */}
       <LocationReservationsTable
