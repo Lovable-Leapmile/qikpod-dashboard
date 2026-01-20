@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Download, RefreshCw, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import NoDataIllustration from "@/components/ui/no-data-illustration";
+import { useApiUrl } from "@/hooks/useApiUrl";
+import { useAuth } from "@/contexts/AuthContext";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-
 interface PartnerReservation {
   reservation_type: string;
   reservation_awbno: string;
@@ -27,10 +28,12 @@ interface PartnerReservation {
 
 const PartnerReservationsAgGrid: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
+  const apiUrl = useApiUrl();
+  const { accessToken } = useAuth();
   const [rowData, setRowData] = useState<PartnerReservation[]>([]);
   const [filteredData, setFilteredData] = useState<PartnerReservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [selectedFilter, setSelectedFilter] = useState<string>("DropPending");
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageSize, setPageSize] = useState(25);
 
@@ -125,22 +128,22 @@ const PartnerReservationsAgGrid: React.FC = () => {
     [],
   );
 
-  const fetchPartnerReservations = async (reservationType: string = "FK_Delivery") => {
+  const fetchPartnerReservations = useCallback(async (reservationStatus: string = "DropPending") => {
+    if (!accessToken) return;
     try {
       setLoading(true);
       const response = await fetch(
-        `https://productionv36.qikpod.com/podcore/get_partner_reservation/?reservation_type=${reservationType}`,
+        `${apiUrl.podcore}/partner_reservation/reservation_status/?reservation_status=${reservationStatus}&order_by_field=updated_at&order_by_type=DESC`,
         {
           headers: {
             accept: "application/json",
-            Authorization:
-              "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDczNDA0MH0.pHhmwwEsMIO-5nyxOvw4G2ntQ7-H2A6hyFdQSci8OCY",
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
       if (response.ok) {
         const data = await response.json();
-        const reservations = data.records || [];
+        const reservations = data.records || data || [];
         setRowData(reservations);
         setFilteredData(reservations);
       } else {
@@ -155,20 +158,15 @@ const PartnerReservationsAgGrid: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [accessToken, apiUrl.podcore]);
 
   useEffect(() => {
-    fetchPartnerReservations();
-  }, []);
+    fetchPartnerReservations(selectedFilter);
+  }, [accessToken, fetchPartnerReservations]);
 
   const handleFilterChange = (value: string) => {
     setSelectedFilter(value);
-    if (value === "all") {
-      setFilteredData(rowData);
-    } else {
-      const filtered = rowData.filter((item) => item.reservation_status?.toLowerCase().includes(value.toLowerCase()));
-      setFilteredData(filtered);
-    }
+    fetchPartnerReservations(value);
   };
 
   const downloadCSV = (jsonDataList: PartnerReservation[]) => {
@@ -225,8 +223,8 @@ const PartnerReservationsAgGrid: React.FC = () => {
   }, []);
 
   const refreshData = useCallback(() => {
-    fetchPartnerReservations();
-  }, []);
+    fetchPartnerReservations(selectedFilter);
+  }, [fetchPartnerReservations, selectedFilter]);
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -271,16 +269,15 @@ const PartnerReservationsAgGrid: React.FC = () => {
               {/* Status Filter and Page Size Selector - Mobile optimized */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 <Select value={selectedFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-full sm:w-[140px] h-9">
+                  <SelectTrigger className="w-full sm:w-[160px] h-9">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Reservations</SelectItem>
-                    <SelectItem value="droppending">Drop Pending</SelectItem>
-                    <SelectItem value="pickuppending">Pickup Pending</SelectItem>
-                    <SelectItem value="rtopending">RTO Pending</SelectItem>
-                    <SelectItem value="pickupcompleted">Pickup Completed</SelectItem>
-                    <SelectItem value="rtocompleted">RTO Completed</SelectItem>
+                    <SelectItem value="DropPending">Drop Pending</SelectItem>
+                    <SelectItem value="PickupPending">Pickup Pending</SelectItem>
+                    <SelectItem value="RTOPending">RTO Pending</SelectItem>
+                    <SelectItem value="PickupCompleted">Pickup Completed</SelectItem>
+                    <SelectItem value="RTOCompleted">RTO Completed</SelectItem>
                   </SelectContent>
                 </Select>
 

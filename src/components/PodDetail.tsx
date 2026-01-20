@@ -96,6 +96,14 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
+      {/* Back Button */}
+      <div className="flex items-center">
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">Back to Pods</span>
+        </Button>
+      </div>
+
       {/* Pod Details Card */}
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-3 pt-4">
