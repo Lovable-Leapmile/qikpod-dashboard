@@ -40,13 +40,6 @@ const PartnerReservationsAgGrid: React.FC = () => {
   const columnDefs: ColDef[] = useMemo(
     () => [
       {
-        headerName: "TYPE",
-        field: "reservation_type",
-        flex: 1,
-        minWidth: 120,
-        cellClass: "font-medium text-center",
-      },
-      {
         headerName: "AWB NO",
         field: "reservation_awbno",
         flex: 1,
@@ -322,8 +315,8 @@ const PartnerReservationsAgGrid: React.FC = () => {
         </div>
       </div>
 
-      {/* AG Grid Table */}
-      <div className="flex-1 w-full">
+      {/* AG Grid Table - Hidden on mobile */}
+      <div className="flex-1 w-full hidden lg:block">
         {loading ? (
           <div className="flex items-center justify-center h-[200px]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -383,7 +376,6 @@ const PartnerReservationsAgGrid: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="font-semibold text-gray-900">{reservation.reservation_awbno}</div>
-                    <div className="text-sm text-gray-600">{reservation.reservation_type}</div>
                   </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.reservation_status)}`}
