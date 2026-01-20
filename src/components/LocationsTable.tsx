@@ -156,31 +156,45 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
   return (
     <ErrorBoundary>
       <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
-        {/* Header Section */}
-        <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
-          <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
-            <div className="flex flex-col gap-3 sm:gap-4">
+        {/* Header Section - Desktop */}
+        <div className="hidden md:flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Locations Management</h3>
+            <p className="text-sm text-gray-500">Manage all locations in your network</p>
+          </div>
+          <Button
+            onClick={() => setShowAddLocationPopup(true)}
+            className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Location</span>
+          </Button>
+        </div>
+
+        {/* Header Section - Mobile */}
+        <div className="md:hidden border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
+          <div className="p-3 border-b border-gray-200 bg-gray-100">
+            <div className="flex flex-col gap-3">
               {/* Title Row */}
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => window.history.back()}
-                    className="flex items-center gap-1 h-8 px-2 sm:px-3 flex-shrink-0"
+                    className="flex items-center gap-1 h-8 px-2 flex-shrink-0"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline">Back</span>
                   </Button>
-                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700 flex-shrink-0" />
-                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Locations</h2>
+                  <MapPin className="h-4 w-4 text-gray-700 flex-shrink-0" />
+                  <h2 className="text-base font-semibold text-gray-900 truncate">Locations</h2>
                 </div>
               </div>
 
-              {/* Controls Row - Stacked on mobile */}
+              {/* Controls Row */}
               <div className="flex flex-wrap items-center gap-2">
                 <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                  <SelectTrigger className="w-16 sm:w-20 h-8">
+                  <SelectTrigger className="w-16 h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white z-50">
@@ -190,19 +204,16 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
                     <SelectItem value="100">100</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 sm:px-3">
-                  <RefreshCw className="h-4 w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Refresh</span>
+                <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2">
+                  <RefreshCw className="h-4 w-4" />
                 </Button>
-                <Button variant="default" size="sm" onClick={() => setShowAddLocationPopup(true)} className="h-8 px-2 sm:px-3">
-                  <Plus className="h-4 w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Add Location</span>
+                <Button variant="default" size="sm" onClick={() => setShowAddLocationPopup(true)} className="h-8 px-2">
+                  <Plus className="h-4 w-4" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3">
-                      <Download className="h-4 w-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Export</span>
+                    <Button variant="outline" size="sm" className="h-8 px-2">
+                      <Download className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-white">
