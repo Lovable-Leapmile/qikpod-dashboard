@@ -227,37 +227,41 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
     <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
       {/* Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.history.back()}
-                className="flex items-center gap-1"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
-              <Package className="h-5 w-5 text-gray-700" />
-              <h2 className="text-lg font-semibold text-gray-900">Pods</h2>
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {/* Title Row */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.history.back()}
+                  className="flex items-center gap-1 h-8 px-2 sm:px-3 flex-shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Back</span>
+                </Button>
+                <Package className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700 flex-shrink-0" />
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Pods</h2>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* Controls Row - Wraps on mobile */}
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 onClick={() => setShowAddPodPopup(true)}
-                className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2"
+                className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center h-8 px-2 sm:px-3"
                 size="sm"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 sm:mr-1" />
                 <span className="hidden sm:inline">Add Pod</span>
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
+                  <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3">
+                    <Download className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Export</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white">
@@ -276,14 +280,13 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Button variant="outline" size="sm" onClick={refreshData}>
-                <RefreshCw className="h-4 w-4 mr-1" />
+              <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 sm:px-3">
+                <RefreshCw className="h-4 w-4 sm:mr-1" />
                 <span className="hidden sm:inline">Refresh</span>
               </Button>
             </div>
-          </div>
 
-          <div className="mt-4">
+            {/* Filters */}
             <TableFilters config={filterConfig} state={filters} onChange={setFilters} onReset={resetFilters} />
           </div>
         </div>

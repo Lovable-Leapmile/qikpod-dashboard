@@ -158,66 +158,68 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
       <div className="w-full h-full flex flex-col animate-fade-in px-[4px]">
         {/* Header Section */}
         <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
-          <div className="p-4 border-b border-gray-200 bg-gray-100">
-            <div className="flex flex-col gap-4">
-              {/* Title with Icon */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
+          <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+            <div className="flex flex-col gap-3 sm:gap-4">
+              {/* Title Row */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => window.history.back()}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 h-8 px-2 sm:px-3 flex-shrink-0"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     <span className="hidden sm:inline">Back</span>
                   </Button>
-                  <MapPin className="h-5 w-5 text-gray-700" />
-                  <h2 className="text-lg font-semibold text-gray-900">Locations</h2>
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700 flex-shrink-0" />
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Locations</h2>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white z-50">
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="sm" onClick={refreshData}>
-                    <RefreshCw className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Refresh</span>
-                  </Button>
-                  <Button variant="default" size="sm" onClick={() => setShowAddLocationPopup(true)}>
-                    <Plus className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Add Location</span>
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-1" />
-                        <span className="hidden sm:inline">Export</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white">
-                      <DropdownMenuItem onClick={() => handleExport("csv")}>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Export as CSV
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleExport("excel")}>
-                        <FileSpreadsheet className="w-4 h-4 mr-2" />
-                        Export as Excel
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleExport("pdf")}>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Export as PDF
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+              </div>
+
+              {/* Controls Row - Stacked on mobile */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                  <SelectTrigger className="w-16 sm:w-20 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white z-50">
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="sm" onClick={refreshData} className="h-8 px-2 sm:px-3">
+                  <RefreshCw className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Refresh</span>
+                </Button>
+                <Button variant="default" size="sm" onClick={() => setShowAddLocationPopup(true)} className="h-8 px-2 sm:px-3">
+                  <Plus className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Add Location</span>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3">
+                      <Download className="h-4 w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Export</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white">
+                    <DropdownMenuItem onClick={() => handleExport("csv")}>
+                      <FileText className="w-4 h-4 mr-2" />
+                      Export as CSV
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleExport("excel")}>
+                      <FileSpreadsheet className="w-4 h-4 mr-2" />
+                      Export as Excel
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleExport("pdf")}>
+                      <FileText className="w-4 h-4 mr-2" />
+                      Export as PDF
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               {/* Filters */}
