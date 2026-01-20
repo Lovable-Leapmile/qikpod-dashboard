@@ -59,8 +59,6 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
         },
         body: JSON.stringify({
           user_name: formData.user_name,
-          user_email: `${formData.user_email}@gmail.com`,
-          user_phone: formData.user_phone,
           user_type: formData.user_type,
           user_address: formData.user_address,
           user_flatno: formData.user_flatno,
@@ -132,14 +130,10 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
           <div className="space-y-2">
             <Label htmlFor="user_email">Email</Label>
             <div className="flex">
-              <Input
-                id="user_email"
-                value={formData.user_email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, user_email: e.target.value }))}
-                className="rounded-r-none"
-                required
-              />
-              <div className="bg-gray-100 border border-l-0 rounded-r-md px-3 py-2 text-sm text-gray-600">
+              <div className="flex-1 bg-muted border rounded-l-md px-3 py-2 text-sm text-muted-foreground">
+                {formData.user_email}
+              </div>
+              <div className="bg-muted border border-l-0 rounded-r-md px-3 py-2 text-sm text-muted-foreground">
                 @gmail.com
               </div>
             </div>
@@ -147,13 +141,9 @@ const EditUserPopup: React.FC<EditUserPopupProps> = ({ open, onOpenChange, user,
 
           <div className="space-y-2">
             <Label htmlFor="user_phone">Phone</Label>
-            <Input
-              id="user_phone"
-              value={formData.user_phone}
-              onChange={(e) => handlePhoneChange(e.target.value)}
-              placeholder="Enter phone number"
-              required
-            />
+            <div className="bg-muted border rounded-md px-3 py-2 text-sm text-muted-foreground">
+              {formData.user_phone}
+            </div>
           </div>
 
           <div className="space-y-2">
