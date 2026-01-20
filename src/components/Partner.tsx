@@ -100,8 +100,14 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between">
-            {/* Left Title */}
-            <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
+            {/* Left Title with Back Button */}
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="sm" onClick={onBack} className="h-8">
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
+              <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
+            </div>
 
             {/* Right Button */}
             <Button

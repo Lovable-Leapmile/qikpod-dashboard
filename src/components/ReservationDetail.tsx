@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Send } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Send } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { dashboardApi, StandardReservationDetail } from "@/services/dashboardApi";
@@ -81,6 +81,14 @@ const ReservationDetail: React.FC<ReservationDetailProps> = ({ reservationId, on
 
   return (
     <div className="space-y-4">
+      {/* Back Button */}
+      <div className="flex items-center">
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">Back to Reservations</span>
+        </Button>
+      </div>
+
       <Card className="bg-white shadow-sm rounded-xl border-gray-200">
         <CardHeader className="pb-6">
           <CardTitle className="text-xl font-semibold text-gray-900">
