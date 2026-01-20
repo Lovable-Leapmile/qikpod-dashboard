@@ -238,78 +238,71 @@ const PartnerReservationsAgGrid: React.FC = () => {
   return (
     <div className="w-full max-w-full h-full flex flex-col animate-fade-in">
       {/* Header Section - Restructured to match Locations table */}
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-6">
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-4">
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col gap-3">
             {/* Title */}
-            <div className="flex items-center space-x-3">
-              <h2 className="text-lg font-semibold text-gray-900">Partner Reservations</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Partner Reservations</h2>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              {/* Search */}
-              <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search reservations..."
-                  value={globalFilter}
-                  onChange={(e) => handleGlobalFilter(e.target.value)}
-                  className="pl-10 w-full"
-                />
-              </div>
+            {/* Search - Full width on mobile */}
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search reservations..."
+                value={globalFilter}
+                onChange={(e) => handleGlobalFilter(e.target.value)}
+                className="pl-10 w-full h-8 sm:h-9"
+              />
+            </div>
 
-              {/* Status Filter and Page Size Selector - Mobile optimized */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-                <Select value={selectedFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-full sm:w-[160px] h-9">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DropPending">Drop Pending</SelectItem>
-                    <SelectItem value="PickupPending">Pickup Pending</SelectItem>
-                    <SelectItem value="RTOPending">RTO Pending</SelectItem>
-                    <SelectItem value="PickupCompleted">Pickup Completed</SelectItem>
-                    <SelectItem value="RTOCompleted">RTO Completed</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Controls Row - Wraps on mobile */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={selectedFilter} onValueChange={handleFilterChange}>
+                <SelectTrigger className="w-[130px] sm:w-[160px] h-8">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DropPending">Drop Pending</SelectItem>
+                  <SelectItem value="PickupPending">Pickup Pending</SelectItem>
+                  <SelectItem value="RTOPending">RTO Pending</SelectItem>
+                  <SelectItem value="PickupCompleted">Pickup Completed</SelectItem>
+                  <SelectItem value="RTOCompleted">RTO Completed</SelectItem>
+                </SelectContent>
+              </Select>
 
-                <div className="flex items-center gap-2">
-                  <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="w-full sm:w-16 h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                <SelectTrigger className="w-16 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
 
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleDownloadCSV}
-                      variant="outline"
-                      size="sm"
-                      className="h-9 px-2 flex-1 sm:flex-initial"
-                    >
-                      <Download className="h-4 w-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Export</span>
-                    </Button>
+              <Button
+                onClick={handleDownloadCSV}
+                variant="outline"
+                size="sm"
+                className="h-8 px-2 sm:px-3"
+              >
+                <Download className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
 
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={refreshData}
-                      className="h-9 px-2 flex-1 sm:flex-initial"
-                    >
-                      <RefreshCw className="h-4 w-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Refresh</span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshData}
+                className="h-8 px-2 sm:px-3"
+              >
+                <RefreshCw className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -360,7 +353,7 @@ const PartnerReservationsAgGrid: React.FC = () => {
       </div>
 
       {/* Mobile Card View */}
-      <div className="lg:hidden p-4 space-y-4 max-h-[600px] overflow-y-auto">
+      <div className="lg:hidden space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto">
         {loading ? (
           <div className="flex justify-center items-center py-8">
             <div className="text-gray-500">Loading...</div>

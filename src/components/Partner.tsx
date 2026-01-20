@@ -98,24 +98,24 @@ const Partner: React.FC<PartnerProps> = ({ onBack }) => {
     <div className="space-y-6 w-full max-w-full mx-0 px-0">
       {/* Partner Dashboard */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center justify-between">
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Left Title with Back Button */}
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={onBack} className="h-8">
-                <ArrowLeft className="w-4 h-4 mr-1" />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Button variant="outline" size="sm" onClick={onBack} className="h-8 px-2 sm:px-3 flex-shrink-0">
+                <ArrowLeft className="w-4 h-4 sm:mr-1" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
-              <h2 className="text-lg font-semibold text-gray-900">Partner Dashboard</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Partner Dashboard</h2>
             </div>
 
             {/* Right Button */}
             <Button
               onClick={() => setShowModal(true)}
-              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-9 px-3"
+              className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center gap-2 h-8 sm:h-9 px-2 sm:px-3 w-full sm:w-auto justify-center"
             >
               <Play className="w-4 h-4" />
-              Run Batch Application
+              <span className="text-sm sm:text-base">Run Batch</span>
             </Button>
           </div>
         </div>
