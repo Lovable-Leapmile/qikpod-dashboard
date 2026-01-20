@@ -7,7 +7,7 @@ import "@/styles/ag-grid.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, MapPin, FileSpreadsheet, FileText, Eye, RefreshCw } from "lucide-react";
+import { Download, MapPin, FileSpreadsheet, FileText, Eye, RefreshCw, ArrowLeft } from "lucide-react";
 import { exportTableData, ExportFormat } from "@/lib/tableExport";
 import {
   DropdownMenu,
@@ -161,6 +161,15 @@ const LocationsTable: React.FC<LocationsTableProps> = ({ onLocationClick, isDash
               {/* Title with Icon */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.history.back()}
+                    className="flex items-center gap-1"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">Back</span>
+                  </Button>
                   <MapPin className="h-5 w-5 text-gray-700" />
                   <h2 className="text-lg font-semibold text-gray-900">Locations</h2>
                 </div>

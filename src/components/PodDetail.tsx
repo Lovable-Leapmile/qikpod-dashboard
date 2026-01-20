@@ -69,8 +69,9 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
     return String(value);
   };
 
-  const getPodStatus = (status: string) => {
-    return status === "success" ? "Active" : "Inactive";
+  const formatStatus = (status: string) => {
+    if (!status) return "N/A";
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   };
 
   const handlePopupSuccess = () => {
@@ -146,7 +147,13 @@ const PodDetail: React.FC<PodDetailProps> = ({ podId, onBack }) => {
                   </div>
                   <div className="truncate">
                     <span className="text-gray-600 font-medium">STATUS:</span>
-                    <span className="ml-1 text-gray-900">{getPodStatus(podDetail.status)}</span>
+                    <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      podDetail.status?.toLowerCase() === 'active' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {formatStatus(podDetail.status)}
+                    </span>
                   </div>
                 </div>
               </div>

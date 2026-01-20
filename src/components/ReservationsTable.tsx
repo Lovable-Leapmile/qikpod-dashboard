@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RefreshCw, Search, Eye, CalendarDays, Download, FileSpreadsheet, FileText } from "lucide-react";
+import { RefreshCw, Search, Eye, CalendarDays, Download, FileSpreadsheet, FileText, ArrowLeft } from "lucide-react";
 import TableFilters, { FilterConfig } from "@/components/filters/TableFilters";
 import { useTableFilters } from "@/hooks/useTableFilters";
 import { exportTableData, ExportFormat } from "@/lib/tableExport";
@@ -311,6 +311,15 @@ const ReservationsTable: React.FC<ReservationsTableProps> = ({
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.history.back()}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
               <CalendarDays className="h-5 w-5 text-gray-700" />
               <h2 className="text-lg font-semibold text-gray-900">Reservations</h2>
             </div>

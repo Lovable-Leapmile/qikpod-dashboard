@@ -209,12 +209,6 @@ const LogsAgGrid = () => {
   const hasData = rowData.length > 0;
   return (
     <div className="w-full h-full flex flex-col animate-fade-in">
-      {/* Back Button */}
-      <Button onClick={() => navigate(-1)} variant="outline" size="sm" className="flex items-center gap-2 mb-3 w-fit">
-        <ArrowLeft className="w-4 h-4" />
-        Back
-      </Button>
-
       {/* Compact Header Section */}
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm mb-3">
         {/* Table Title and Controls */}
@@ -222,6 +216,15 @@ const LogsAgGrid = () => {
           {/* Single line for all controls on desktop */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4 w-full lg:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
               <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Logs</h2>
 
               {/* Auto Refresh Checkbox */}
