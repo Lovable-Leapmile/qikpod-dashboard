@@ -7,7 +7,8 @@ import "@/styles/ag-grid.css";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Package, Eye, RefreshCw, Download, FileSpreadsheet, FileText, ArrowLeft } from "lucide-react";
+import { Package, Eye, RefreshCw, Download, FileSpreadsheet, FileText, ArrowLeft, Plus } from "lucide-react";
+import AddPodPopup from "./AddPodPopup";
 import TableFilters, { FilterConfig } from "@/components/filters/TableFilters";
 import { useTableFilters } from "@/hooks/useTableFilters";
 import { exportTableData, ExportFormat } from "@/lib/tableExport";
@@ -35,6 +36,7 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
   const [pods, setPods] = useState<Pod[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(25);
+  const [showAddPodPopup, setShowAddPodPopup] = useState(false);
 
   const { filters, setFilters, filteredData, resetFilters } = useTableFilters<Pod>(
     pods,
@@ -242,6 +244,15 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
             </div>
 
             <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => setShowAddPodPopup(true)}
+                className="bg-[#FDDC4E] hover:bg-yellow-400 text-black flex items-center space-x-2"
+                size="sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Add Pod</span>
+              </Button>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
@@ -392,6 +403,13 @@ const PodsTable: React.FC<PodsTableProps> = ({ onPodClick, isDashboard = false }
           />
         )}
       </div>
+
+      {/* Add Pod Popup */}
+      <AddPodPopup
+        open={showAddPodPopup}
+        onOpenChange={setShowAddPodPopup}
+        onSuccess={fetchData}
+      />
     </div>
   );
 };
