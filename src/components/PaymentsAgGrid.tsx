@@ -222,7 +222,18 @@ const PaymentsAgGrid = () => {
         <div className="p-4 border-b border-gray-200 bg-gray-100">
           {/* First line: title (left) and primary controls (right) */}
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Payments</h2>
+            </div>
 
             <div className="flex items-center gap-2">
               <Button
