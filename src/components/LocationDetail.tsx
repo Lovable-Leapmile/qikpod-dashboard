@@ -75,7 +75,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
 
   const handleDeleteLocation = async () => {
     if (!accessToken) return;
-    
+
     const confirmed = window.confirm(`Are you sure you want to delete location "${locationDetail?.location_name}"?`);
     if (!confirmed) return;
 
@@ -146,12 +146,7 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
   return (
     <div className="space-y-4 p-4 md:p-4">
       {/* Back Button */}
-      <Button
-        onClick={onBack}
-        variant="outline"
-        size="sm"
-        className="flex items-center gap-2 mb-2"
-      >
+      <Button onClick={onBack} variant="outline" size="sm" className="flex items-center gap-2 mb-2">
         <ArrowLeft className="w-4 h-4" />
         Back to Locations
       </Button>
@@ -180,20 +175,20 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
               <span className="text-gray-600 font-medium">PINCODE:</span>
               <span className="ml-1 text-gray-900">{formatValue(locationDetail.location_pincode)}</span>
             </div>
-            <div className="truncate">
+            {/*<div className="truncate">
               <span className="text-gray-600 font-medium">RESERVATIONS:</span>
               <span className="ml-1 text-gray-900">338</span>
-            </div>
+            </div>*/}
 
             {/* Row 3 */}
-            <div className="truncate">
+            {/*<div className="truncate">
               <span className="text-gray-600 font-medium">PODS:</span>
               <span className="ml-1 text-gray-900">0</span>
             </div>
             <div className="truncate">
               <span className="text-gray-600 font-medium">USERS:</span>
               <span className="ml-1 text-gray-900">114</span>
-            </div>
+            </div>*/}
 
             {/* Row 4 */}
             <div className="truncate md:col-span-2">
@@ -241,8 +236,8 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
             >
               Edit
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               className="rounded-lg text-xs md:text-sm h-8 px-2"
               onClick={handleDeleteLocation}
               disabled={deleting}
@@ -328,16 +323,10 @@ const LocationDetail: React.FC<LocationDetailProps> = ({
       </Card>
 
       {/* Pods Table */}
-      <LocationPodsTable
-        locationId={locationId}
-        onPodClick={onPodClick}
-      />
+      <LocationPodsTable locationId={locationId} onPodClick={onPodClick} />
 
       {/* Users Table */}
-      <LocationUsersTable
-        locationId={locationId}
-        onUserClick={onUserClick}
-      />
+      <LocationUsersTable locationId={locationId} onUserClick={onUserClick} />
 
       {/* Reservations Tables */}
       <LocationReservationsTable
