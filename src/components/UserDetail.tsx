@@ -162,9 +162,7 @@ const UserDetail: React.FC<UserDetailProps> = ({ userId, onBack }) => {
             {/* User Information */}
             <div className="flex-grow min-w-0">
               {/* Desktop: Title */}
-              <h2 className="hidden md:block text-2xl font-bold text-gray-900 mb-6">
-                User Details: {userDetail.user_name}
-              </h2>
+              <h2 className="hidden md:block text-2xl font-bold text-gray-900 mb-6">{userDetail.user_name}</h2>
 
               {/* Display information in rows */}
               <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
