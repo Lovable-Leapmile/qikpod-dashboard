@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogOut, Menu, X, ChevronDown, ArrowLeft } from 'lucide-react';
+import qikpodLogo from "@/assets/qikpod-logo.png";
 import { NavigationItem } from './NavigationItems';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -55,7 +56,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
               onClick={handleLogoClick}
             >
               <img 
-                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                src={qikpodLogo} 
                 alt="QikPod Logo" 
                 className="h-5 w-auto" 
               />
