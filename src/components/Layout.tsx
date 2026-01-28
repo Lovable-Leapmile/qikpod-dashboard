@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import qikpodLogo from "@/assets/qikpod-logo.png";
 import {
   Dialog,
   DialogContent,
@@ -61,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, breadcrumb }) => {
           <div className="flex items-center">
             <div className="cursor-pointer" onClick={() => navigate("/dashboard")}>
               <img
-                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
+                src={qikpodLogo}
                 alt="QikPod Logo"
                 className="h-6 w-auto"
               />

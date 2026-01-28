@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowLeft } from "lucide-react";
+import qikpodLogo from "@/assets/qikpod-logo.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface MobileHeaderProps {
@@ -38,7 +39,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ isMobileMenuOpen, setIsMobi
           )}
           <div className="cursor-pointer" onClick={handleLogoClick}>
             <img
-              src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
+              src={qikpodLogo}
               alt="QikPod Logo"
               className="h-5 w-auto"
             />

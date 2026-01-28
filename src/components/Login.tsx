@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { Lock, Smartphone } from 'lucide-react';
+import qikpodLogo from "@/assets/qikpod-logo.png";
 
 const Login = () => {
   const [mobile, setMobile] = useState('');
@@ -45,11 +46,11 @@ const Login = () => {
     <div className="min-h-screen flex">
       {/* Left Side - Welcome Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 flex-col justify-center items-center text-white p-12">
-        <div className="text-center max-w-md">
+          <div className="text-center max-w-md">
           <div className="mb-8">
             <div className="w-48 mx-auto flex items-center justify-center mb-6 p-4">
               <img
-                src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png"
+                src={qikpodLogo}
                 alt="QikPod Logo"
                 className="w-full h-auto object-contain"
               />
@@ -68,7 +69,7 @@ const Login = () => {
             <div className="lg:hidden text-center mb-8">
               <div className="w-36 h-24 mx-auto bg-[#fddc4e] rounded-lg flex items-center justify-center mb-4 shadow-md p-3">
                 <img 
-                  src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Qikpod/Images/q70.png" 
+                  src={qikpodLogo} 
                   alt="QikPod Logo" 
                   className="w-full h-full object-contain"
                 />
