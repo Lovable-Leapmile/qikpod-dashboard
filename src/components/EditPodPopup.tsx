@@ -23,6 +23,8 @@ interface PodUpdateData {
   pod_state: string;
   pod_connection_method: string;
   pod_mode: string;
+  pod_wifi_id: string;
+  pod_wifi_password: string;
 }
 
 const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData, onSuccess }) => {
@@ -38,6 +40,8 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData
     pod_state: "",
     pod_connection_method: "",
     pod_mode: "",
+    pod_wifi_id: "",
+    pod_wifi_password: "",
   });
 
   // Pre-fill form data when popup opens or pod data changes
@@ -50,6 +54,8 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData
         pod_state: podData.pod_state || "",
         pod_connection_method: podData.pod_connection_method || "",
         pod_mode: podData.pod_mode || "",
+        pod_wifi_id: (podData as any).pod_wifi_id || "",
+        pod_wifi_password: (podData as any).pod_wifi_password || "",
       });
     }
   }, [podData]);
@@ -203,6 +209,31 @@ const EditPodPopup: React.FC<EditPodPopupProps> = ({ open, onOpenChange, podData
                 </SelectContent>
               </Select>
             </div>
+
+            {formData.pod_connection_method === "Wifi" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="pod_wifi_id">Wifi ID</Label>
+                  <Input
+                    id="pod_wifi_id"
+                    value={formData.pod_wifi_id}
+                    onChange={(e) => updateFormField("pod_wifi_id", e.target.value)}
+                    placeholder="Enter Wifi ID"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pod_wifi_password">Wifi Password</Label>
+                  <Input
+                    id="pod_wifi_password"
+                    type="password"
+                    value={formData.pod_wifi_password}
+                    onChange={(e) => updateFormField("pod_wifi_password", e.target.value)}
+                    placeholder="Enter Wifi Password"
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
